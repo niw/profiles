@@ -1,0 +1,15 @@
+[submodule ".vim/runtimes/vim-ruby"]
+	path = .vim/runtimes/vim-ruby
+	url = git://github.com/vim-ruby/vim-ruby.git
+[submodule ".vim/runtimes/vim-rails"]
+	path = .vim/runtimes/vim-rails
+	url = git://github.com/tpope/vim-rails.git
+[submodule ".vim/runtimes/vim-objj"]
+	path = .vim/runtimes/vim-objj
+	url = git://github.com/nanki/vim-objj.git
+[submodule ".vim/runtimes/git-vim"]
+	path = .vim/runtimes/git-vim
+	url = git://github.com/motemen/git-vim.git
+[submodule ".vim/runtimes/snipmate"]
+	path = .vim/runtimes/snipmate
+	url = git://github.com/msanders/snipmate.vim.git
