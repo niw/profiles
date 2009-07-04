@@ -1,0 +1,18 @@
+[user]
+	name = Yoshimasa Niwa
+	email = niw@niw.at
+[alias]
+	ci = commit
+	cia = commit -a
+	co = checkout
+	st = status
+	sta = status -a
+	br = branch -a
+	sm = submodule
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+[gui]
+	fontui = -family \"ヒラギノ角ゴ Pro W3\" -size 12 -weight normal -slant roman -underline 0 -overstrike 0
+	fontdiff = -family Osaka−等幅 -size 12 -weight normal -slant roman -underline 0 -overstrike 0

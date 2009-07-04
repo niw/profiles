@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+require 'uri'
+require 'net/http'
+require 'kconv'
+
+$KCODE='u'
+
+def redirect(url, limit = 10)
+  raise ArgumentError, 'http redirect too deep' if limit == 0
+  uri = URI.parse(url);
+  Net::HTTP.start(uri.host, uri.port) do |h|
+    r = h.head(uri.request_uri)
+    case r
+    when Net::HTTPSuccess
+      url
+    when Net::HTTPRedirection
+      redirect(r['location'], limit - 1)
+    else
+      r.error!
+    end
+  end
+end
+
+prefix = ARGV.shift || ''
+count = 1
+print "#/bin/sh\n"
+youtube_url_re = /http:\/\/([^\.]*\.?youtube\.com)(\/watch\?v=([a-zA-Z0-9\_\-]+))/
+ARGF.each do |line|
+  next if line.match(/^#/)
+  if (m = line.match(youtube_url_re)) && (m = redirect(m[0]).match(youtube_url_re))
+    id = m[3]
+    Net::HTTP.start(m[1]) do |h|
+      r, = h.get(m[2])
+      t = r.body.toutf8.match(/<meta name="title" content="(.*)">/)
+      title = t ? prefix + t[1] : "#{prefix}_#{count}"
+      title = title.gsub(/[ 　]+/, "_").gsub(/\//, "_")
+      n = r.body.match(/swfArgs = .+"l": ([0-9]+).+"t": "([^"]+)"/)
+      fmts = [22, 18, 6, 0]
+      while(fmt = fmts.shift)
+        begin
+          url = redirect("http://www.youtube.com/get_video?video_id=#{id}&l=#{n[1]}&t=#{n[2]}" + (fmt > 0 ? "&fmt=#{fmt}" : ""))
+          puts "wget -O \"#{title}.mp4\" \"#{url}\""
+          count = count + 1
+          STDERR.puts "#{title}\t#{url} (fmt=#{fmt})"
+          break
+        rescue
+        end
+      end
+    end
+  end
+end

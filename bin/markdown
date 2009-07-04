@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'erb'
+
+ERB.new(<<END_OF_HTML).run
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<%
+  require 'rubygems'
+  require 'BlueCloth'
+%>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="author" content="Yoshimasa Niwa" />
+<style type="text/css">
+body {
+  color: #333;
+  font-family: Georgia /*, "Hiragino Mincho Pro", "ヒラギノ明朝 Pro W3", "ＭＳ Ｐゴシック", "Times New Roman", Times, serif*/;
+  margin: 30px 80px;
+}
+hr {
+  height: 2px;
+  border: none;
+  background: #ddd;
+}
+h1 {
+  font-size: large;
+  color: #39c;
+}
+h2 {
+  font-size: medium;
+  color: #666;
+}
+p {
+  margin 0;
+  padding: 0;
+}
+a,
+a:visited {
+  color: #39c;
+}
+</style>
+</head>
+<body>
+<%= BlueCloth.new(ARGF.read).to_html %>
+</body>
+</html>
+END_OF_HTML

@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+
+require 'rubygems' rescue LoadError
+require 'active_support'
+require 'active_record'
+require 'irb'
+require 'optparse'
+require 'mysql'
+
+options = {
+  :adapter => "mysql",
+  :host => 'localhost',
+}
+pluralize_table = false
+
+argv = ARGV.size.zero? ? ['--help'] : ARGV
+OptionParser.new do |opts|
+  opts.banner = 'Usage: ./iar -apostgresql -uroot -prootpasswd -h192.168.0.10 dbname'
+  
+  non_adapters = %w(establish_connection remove_connection retrieve_connection)
+  adapters = ActiveRecord::Base.public_methods.find_all {|m| 
+    m.match(/_connection$/) && !non_adapters.include?(m)
+  }.map {
+    |e| e.gsub('_connection', '')
+  }.sort
+
+  opts.on("-a VAL", "--adapter=VAL",
+            "adapter (#{adapters.join(' ')})",
+            "default: mysql"
+         ) { |value| options[:adapter] = value }
+  opts.on("-u VAL", "--user=VAL",
+          "username"
+         ) { |value| options[:username] = value }
+  opts.on("-h VAL", "--host=VAL",
+          "hostname",
+          "default: localhost"
+         ) { |value| options[:host] = value }
+  opts.on("-D VAL", "--database=VAL",
+          "database"
+         ) { |value| options[:database] = value }
+  opts.on("-p VAL", "--password=VAL",
+          "password"
+         ) { |value| options[:password] = value }
+  opts.on("-e VAL", "--encoding=VAL",
+          "encoding"
+         ) { |value| options[:encoding] = value}
+  opts.on("-t", "--pluralize_table",
+          "use pluralize table name (default not use)"
+         ) { |value| pluralize_table = true}
+  
+  opts.parse! argv 
+end
+
+options[:database] = ARGV.shift if !options[:database] && ARGV.first && ARGV.first.first != '-'
+
+ActiveRecord::Base.pluralize_table_names = pluralize_table
+ActiveRecord::Base.establish_connection(options)
+ActiveRecord::Base.connection.tables.each do |table|
+  table = table.singularize if pluralize_table
+  begin
+    classname = (table.upcase == table) ? table : table.camelize
+    eval "class #{classname} < ActiveRecord::Base; end"
+    puts "define #{classname}: from #{table}"
+
+    columns = ActiveRecord::Base.connection.columns(table)
+    primary_key = columns.select{|column| column.primary}.first || columns.select{|column|
+      ['P_ID', 'P_KEY', 'PRIMARY_ID', 'PRIMARY_KEY', 'INDEX', 'ROWID'].include?(column.name)
+     }.first
+    if primary_key && primary_key.name != 'id'
+      eval "class #{classname}; def primary_key; '#{primary_key.name}'; end; end"
+      puts "\tprimary_key: #{primary_key.name}"
+    end
+  rescue TypeError
+    puts "skip #{table}: could not create class named #{classname}"
+  end
+end
+
+module Kernel
+  def show_tables
+    ActiveRecord::Base.connection.tables
+  end
+end
+
+IRB.start

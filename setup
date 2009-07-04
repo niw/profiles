@@ -1,0 +1,59 @@
+#!/bin/sh
+
+list=".* dot.*"
+uname=`uname`
+
+if [ "${uname}" = 'Darwin' ]; then
+	list="${list} darwin/.* darwin/dot.*"
+fi
+
+if [ `echo ${uname} | sed 's/\(.*\)_.*/\1/'` = 'CYGWIN' ]; then
+	cygwin=1
+	list="${list} cygwin/.* cygwin/_* cygwin/dot.*"
+fi
+
+if [ "$1" = '--replace' -o "$1" = '-r' ]; then
+	replace=1
+fi
+
+for i in ${list}
+do
+	if [ ! -e ${i} ]; then
+		continue
+	fi
+
+	f=`basename "${i}"`
+	ignored=0
+	for ignore in . .. .svn .git .gitignore .DS_Store
+	do
+		if [ "${f}" = "${ignore}" ]; then
+			ignored=1
+			continue
+		fi
+	done
+	if [ "${ignored}" = "1" ]; then
+		continue
+	fi
+
+	f=`echo "${f}" | sed -e 's/^dot\./\./'`
+	if [ ! $cygwin ]; then
+		f=`echo "${f}" | sed -e 's/^_/\./'`
+	fi
+
+	if [ -e "${HOME}/${f}" -o -h "${HOME}/${f}" ]; then
+		echo "Already exist the dotfile ${f}."
+		if [ $replace ]; then
+			echo "Remove ${f}"
+			rm -rf "${HOME}/${f}"
+		else
+			continue
+		fi
+	fi
+	if [ $cygwin ]; then
+		echo "Copy dotfile ${f} to ${HOME}..."
+		cp -r "${i}" "${HOME}"
+	else
+		echo "Create symlink ${f} to ${HOME}..."
+		ln -s "`pwd`/${i}" "${HOME}/${f}"
+	fi
+done

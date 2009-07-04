@@ -1,0 +1,82 @@
+#!/bin/sh
+# svnRecover -- recovers .svn directories inside another directory.
+#
+# Created 2007 by Daniel Sadilek, made available in the public domain
+#
+# This is the version of 2008-09-16
+#
+# Thanks to Percy (http://www.blogger.com/profile/06545856836726341807)
+# for providing a version with better error handling.
+#
+# Thanks to Anonymous for pointing out an error with extended priviledges.
+#
+
+# use newline as file delimiter
+IFS="
+"
+
+# must be dir!
+if [ ! -d "$1" ]; then
+  echo "Usage: svnrecover <directory>"
+  exit
+fi
+
+# get info
+dir=`dirname "$1"`
+base=`basename "$1"`
+
+# go to dir
+cd "$dir"
+
+# prefix
+prefix="tmp"
+prefixi=1
+
+# does it exist?
+while [ -x "$prefix.$base" ]; do
+  prefix="tmp$prefixi"
+  prefixi=$(( prefixi + 1 ))
+done
+
+# move to temp
+echo Moving to temp location.
+mv "$base" "$prefix.$base"
+if [ $? -ne "0" ]; then
+  echo "Could not rename '$base' to '$prefix.$base'."
+  echo "Stopping process!"
+  exit 1
+fi
+
+# update
+echo SVN Update.
+svn update -q "$base" 2>&1
+
+# check to make sure it's a dir!
+if [ ! -d "$base" ]; then
+  echo Version in repository is not a folder or could not be checked out!
+  echo Restoring original!
+  rm -f "$base"
+  mv "$prefix.$base" "$base"
+  exit 2
+fi
+
+# go to dir
+echo Moving .svn directories.
+cd "$base"
+
+# find .svn dirs
+for folder in `find . -type d -name .svn`; do
+  # only move .svn folder if its parent exists in the modified version
+  if [ -d ../"$prefix.$base"/"`dirname "$folder"`" ]; then
+    # only move .svn folder if itself not already exists in the modified version
+    if [ ! -d ../"$prefix.$base"/"$folder" ]; then
+      mv "$folder" ../"$prefix.$base"/"`dirname "$folder"`"
+    fi
+  fi
+done
+
+# replace
+echo Replacing.
+cd ..
+rm -rf "$base"
+mv "$prefix.$base" "$base"

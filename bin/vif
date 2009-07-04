@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+EDITOR = ENV['EDITOR'] || 'vim'
+
+files = `find . -type f ! -path './tmp/*' ! -path './log/*' ! -path '*/.svn/*' #{ARGV.map{|v| "#{/^-/ === v ? '!' : ''} -path '*#{v.gsub(/^-/, '')}*' "}.join}`
+system("#{EDITOR} #{files.split.join(' ')}")
+puts files

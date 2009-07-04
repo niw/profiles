@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'tmail'
+
+def split(body)
+  mail = TMail::Mail.parse(body)
+  if mail.multipart?
+    mail.parts.each_with_index do |part, index|
+      name = part.disposition_param("filename")
+      if name
+        File.open(name, "w"){|f| f.write(part.body)}
+      else
+        print(part.body)
+      end
+    end
+  else
+    print(mail)
+  end
+end
+
+split(ARGF.read)

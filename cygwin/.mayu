@@ -1,0 +1,17 @@
+include "104.mayu"
+keymap Global
+
+key *ACBack = *Home
+key *ACForward = *End
+
+mod Control += CapsLock
+key ScrollLock = CapsLock
+key *CapsLock = *LControl
+
+mod Alt -= RAlt
+key RAlt = $ToggleIME
+
+key A-Space = $ToggleIME
+
+mod Control -= RControl
+mod Windows += RControl
