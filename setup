@@ -24,7 +24,7 @@ do
 
 	f=`basename "${i}"`
 	ignored=0
-	for ignore in . .. .svn .git .gitignore .DS_Store
+	for ignore in . .. .svn .git .gitignore .gitmodules .DS_Store
 	do
 		if [ "${f}" = "${ignore}" ]; then
 			ignored=1
