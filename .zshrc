@@ -1,15 +1,11 @@
-# based on http://devel.aquahill.net/zsh/zshoptions
-
-##
-## local variables
-##
+## Local Variables {{{
 
 arch=`uname`
 profiles=~/.profiles
 
-##
-## configures
-##
+# }}}
+
+## Basic Enviroments {{{
 
 # editor
 export EDITOR=vim
@@ -33,9 +29,10 @@ fi
 
 export PATH=${PATH}:${profiles}/bin
 
-##
-## zsh options
-##
+# }}}
+
+## Basic Configurations {{{
+## based on http://devel.aquahill.net/zsh/zshoptions
 
 # viキーバインド
 bindkey -v
@@ -139,9 +136,9 @@ setopt no_check_jobs
 #autoload predict-on
 #predict-on
 
-##
-## Completion System
-##
+# }}}
+
+## Completion System {{{
 
 # コマンドラインオプションを補完
 autoload -U compinit
@@ -172,9 +169,9 @@ if [ -f $HOME/.ssh/known_hosts ]; then
 	zstyle ':completion:*:(ssh|scp|sftp):*' hosts $knownhosts
 fi
 
-##
-## Alias
-##
+## }}}
+
+## Alias {{{
 
 alias -g V="| vi -v -"
 alias -g G="| grep"
@@ -194,9 +191,9 @@ alias ge="grepedit"
 
 alias wget="wget -U Mozilla --no-check-certificate"
 
-##
-## 履歴
-##
+## }}}
+
+## History {{{
 
 # 履歴をファイルに保存する
 HISTFILE="${HOME}"/.zsh-history
@@ -239,9 +236,10 @@ autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
-##
-## Keybinds based on http://github.com/kana/config/
-##
+## }}}
+
+## Keybinds {{{
+## based on http://github.com/kana/config/
 
 # to delete characters beyond the starting point of the current insertion.
 bindkey -M viins '\C-h' backward-delete-char
@@ -262,9 +260,9 @@ bindkey -M viins '^n' history-beginning-search-forward-end
 bindkey -M vicmd '\C-t' transpose-words
 bindkey -M viins '\C-t' transpose-words
 
-##
-## Scan additonal configurations
-##
+# }}}
+
+## Scan Additonal Configurations {{{
 
 setopt no_nomatch
 for i in "${profiles}" "${profiles}/${arch}"
@@ -287,13 +285,15 @@ do
 	done
 done
 
-##
-## Post configurations
-##
+# }}}
+
+## Post Configurations {{{
 
 # vimがあったらviはvim
 if type 'vim' > /dev/null 2>&1; then
 	alias vi='vim'
 fi
+
+# }}}
 
 # vim:ts=4:sw=4:noexpandtab:foldmethod=marker:

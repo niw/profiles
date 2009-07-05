@@ -1,7 +1,10 @@
-" ~/.vimをランタイムパスに加える (Windows/Cygwin互換用)
+" ~/.vimをランタイムパスに加える (Windows/Cygwin互換用) {{{
+
 if has('win32')
   set runtimepath+=$HOME/.vim
 endif
+
+"}}}
 
 "{{{ 日本語化とファイルエンコードの自動判別
 
@@ -299,7 +302,8 @@ autocmd FileType gitcommit DiffGitCached
 
 "}}}
 
-" 追加のランタイムパスと設定
+" 追加のランタイムパスと設定 {{{
+
 for s:dir in split(glob($HOME . "/.vim/runtimes/*"))
   if isdirectory(s:dir)
     let &runtimepath = &runtimepath . "," . s:dir
@@ -314,5 +318,7 @@ for s:dir in split(glob($HOME . "/.vim/runtimes/*"))
     endfor
   endif
 endfor
+
+"}}}
 
 " vim:ts=2:sw=2:expandtab:foldmethod=marker:
