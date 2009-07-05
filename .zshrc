@@ -3,10 +3,9 @@
 ##
 ## local variables
 ##
+
 arch=`uname`
 profiles=~/.profiles
-
-
 
 ##
 ## configures
@@ -235,21 +234,38 @@ setopt hist_ignore_dups
 # 履歴を直接実行
 unsetopt HISTVERIFY
 
-# 全履歴の一覧を出力する
-function history-all {
-	history -E 1
-}
-
 # 履歴検索
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
-bindkey "^P" history-beginning-search-backward-end
-bindkey "^N" history-beginning-search-forward-end
+
+##
+## Keybinds based on http://github.com/kana/config/
+##
+
+# to delete characters beyond the starting point of the current insertion.
+bindkey -M viins '\C-h' backward-delete-char
+bindkey -M viins '\C-w' backward-kill-word
+bindkey -M viins '\C-u' backward-kill-line
+
+# undo/redo more than once.
+bindkey -M vicmd 'u' undo
+bindkey -M vicmd '\C-r' redo
+
+# history
+bindkey -M vicmd '/' history-incremental-search-backward
+bindkey -M vicmd '?' history-incremental-search-forward
+bindkey -M viins '^p' history-beginning-search-backward-end
+bindkey -M viins '^n' history-beginning-search-forward-end
+
+# transpose
+bindkey -M vicmd '\C-t' transpose-words
+bindkey -M viins '\C-t' transpose-words
 
 ##
 ## Scan additonal configurations
 ##
+
 setopt no_nomatch
 for i in "${profiles}" "${profiles}/${arch}"
 do
@@ -279,3 +295,5 @@ done
 if type 'vim' > /dev/null 2>&1; then
 	alias vi='vim'
 fi
+
+# vim:ts=4:sw=4:noexpandtab:foldmethod=marker:
