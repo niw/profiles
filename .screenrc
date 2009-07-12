@@ -9,7 +9,7 @@ encoding utf-8 utf-8
 msgwait 2
 startup_message off
 termcapinfo xterm* ti@:te@
-#vbell off
+vbell off
 
 # }}}
 
