@@ -8,7 +8,11 @@ defencoding utf-8
 encoding utf-8 utf-8
 msgwait 2
 startup_message off
+# Shell is zsh for using screen as login command
+shell zsh
+# Enable scrolling on Terminal.app
 termcapinfo xterm* ti@:te@
+# Turn on bell everywhere
 vbell off
 
 # }}}
