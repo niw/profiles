@@ -1,4 +1,29 @@
-termcapinfo xterm* ti@:te@
+## Basics {{{
+
+altscreen on
+autodetach on
+defbce on
 defscrollback 100000
-hardstatus alwayslastline "%{= wk} %-w%{=bu dr}%n %t%{-}%+w %= %{=b wb}%y/%m/%d %{=b wb}%c"
+defencoding utf-8
+encoding utf-8 utf-8
+msgwait 2
 startup_message off
+termcapinfo xterm* ti@:te@
+#vbell off
+
+# }}}
+
+## Status line {{{
+
+# %{=bu wk} change color to bold, underline, while, black
+# %{-}      reset color
+# %-w       previous windows of current window
+# %+w       next windows of current window
+# %n        window number
+# %t        window title
+# %c        24H time
+hardstatus alwayslastline "%{= wk} %-w%{=b bw}%n %t%{-}%+w %= %{= wb}%y/%m/%d %c "
+
+# }}}
+
+# vim:ts=4:sw=4:noexpandtab:foldmethod=marker:
