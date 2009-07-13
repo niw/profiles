@@ -1,32 +1,29 @@
 ## Local Variables {{{
 
+# define architecture
 arch=`uname`
-profiles=~/.profiles
-
-# }}}
-
-## Basic Enviroments {{{
-
-# editor
-export EDITOR=vim
-# default language
-export LANG=ja_JP.UTF-8
-# colors ls
-alias ls='ls -p -h --show-control-chars --color=auto'
-
-# major architectures depended on configrations
 if [ $(uname | sed 's/\(.*\)_.*/\1/') = 'CYGWIN' ]; then
 	arch='cygwin'
 elif [ "${arch}" = 'Darwin' ]; then
 	arch='darwin'
-	unalias ls
-	alias ls='ls -hG'
 elif [ "${arch}" = 'FreeBSD' ]; then
 	arch='freebsd'
-	unalias ls
-	alias ls='ls -hG'
 fi
 
+# path of profiles itself
+profiles=~/.profiles
+
+# }}}
+
+## Basic Enviroment Variables {{{
+
+# editor
+export EDITOR=vim
+
+# default language
+export LANG=ja_JP.UTF-8
+
+# profile bin path
 export PATH=${PATH}:${profiles}/bin
 
 # }}}
@@ -171,24 +168,33 @@ fi
 
 ## }}}
 
-## Alias {{{
+## Basic Alias {{{
 
+# colors ls
+if [ "${arch}" = "darwin" -o "${arch}" = "freebsd" ]; then
+	alias ls='ls -hG'
+else
+	alias ls='ls -p -h --show-control-chars --color=auto'
+fi
+
+# pipe
 alias -g V="| vi -v -"
 alias -g G="| grep"
 alias -g T="| tail"
 alias -g H="| head"
 alias -g L="| less -r"
 
-alias now="date +%Y%m%d%H%M%S"
-
+# subversion related
 alias svndiff="svn diff -x --ignore-all-space -x --ignore-eol-style | vi -v -"
 alias svndiffd="svn diff -x --ignore-all-space -x --ignore-eol-style -r \"{\`date -v-1d +%Y%m%d\`}\" | vi -v -"
 alias svnst="svn st | grep -v '^[X?]'"
 
+# grep related
 alias grepr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' . -e "
 alias gr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
 alias ge="grepedit"
 
+alias now="date +%Y%m%d%H%M%S"
 alias wget="wget -U Mozilla --no-check-certificate"
 
 ## }}}
