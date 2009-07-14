@@ -1,4 +1,8 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
+
+# based on the code from Haruo Nanki<nanki@dotswitch.net>
+# see http://blog.netswitch.jp/articles/2006/01/26/%E3%82%A2%E3%82%B9%E3%83%9A%E3%82%AF%E3%83%88%E6%8C%87%E5%90%91%E3%82%A8%E3%83%87%E3%82%A3%E3%82%BF-2
+
 require 'tempfile'
 
 IDLINE = "# ============================================================ "
