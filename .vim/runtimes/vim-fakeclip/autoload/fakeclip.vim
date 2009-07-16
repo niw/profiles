@@ -118,7 +118,8 @@ endfunction
 
 
 function! s:read_clipboard_mac()
-  return system('pbpaste')
+  let uid = printf("0x%X", system('id -u'))
+  return system('__CF_USER_TEXT_ENCODING=' . uid . ':0x8000100:14 pbpaste')
 endfunction
 
 
@@ -163,7 +164,8 @@ endfunction
 
 
 function! s:write_clipboard_mac(text)
-  call system('pbcopy', a:text)
+  let uid = printf("0x%X", system('id -u'))
+  call system('__CF_USER_TEXT_ENCODING=' . uid . ':0x8000100:14 pbcopy', a:text)
   return
 endfunction
 
