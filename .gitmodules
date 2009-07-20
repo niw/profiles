@@ -13,3 +13,6 @@
 [submodule ".vim/runtimes/snipmate"]
 	path = .vim/runtimes/snipmate
 	url = git://github.com/msanders/snipmate.vim.git
+[submodule ".vim/runtimes/vim-surround"]
+	path = .vim/runtimes/vim-surround
+	url = git://github.com/tpope/vim-surround.git
