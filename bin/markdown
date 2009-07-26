@@ -16,7 +16,7 @@ ERB.new(<<END_OF_HTML).run
 <style type="text/css">
 body {
   color: #333;
-  font-family: Georgia /*, "Hiragino Mincho Pro", "$B%R%i%.%NL@D+(B Pro W3", "$B#M#S(B $B#P%4%7%C%/(B", "Times New Roman", Times, serif*/;
+  font-family: Georgia /*, "Hiragino Mincho Pro", "ヒラギノ明朝 Pro W3", "ＭＳ Ｐゴシック", "Times New Roman", Times, serif*/;
   margin: 30px 80px;
 }
 hr {
