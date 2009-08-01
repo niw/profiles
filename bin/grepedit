@@ -74,6 +74,7 @@ tmp.open
 
 if !status || now == tmp.mtime
   $stderr.puts "Nothing changed"
+  tmp.close!
   exit
 end
 
@@ -103,3 +104,5 @@ regions_set.each do |filename, regions|
   end
   open(filename, "w"){|file| file.write lines.to_s}
 end
+
+tmp.close!
