@@ -4,6 +4,6 @@
 
 EDITOR = ENV['EDITOR'] || 'vim'
 
-files = `find . -type f ! -path './tmp/*' ! -path './log/*' ! -path '*/.svn/*' #{ARGV.map{|v| "#{/^-/ === v ? '!' : ''} -path '*#{v.gsub(/^-/, '')}*' "}.join}`
+files = `find . -type f ! -name .DS_Store ! -path './tmp/*' ! -path './log/*' ! -path '*/.svn/*' ! -path '*/.git/*' #{ARGV.map{|v| "#{/^-/ === v ? '!' : ''} -path '*#{v.gsub(/^-/, '')}*' "}.join}`
 system("#{EDITOR} #{files.split.join(' ')}")
 puts files
