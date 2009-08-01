@@ -9,6 +9,7 @@
 	sta = status -a
 	br = branch -a
 	sm = submodule
+	gr = log --graph
 [color]
 	diff = auto
 	status = auto
