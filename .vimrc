@@ -306,9 +306,9 @@ autocmd FileType gitcommit DiffGitCached
 
 for s:dir in split(glob($HOME . "/.vim/runtimes/*"))
   if isdirectory(s:dir)
-    let &runtimepath = &runtimepath . "," . s:dir
+    let &runtimepath = s:dir . "," . &runtimepath
     if isdirectory(s:dir . "/after")
-      let &runtimepath = &runtimepath . "," . s:dir . "/after"
+      let &runtimepath = s:dir . "/after" . "," . &runtimepath
     endif
     " Read additional vimrc files
     for s:vimfile in [s:dir . "/.vimrc", s:dir . ".vim"]
