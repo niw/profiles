@@ -1,11 +1,3 @@
-" ~/.vimをランタイムパスに加える (Windows/Cygwin互換用) {{{
-
-if has('win32')
-  set runtimepath+=$HOME/.vim
-endif
-
-"}}}
-
 "{{{ 日本語化とファイルエンコードの自動判別
 
 " 日本語対応のための設定
@@ -109,6 +101,7 @@ if !has('gui_running') && &encoding != 'cp932' && &term == 'win32'
 endif
 " メニューファイルが存在しない場合は予め'guioptions'を調整しておく
 if 1 && !filereadable($VIMRUNTIME . '/menu.vim') && has('gui_running')
+  set guioptions&
   set guioptions+=M
 endif
 
@@ -143,6 +136,7 @@ set showmatch
 " コマンドライン補完するときに強化されたものを使う(参照 :help wildmenu)
 set wildmenu
 " テキスト挿入中の自動折り返しを日本語に対応させる
+set formatoptions&
 set formatoptions+=mM
 " 日本語整形スクリプト(by. 西岡拓洋さん)用の設定
 let format_allow_over_tw = 1  " ぶら下り可能幅
@@ -192,79 +186,64 @@ filetype plugin on
 set previewheight=40
 " カーソルキーとバックスペースで前後の行に移動
 set backspace=indent,eol,start
+set whichwrap&
 set whichwrap+=<,>,[,],h,l
 
 "}}}
 
-"{{{ プラットフォーム依存の設定
+"{{{ キーマッピング
 
-" ファイル名に大文字小文字の区別がないシステム用の設定:
-" (例: DOS/Windows/MacOS)
-if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMrC')
-  " tagsファイルの重複防止
-  set tags=./tags,tags
-endif
+" ウィンドウ移動
+noremap <C-Down> <C-W>j
+noremap <C-Up> <C-W>k
+noremap <C-Left> <C-W>h
+noremap <C-Right> <C-W>l
 
-" コンソールでのカラー表示のための設定(暫定的にUNIX専用)
-" (disalbed: if $TERM is correctly selected, the term equals $TREM)
-"if has('unix') && !has('gui_running')
-"  let uname = system('uname')
-"  if uname =~? "linux"
-"    set term=builtin_linux
-"  elseif uname =~? "freebsd"
-"    set term=builtin_cons25
-"  elseif uname =~? "Darwin"
-"    set term=beos-ansi
-"  else
-"    set term=builtin_xterm
-"  endif
-"  unlet uname
-"endif
+" バッファ切り替え
+noremap <silent> <F2> :bp<CR>
+noremap <silent> <F3> :bn<CR>
+noremap <silent> <F5> :make<CR>
 
-" コンソール版で環境変数$DISPLAYが設定されていると起動が遅くなる件へ対応
-if !has('gui_running') && has('xterm_clipboard')
-  set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
-endif
+" ;でもExコマンド
+noremap ; :
 
-" プラットホーム依存の特別な設定
-" WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正
-if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
-  let $PATH = $VIM . ';' . $PATH
-endif
+" 表示行で移動
+noremap j gj
+noremap k gk
+noremap gj j
+noremap gk k
 
-" Macではデフォルトの'iskeyword'がcp932に対応しきれていないので修正
-if has('mac')
-  set iskeyword=@,48-57,_,128-167,224-235
-endif
+" .vimrc再読み込み
+nnoremap s. :<C-u>source $MYVIMRC<Enter>
+
+" ハイライト削除
+nnoremap <Esc><Esc> :nohlsearch<CR>
+
+" 最後の変更のあったテキストを選択する
+nnoremap gm `[v`]
+vnoremap gm :<C-u>normal gc<Enter>
+onoremap gm :<C-u>normal gc<Enter>
 
 "}}}
 
-"{{{ その他の設定
-
-" キーマッピング
-map <C-J> <C-W>j
-map <C-K> <C-W>k
-map <C-H> <C-W>h
-map <C-L> <C-W>l
-map <C-Down> <C-W>j
-map <C-Up> <C-W>k
-map <C-Left> <C-W>h
-map <C-Right> <C-W>l
-map <silent> <unique> <F2> :bp<CR>
-map <silent> <unique> <F3> :bn<CR>
-map <silent> <unique> <F5> :make<CR>
+" {{{ オートコマンド
 
 " ファイルタイプ
-autocmd FileType ruby,eruby set nowrap ts=2 tw=0 sw=2 expandtab
-autocmd BufNewFile,BufRead *.md set ft=markdown fenc=utf-8
-autocmd BufNewFile,BufRead *.as set ft=actionscript fenc=utf-8 tabstop=4 tw=0 sw=4 noexpandtab
-autocmd BufNewFile,BufRead *.rl set ft=ragel
-autocmd BufNewFile,BufRead *.srt set ft=srt
-autocmd BufNewFile,BufRead *.haml set ft=haml
-autocmd BufNewFile,BufRead nginx.conf* set ft=nginx
-autocmd BufNewFile,BufRead Portfile set ft=macports
-autocmd BufNewFile,BufRead *.vcf set ft=vcard
-autocmd BufNewFile,BufRead *.module set ft=php ts=2 tw=0 sw=2 nowrap expandtab
+augroup FileTypeRelated
+  autocmd!
+  autocmd FileType ruby,eruby set nowrap ts=2 tw=0 sw=2 expandtab
+  autocmd BufNewFile,BufRead *.md set ft=markdown fenc=utf-8
+  autocmd BufNewFile,BufRead *.as set ft=actionscript fenc=utf-8 tabstop=4 tw=0 sw=4 noexpandtab
+  autocmd BufNewFile,BufRead *.rl set ft=ragel
+  autocmd BufNewFile,BufRead *.srt set ft=srt
+  autocmd BufNewFile,BufRead *.haml set ft=haml
+  autocmd BufNewFile,BufRead nginx.conf* set ft=nginx
+  autocmd BufNewFile,BufRead Portfile set ft=macports
+  autocmd BufNewFile,BufRead *.vcf set ft=vcard
+  autocmd BufNewFile,BufRead *.module set ft=php ts=2 tw=0 sw=2 nowrap expandtab
+augroup END
+
+" バイナリ編集
 augroup Binary
   autocmd!
   autocmd BufReadPre *.bin let &bin=1
@@ -276,12 +255,27 @@ augroup Binary
   autocmd BufWritePost *.bin set nomod | endif
 augroup END
 
-" ウィンドウのカレントディレクトリをバッファ切り替えで変更
-" :help cmdline-special
-autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h:gs? ?\\\\ ?")
+augroup Misc
+  autocmd!
 
-" vimgrep後にQuickFixを自動で開く
-au QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
+  " カーソル行をハイライト
+  autocmd WinEnter * setlocal cursorline
+  autocmd WinLeave * setlocal nocursorline
+
+  " ウィンドウのカレントディレクトリをバッファ切り替えで変更
+  " :help cmdline-special
+  autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h:gs? ?\\\\ ?")
+
+  " vimgrep後にQuickFixを自動で開く
+  autocmd QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
+augroup END
+
+"}}}
+
+"{{{ コマンド
+
+" utf-8で開き直す
+command! Utf8 edit ++enc=utf-8
 
 "}}}
 
@@ -302,15 +296,51 @@ autocmd FileType gitcommit DiffGitCached
 
 "}}}
 
-" 追加のランタイムパスと設定 {{{
+"{{{ プラットフォーム依存の設定
 
+" ファイル名に大文字小文字の区別がないシステム用の設定:
+" (例: DOS/Windows/MacOS)
+if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMrC')
+  " tagsファイルの重複防止
+  set tags=./tags,tags
+endif
+
+" コンソール版で環境変数$DISPLAYが設定されていると起動が遅くなる件へ対応
+if !has('gui_running') && has('xterm_clipboard')
+  set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
+endif
+
+" プラットホーム依存の特別な設定
+" WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正
+if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
+  let $PATH = $VIM . ';' . $PATH
+endif
+
+" Macではデフォルトの'iskeyword'がcp932に対応しきれていないので修正
+if has('mac')
+  set iskeyword=@,48-57,_,128-167,224-235
+endif
+
+"}}}
+
+"{{{ ランタイムパス
+
+set runtimepath&
+
+" ~/.vimをランタイムパスに加える (Windows/Cygwin互換用)
+if has('win32')
+  set runtimepath+=$HOME/.vim
+endif
+
+" 追加のラインタイムパス
 for s:dir in split(glob($HOME . "/.vim/runtimes/*"))
   if isdirectory(s:dir)
     let &runtimepath = s:dir . "," . &runtimepath
     if isdirectory(s:dir . "/after")
       let &runtimepath = s:dir . "/after" . "," . &runtimepath
     endif
-    " Read additional vimrc files
+
+    " 追加の設定ファイルを読み込む
     for s:vimfile in [s:dir . "/.vimrc", s:dir . ".vim"]
       if filereadable(s:vimfile)
         execute "source " . s:vimfile
