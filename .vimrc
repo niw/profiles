@@ -259,8 +259,8 @@ augroup Misc
   autocmd!
 
   " カーソル行をハイライト
-  autocmd WinEnter * setlocal cursorline
-  autocmd WinLeave * setlocal nocursorline
+  autocmd WinEnter,BufEnter * setlocal cursorline
+  autocmd WinLeave,BufLeave * setlocal nocursorline
 
   " ウィンドウのカレントディレクトリをバッファ切り替えで変更
   " :help cmdline-special
