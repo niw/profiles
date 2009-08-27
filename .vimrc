@@ -231,16 +231,16 @@ onoremap gm :<C-u>normal gc<Enter>
 " ファイルタイプ
 augroup FileTypeRelated
   autocmd!
-  autocmd FileType ruby,eruby set nowrap ts=2 tw=0 sw=2 expandtab
-  autocmd BufNewFile,BufRead *.md set ft=markdown fenc=utf-8
-  autocmd BufNewFile,BufRead *.as set ft=actionscript fenc=utf-8 tabstop=4 tw=0 sw=4 noexpandtab
-  autocmd BufNewFile,BufRead *.rl set ft=ragel
-  autocmd BufNewFile,BufRead *.srt set ft=srt
-  autocmd BufNewFile,BufRead *.haml set ft=haml
-  autocmd BufNewFile,BufRead nginx.conf* set ft=nginx
-  autocmd BufNewFile,BufRead Portfile set ft=macports
-  autocmd BufNewFile,BufRead *.vcf set ft=vcard
-  autocmd BufNewFile,BufRead *.module set ft=php ts=2 tw=0 sw=2 nowrap expandtab
+  autocmd FileType ruby,eruby setlocal tabstop=2 shiftwidth=2 expandtab nowrap
+  autocmd BufNewFile,BufRead *.md setlocal filetype=markdown fileencoding=utf-8
+  autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
+  autocmd BufNewFile,BufRead *.rl setlocal filetype=ragel
+  autocmd BufNewFile,BufRead *.srt setlocal filetype=srt
+  autocmd BufNewFile,BufRead *.haml setlocal filetype=haml
+  autocmd BufNewFile,BufRead nginx.conf* setlocal filetype=nginx
+  autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
+  autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
+  autocmd BufNewFile,BufRead *.module setlocal filetype=php tabstop=2 shiftwidth=2 expandtab nowrap
 augroup END
 
 " バイナリ編集
@@ -248,17 +248,17 @@ augroup Binary
   autocmd!
   autocmd BufReadPre *.bin let &bin=1
   autocmd BufReadPost *.bin if &bin | silent %!xxd -g 1
-  autocmd BufReadPost *.bin set ft=xxd | endif
+  autocmd BufReadPost *.bin setlocal ft=xxd | endif
   autocmd BufWritePre *.bin if &bin | %!xxd -r
   autocmd BufWritePre *.bin endif
   autocmd BufWritePost *.bin if &bin | silent %!xxd -g 1
-  autocmd BufWritePost *.bin set nomod | endif
+  autocmd BufWritePost *.bin setlocal nomod | endif
 augroup END
 
 augroup Misc
   autocmd!
 
-  " カーソル行をハイライト 遅いから削除
+  " カーソル行をハイライト
   "autocmd WinEnter,BufEnter * setlocal cursorline
   "autocmd WinLeave,BufLeave * setlocal nocursorline
 
@@ -351,4 +351,4 @@ endfor
 
 "}}}
 
-" vim:ts=2:sw=2:expandtab:foldmethod=marker:
+" vim:tabstop=2:shiftwidth=2:expandtab:foldmethod=marker:nowrap:
