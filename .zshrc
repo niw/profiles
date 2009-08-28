@@ -4,6 +4,8 @@
 arch=`uname`
 if [ $(uname | sed 's/\(.*\)_.*/\1/') = 'CYGWIN' ]; then
 	arch='cygwin'
+elif [ "${arch}" = 'Linux' ]; then
+	arch='linux'
 elif [ "${arch}" = 'Darwin' ]; then
 	arch='darwin'
 elif [ "${arch}" = 'FreeBSD' ]; then
