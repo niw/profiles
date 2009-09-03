@@ -217,7 +217,7 @@ noremap gk k
 nnoremap s. :<C-u>source $MYVIMRC<Enter>
 
 " ハイライト削除
-nnoremap <Esc><Esc> :nohlsearch<CR>
+noremap <C-h><C-n> :<C-u>nohlsearch<Enter>
 
 " 最後の変更のあったテキストを選択する
 nnoremap gm `[v`]
