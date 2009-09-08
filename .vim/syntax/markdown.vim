@@ -2,12 +2,11 @@
 " Language:	Markdown
 " Maintainer:	Ben Williams <benw@plasticboy.com>
 " URL:		http://plasticboy.com/markdown-vim-mode/
-" Version:	8
-" Last Change:  2008 April 29 
+" Version:	9
+" Last Change:  2009 May 18 
 " Remark:	Uses HTML syntax file
 " Remark:	I don't do anything with angle brackets (<>) because that would too easily
 "		easily conflict with HTML syntax
-" TODO: 	Do something appropriate with image syntax
 " TODO: 	Handle stuff contained within stuff (e.g. headings within blockquotes)
 
 
@@ -37,13 +36,23 @@ syn case ignore
 syn sync linebreaks=1
 
 "additions to HTML groups
-syn region htmlBold     start=/\(^\|\s\)\*\@<!\*\*\*\@!/     end=/\*\@<!\*\*\*\@!\($\|\s\)/   contains=@Spell,htmlItalic
-syn region htmlItalic   start=/\(^\|\s\)\*\@<!\*\*\@!/       end=/\*\@<!\*\*\@!\($\|\s\)/      contains=htmlBold,@Spell
-syn region htmlBold     start=/\(^\|\s\)_\@<!___\@!/         end=/_\@<!___\@!\($\|\s\)/       contains=htmlItalic,@Spell
-syn region htmlItalic   start=/\(^\|\s\)_\@<!__\@!/          end=/_\@<!__\@!\($\|\s\)/        contains=htmlBold,@Spell
-syn region htmlString   start="]("ms=s+2             end=")"me=e-1
-syn region htmlLink     start="\["ms=s+1            end="\]"me=e-1 contains=@Spell
-syn region htmlString   start="\(\[.*]: *\)\@<=.*"  end="$"
+syn region htmlBold     start=/\\\@<!\(^\|\A\)\@=\*\@<!\*\*\*\@!/     end=/\\\@<!\*\@<!\*\*\*\@!\($\|\A\)\@=/   contains=@Spell,htmlItalic
+syn region htmlItalic   start=/\\\@<!\(^\|\A\)\@=\*\@<!\*\*\@!/       end=/\\\@<!\*\@<!\*\*\@!\($\|\A\)\@=/      contains=htmlBold,@Spell
+syn region htmlBold     start=/\\\@<!\(^\|\A\)\@=_\@<!___\@!/         end=/\\\@<!_\@<!___\@!\($\|\A\)\@=/       contains=htmlItalic,@Spell
+syn region htmlItalic   start=/\\\@<!\(^\|\A\)\@=_\@<!__\@!/          end=/\\\@<!_\@<!__\@!\($\|\A\)\@=/        contains=htmlBold,@Spell
+
+" [link](URL) | [link][id] | [link][]
+syn region mkdLink matchgroup=mkdDelimiter      start="\!\?\[" end="\]\ze\s*[[(]" contains=@Spell nextgroup=mkdURL,mkdID skipwhite oneline
+syn region mkdID matchgroup=mkdDelimiter        start="\["    end="\]" contained
+syn region mkdURL matchgroup=mkdDelimiter       start="("     end=")"  contained
+
+" Link definitions: [id]: URL (Optional Title)
+" TODO handle automatic links without colliding with htmlTag (<URL>)
+syn region mkdLinkDef matchgroup=mkdDelimiter   start="^ \{,3}\zs\[" end="]:" oneline nextgroup=mkdLinkDefTarget skipwhite
+syn region mkdLinkDefTarget start="<\?\zs\S" excludenl end="\ze[>[:space:]\n]"   contained nextgroup=mkdLinkTitle,mkdLinkDef skipwhite skipnl oneline
+syn region mkdLinkTitle matchgroup=mkdDelimiter start=+"+     end=+"+  contained
+syn region mkdLinkTitle matchgroup=mkdDelimiter start=+'+     end=+'+  contained
+syn region mkdLinkTitle matchgroup=mkdDelimiter start=+(+     end=+)+  contained
 
 "define Markdown groups
 syn match  mkdLineContinue ".$" contained
@@ -54,10 +63,11 @@ syn match  mkdRule      /^\s*-\{3,}$/
 syn match  mkdRule      /^\s*\*\{3,5}$/
 syn match  mkdListItem  "^\s*[-*+]\s\+"
 syn match  mkdListItem  "^\s*\d\+\.\s\+"
-syn match  mkdCode      /^\s*\n\(\(\s\{4,}\|[\t]\+\)[^*-+ ].*\n\)\+/
-syn region mkdCode      start=/`/                   end=/`/
+syn match  mkdCode      /^\s*\n\(\(\s\{4,}[^ ]\|\t\+[^\t]\).*\n\)\+/
+syn match  mkdLineBreak /  \+$/
+syn region mkdCode      start=/\\\@<!`/                   end=/\\\@<!`/
 syn region mkdCode      start=/\s*``[^`]*/          end=/[^`]*``\s*/
-syn region mkdBlockquote start=/^\s*>/              end=/$/                 contains=mkdLineContinue,@Spell
+syn region mkdBlockquote start=/^\s*>/              end=/$/                 contains=mkdLineBreak,mkdLineContinue,@Spell
 syn region mkdCode      start="<pre[^>]*>"         end="</pre>"
 syn region mkdCode      start="<code[^>]*>"        end="</code>"
 
@@ -78,7 +88,15 @@ HtmlHiLink mkdBlockquote    Comment
 HtmlHiLink mkdLineContinue  Comment
 HtmlHiLink mkdListItem      Identifier
 HtmlHiLink mkdRule          Identifier
+HtmlHiLink mkdLineBreak     Todo
+HtmlHiLink mkdLink          htmlLink
+HtmlHiLink mkdURL           htmlString
+HtmlHiLink mkdID            Identifier
+HtmlHiLink mkdLinkDef       mkdID
+HtmlHiLink mkdLinkDefTarget mkdURL
+HtmlHiLink mkdLinkTitle     htmlString
 
+HtmlHiLink mkdDelimiter     Delimiter
 
 let b:current_syntax = "mkd"
 
