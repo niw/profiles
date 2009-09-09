@@ -1,11 +1,28 @@
 #!/usr/bin/env ruby
 require 'webrick'
 
+class EchoServlet < WEBrick::HTTPServlet::AbstractServlet
+  def do_GET(req, res)
+    echo(req, res)
+  end
+
+  def do_POST(req, res)
+    echo(req, res)
+  end
+
+  private
+  def echo(req, res)
+    res.content_type = "text/plain";
+    res.body = ["Request:", req.request_line, "Header:", req.header.inspect, "Body:", req.body.inspect].join("\r\n")
+  end
+end
+
 server = WEBrick::HTTPServer.new(
   :Port => 3000,
   :BindAddress => '0.0.0.0',
   :DocumentRoot => File.expand_path(Dir.pwd)
 )
+server.mount("/echo", EchoServlet);
 
 trap('INT') do
   server.shutdown
