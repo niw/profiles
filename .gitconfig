@@ -7,7 +7,8 @@
 	co = checkout
 	st = status
 	sta = status -a
-	br = branch -a
+	br = branch
+	bra = branch -a
 	sm = submodule
 	gr = log --graph
 [color]
