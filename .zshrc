@@ -63,7 +63,7 @@ setopt auto_cd
 setopt auto_resume
 
 # ビープ音を鳴らさないようにする
-#setopt no_beep
+setopt no_beep
 
 # {a-c} を a b c に展開する機能を使えるようにする
 setopt brace_ccl
@@ -96,7 +96,10 @@ setopt magic_equal_subst
 setopt mark_dirs
 
 # 補完候補が複数ある時、一覧表示 (auto_list) しない
-setopt no_auto_menu
+#setopt no_auto_menu
+
+# *で全候補を表示しない
+setopt glob_complete
 
 # 複数のリダイレクトやパイプなど、必要に応じて tee や cat の機能が使われる
 setopt multios
