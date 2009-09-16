@@ -11,6 +11,7 @@
 	bra = branch -a
 	sm = submodule
 	gr = log --graph
+	d = diff -w
 [color]
 	diff = auto
 	status = auto
