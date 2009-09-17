@@ -138,6 +138,10 @@ setopt no_check_jobs
 #autoload predict-on
 #predict-on
 
+# C-wでディレクトリごとに消せるようにする
+autoload -U select-word-style
+select-word-style bash
+
 # }}}
 
 ## Completion System {{{
@@ -262,6 +266,7 @@ bindkey -M vicmd 'u' undo
 bindkey -M vicmd '\C-r' redo
 
 # history
+# see also 'autoload history-search-end'
 bindkey -M vicmd '/' history-incremental-search-backward
 bindkey -M vicmd '?' history-incremental-search-forward
 bindkey -M viins '^p' history-beginning-search-backward-end
