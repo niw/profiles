@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require "webrick"
+require "webrick/httpproxy"
+
+handler = Proc.new() {|req,res|
+  puts "Request: " + req.header.inspect
+  puts "Response: " + res.header.inspect
+}
+
+s = WEBrick::HTTPProxyServer.new(
+  :BindAddress => "127.0.0.1",
+  :Port => 8080,
+  :Logger => WEBrick::Log::new($stderr, WEBrick::Log::DEBUG),
+  :ProxyVia => false,
+  :ProxyContentHandler => handler
+)
+ 
+Signal.trap("INT") do
+ s.shutdown
+end
+
+s.start
