@@ -54,7 +54,7 @@ host_color=$color_table[$[$(hostname | sum | sed 's/\([0-9]*\) *\([0-9]*\)/\1/')
 PROMPT='%F{yellow}%T%f [ %(!.%F{red}root.%F{${user_color}}%n)%f@%F{${host_color}}%m%f(${arch}):%F{blue}%2~%f ] %(!.#.%%) '
 
 # プロンプトにカレントディレクトリを指定
-RPROMPT='[ %~ ]'
+#RPROMPT='[ %~ ]'
 
 # 指定したコマンド名がなく、ディレクトリ名と一致した場合 cd する
 setopt auto_cd
@@ -141,6 +141,20 @@ setopt no_check_jobs
 # C-wでディレクトリごとに消せるようにする
 autoload -U select-word-style
 select-word-style bash
+
+# }}}
+
+## VCS Info  {{{
+
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' formats '%s:%b'
+zstyle ':vcs_info:*' actionformats '%s:%b (%a)'
+precmd () {
+	psvar=()
+	LANG=en_US.UTF-8 vcs_info
+	[[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+}
+RPROMPT="[ %1(v.%F{green}%v%f.%~) ]"
 
 # }}}
 
