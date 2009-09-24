@@ -179,6 +179,9 @@ fi
 
 ## Basic Alias {{{
 
+# ls typo
+alias ls-al='ls -al'
+
 # colors ls
 if [ "${arch}" = "darwin" -o "${arch}" = "freebsd" ]; then
 	alias ls='ls -hG'
