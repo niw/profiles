@@ -111,7 +111,7 @@ setopt numeric_glob_sort
 setopt print_eightbit
 
 # 戻り値が 0 以外の場合終了コードを表示する
-#setopt print_exit_value
+setopt print_exit_value
 
 # ディレクトリスタックに同じディレクトリを追加しないようになる
 setopt pushd_ignore_dups
