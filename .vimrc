@@ -241,6 +241,7 @@ augroup FileTypeRelated
   autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
   autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
   autocmd BufNewFile,BufRead *.module setlocal filetype=php tabstop=2 shiftwidth=2 expandtab nowrap
+  autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
 augroup END
 
 " バイナリ編集
