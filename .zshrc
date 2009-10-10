@@ -300,10 +300,10 @@ bindkey -M viins '\C-t' transpose-words
 case "${TERM}" in
 screen*|ansi*)
 	preexec() {
-		print "\ek$1\e\\"
+		print -n "\ek$1\e\\"
 	}
 	precmd() {
-		print "\ek$(basename $(pwd))\e\\"
+		print -n "\ek$(basename $(pwd))\e\\"
 	}
     ;;
 esac
