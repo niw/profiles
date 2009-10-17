@@ -16,3 +16,6 @@
 [submodule ".vim/runtimes/vim-surround"]
 	path = .vim/runtimes/vim-surround
 	url = git://github.com/tpope/vim-surround.git
+[submodule ".vim/runtimes/neocomplcache"]
+	path = .vim/runtimes/neocomplcache
+	url = git://github.com/Shougo/neocomplcache.git

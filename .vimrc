@@ -188,6 +188,8 @@ set previewheight=40
 set backspace=indent,eol,start
 set whichwrap&
 set whichwrap+=<,>,[,],h,l
+" 補完のオプション
+set completeopt=menuone
 
 "}}}
 
