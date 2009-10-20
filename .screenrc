@@ -14,7 +14,8 @@ shell zsh
 termcapinfo xterm* ti@:te@
 # Turn on bell everywhere
 vbell off
-
+# Change control key from C-a to C-t because C-a is for line-beginning on zsh
+escape ^t^t
 # }}}
 
 ## Status line {{{
