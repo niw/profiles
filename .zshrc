@@ -303,7 +303,7 @@ screen*|ansi*)
 		print -n "\ek$1\e\\"
 	}
 	precmd() {
-		print -n "\ek$(basename $(pwd))\e\\"
+		print -n "\ek$(whoami)@$(hostname -s):$(basename $(pwd))\e\\"
 	}
     ;;
 esac
