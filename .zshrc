@@ -34,10 +34,10 @@ export PATH=${PATH}:${profiles}/bin
 ## based on http://devel.aquahill.net/zsh/zshoptions
 
 # viキーバインド
-bindkey -v
+#bindkey -v
 
 # emacsキーバインド
-#bindkey -e
+bindkey -e
 
 # 色を使う
 autoload -U colors
@@ -270,7 +270,7 @@ zle -N history-beginning-search-forward-end history-search-end
 
 ## }}}
 
-## Keybinds {{{
+## Improve Vim Keybinds {{{
 ## based on http://github.com/kana/config/
 
 # to delete characters beyond the starting point of the current insertion.
