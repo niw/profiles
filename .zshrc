@@ -270,7 +270,7 @@ zle -N history-beginning-search-forward-end history-search-end
 
 ## }}}
 
-## Improve Vim Keybinds {{{
+## Improve Keybinds {{{
 ## based on http://github.com/kana/config/
 
 # to delete characters beyond the starting point of the current insertion.
@@ -288,6 +288,9 @@ bindkey -M vicmd '/' history-incremental-search-backward
 bindkey -M vicmd '?' history-incremental-search-forward
 bindkey -M viins '^p' history-beginning-search-backward-end
 bindkey -M viins '^n' history-beginning-search-forward-end
+
+bindkey -M emacs '^p' history-beginning-search-backward-end
+bindkey -M emacs '^n' history-beginning-search-forward-end
 
 # transpose
 bindkey -M vicmd '\C-t' transpose-words
