@@ -84,7 +84,7 @@ setopt no_flow_control
 setopt no_hup
 
 # Ctrl+D では終了しないようになる（exit, logout などを使う）
-setopt ignore_eof
+#setopt ignore_eof
 
 # 内部コマンド jobs の出力をデフォルトで jobs -l にする
 setopt long_list_jobs
@@ -111,7 +111,7 @@ setopt numeric_glob_sort
 setopt print_eightbit
 
 # 戻り値が 0 以外の場合終了コードを表示する
-setopt print_exit_value
+#setopt print_exit_value
 
 # ディレクトリスタックに同じディレクトリを追加しないようになる
 setopt pushd_ignore_dups
