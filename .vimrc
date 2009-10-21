@@ -32,7 +32,7 @@ endfunction
 function! s:CheckIconvCapability()
   if !has('iconv') | return | endif
   if iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
-    let s:enc_eucjp = 'euc-jisx0213'
+    let s:enc_eucjp = 'euc-jisx0213,euc-jp'
     let s:enc_jisx = 'iso-2022-jp-3'
   else
     let s:enc_eucjp = 'euc-jp'
@@ -84,10 +84,6 @@ if !(has('win32') || has('mac')) && has('multi_lang')
       language messages ja_JP.eucJP
     endif
   endif
-endif
-" MacOS Xメニューの日本語化 (メニュー表示前に行なう必要がある)
-if has('mac')
-  set langmenu=japanese
 endif
 " 日本語入力用のkeymapの設定例 (コメントアウト)
 if has('keymap')
