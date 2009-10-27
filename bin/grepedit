@@ -8,7 +8,7 @@ require 'tempfile'
 IDLINE = "# ============================================================ "
 
 AROUND = (ENV["AROUND"] || 4).to_i
-FILTER = "| grep -v \\/\\\\.git\\/ | grep -v \\/\\\\.svn\\/ | grep -v \\\\.log: | grep -v \\\\.swp: "
+EXCLUDEDIRS = (ENV["EXCLUDEDIRS"] || "CVS .svn .git log tmp").split(/\s/)
 EDITOR = ENV["EDITOR"] || "vim"
 
 if ARGV.empty?
@@ -18,9 +18,9 @@ end
 
 regions_set = Hash.new{[]}
 pattern = ARGV.shift.gsub(/'/, "\\'")
-args = ARGV.empty? ? '-r .' : ARGV.join(' ')
+args = ((ARGV.empty? ? ['-r .'] : ARGV) + EXCLUDEDIRS.map{|excludedir| "--exclude-dir=#{excludedir}"}).join(' ')
 
-%x(grep '#{pattern}' #{args} -E -H -n #{FILTER}).each do |line|
+%x(grep '#{pattern}' #{args} -E -H -n).each do |line|
   next unless /.*:.*:.*/ === line
   filename,lineno = line.split(/:/)
   lineno = [lineno.to_i - AROUND - 1, 0].max
