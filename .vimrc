@@ -58,7 +58,10 @@ function! s:DetermineFileencodings()
   else
     " TODO: 必要ならばその他のエンコード向けの設定をココに追加する
   endif
-  "let &fileencodings = value. ',ucs-bom,ucs-2le,ucs-2'
+  if has('guess_encode')
+    let value = 'guess,'. value
+  endif
+  "let value = value. ',ucs-bom,ucs-2le,ucs-2'
   let &fileencodings = value
 endfunction
 
