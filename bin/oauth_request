@@ -58,7 +58,7 @@ parser = OptionParser.new do |opts|
   opts.on "-m", "--http-method=VAL", "http request method for authorized oauth request", "default: get" do |value|
     options[:http_method] = value.downcase.to_sym
   end
-  opts.on "-d", "--data=VAL", "a comma separated set of pair of key=valye for POST request" do |value|
+  opts.on "-d", "--data=VAL", "a amp separated set of pair of key=valye for POST request" do |value|
     options[:http_method] = :post
     options[:post_data] = value
   end
@@ -159,7 +159,7 @@ end
 
 request_options = {}
 if options[:post_data]
-  request_options = options[:post_data].split(/,/).inject({}) do |hash, option|
+  request_options = options[:post_data].split(/&/).inject({}) do |hash, option|
     key, value = option.split(/=/, 2)
     hash[key] = value
     hash
