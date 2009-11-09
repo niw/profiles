@@ -159,8 +159,8 @@ end
 
 request_options = {}
 if options[:post_data]
-  request_options = options[:post_data].split(/,/).inject({}) do |option, hash|
-    key, value = options.split(/=/, 2)
+  request_options = options[:post_data].split(/,/).inject({}) do |hash, option|
+    key, value = option.split(/=/, 2)
     hash[key] = value
     hash
   end
