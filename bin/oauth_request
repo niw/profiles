@@ -78,7 +78,7 @@ parser.parse! ARGV
 if options[:config]
   require 'yaml'
   begin
-    options.merge!(YAML.load(File.read(options[:config])))
+    options = YAML.load(File.read(options[:config])).merge(options)
   rescue
   end
 end
@@ -152,7 +152,7 @@ unless options[:access_token] && options[:access_secret]
 
   access_token = consumer.get_access_token(request_token, :oauth_verifier => pin)
   puts "Please pass next options when you request authorized request next:"
-  puts "-t=#{access_token.token} -s=#{access_token.secret}"
+  puts "-t '#{access_token.token}' -s '#{access_token.secret}'"
 else
   access_token = OAuth::AccessToken.new(consumer, options[:access_token], options[:access_secret])
 end
