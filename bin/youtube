@@ -35,7 +35,7 @@ ARGF.each do |line|
       t = r.body.toutf8.match(/<meta name="title" content="(.*)">/)
       title = t ? prefix + t[1] : "#{prefix}_#{count}"
       title = title.gsub(/[ 　]+/, "_").gsub(/\//, "_")
-      n = r.body.match(/swfArgs = .+"t": "([^"]+)"/)
+      n = r.body.match(/"t": "([^"]+)"/)
       fmts = [22, 18, 6, 0]
       while(fmt = fmts.shift)
         begin
