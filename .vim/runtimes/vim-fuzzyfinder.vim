@@ -7,5 +7,6 @@ let g:fuf_modesDisable = ['mrucmd']
 let g:fuf_mrufile_maxItem = 400
 " Keymapping
 nnoremap <silent> <C-m> :FufBuffer<CR>
-nnoremap <silent> <C-k> :FufFileWithCurrentBufferDir<CR>
+nnoremap <silent> <C-k> :FufFile<CR>
+nnoremap <silent> <C-l> :FufFileWithCurrentBufferDir<CR>
 nnoremap <silent> <C-j> :FufMruFile<CR>

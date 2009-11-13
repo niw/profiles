@@ -264,7 +264,7 @@ augroup Misc
 
   " ウィンドウのカレントディレクトリをバッファ切り替えで変更
   " :help cmdline-special
-  autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h:gs? ?\\\\ ?")
+  "autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h:gs? ?\\\\ ?")
 
   " vimgrep後にQuickFixを自動で開く
   autocmd QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
