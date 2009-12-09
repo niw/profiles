@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'optparse'
 require 'uri'
-require 'open-uri'
+require 'net/http'
 require 'hpricot'
 require 'fileutils'
 require 'zlib'
@@ -84,9 +84,13 @@ end
 
 def lookup(word, fuzzy = true)
   if Config.refresh || !(raw = Cache.get(word))
-    raw = open("http://eow.alc.co.jp/#{URI.encode(word)}/UTF-8/").read
+    uri = URI.parse("http://eow.alc.co.jp/#{URI.encode(word)}/UTF-8/")
+    res = Net::HTTP.start(uri.host, uri.port) do |http|
+      http.get(uri.path, "User-Agent" => "Mozilla/5.0")
+    end
+    raw = res.body
   end
-  results = Hpricot(raw).search("//table/tr/td/ul/div/li")
+  results = Hpricot(raw).search("//div[@id='resultList']/ul/li")
   if results.size > 0
     Cache.set(word, raw)
     results.each do |li|
