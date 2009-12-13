@@ -9,7 +9,15 @@ let g:fuf_mrufile_maxItem = 400
 let g:fuf_keyPreview = '<Space>'
 
 " Keymapping
-nnoremap <silent> <C-m> :FufBuffer<CR>
+" FIXME too dirty
+function! s:EnterInQuickFix(cmd)
+	if !(&buftype ==? 'quickfix')
+		execute(a:cmd)
+	else
+		call feedkeys("\<Enter>", 'n')
+	endif
+endfunction
+nnoremap <silent> <Enter> :call <SID>EnterInQuickFix("FufBuffer")<CR>
 nnoremap <silent> <C-k> :FufFile<CR>
 nnoremap <silent> <C-l> :FufFileWithCurrentBufferDir<CR>
 nnoremap <silent> <C-j> :FufMruFile<CR>
