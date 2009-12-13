@@ -61,7 +61,43 @@ ZIPファイルをランタイムディレクトリに展開します。
         オムニ補完      css         (":", ";", "{", "^", "@", or "!")
                                     + 0個または1個のスペース
 
-この補完動作はカスタマイズ可能です。
+さらに、設定を行うことで、ユーザー定義補完と snipMate トリガー補完
+(|acp-snipMate|) を自動ポップアップさせることができます。
+
+これらの補完動作はカスタマイズ可能です。
+
+                                                                *acp-snipMate*
+snipMate トリガー補完 ~
+
+snipMate トリガー補完では、snipMate プラグイン
+(http://www.vim.org/scripts/script.php?script_id=2540) が提供するスニペットの
+トリガーを補完してそれを展開することができます。
+
+この自動ポップアップを有効にするには、次の関数を plugin/snipMate.vim に追加す
+る必要があります:
+>
+  fun! GetSnipsInCurrentScope()
+    let snips = {}
+    for scope in [bufnr('%')] + split(&ft, '\.') + ['_']
+      call extend(snips, get(s:snippets, scope, {}), 'keep')
+      call extend(snips, get(s:multi_snips, scope, {}), 'keep')
+    endfor
+    return snips
+  endf
+<
+そして|g:acp_behaviorSnipmateLength|オプションを 1 にしてください。
+
+この自動ポップアップには制限があり、カーソル直前の単語は大文字英字だけで構成さ
+れていなければなりません。
+
+                                                               *acp-perl-omni*
+Perl オムニ補完 ~
+
+AutoComplPop は perl-completion.vim
+(http://www.vim.org/scripts/script.php?script_id=2852) をサポートしています。
+
+この自動ポップアップを有効にするには、|g:acp_behaviorPerlOmniLength|オプション
+を 0 以上にしてください。
 
 
 ==============================================================================
@@ -119,16 +155,23 @@ ZIPファイルをランタイムディレクトリに展開します。
 <
         真なら自動ポップアップ時に、 'completeopt' へ "preview" を追加します。
 
-                                             *g:acp_behaviorUserDefinedFunction*  >
+                                        *g:acp_behaviorUserDefinedFunction*  >
   let g:acp_behaviorUserDefinedFunction = ''
 <
-        ユーザー定義補完の関数。空ならこの補完は行いません。
+        ユーザー定義補完の|g:acp_behavior-completefunc|。空ならこの補完は行わ
+        れません。。
 
-                                             *g:acp_behaviorUserDefinedPattern*  >
-  let g:acp_behaviorUserDefinedPattern = '\k$'
+                                         *g:acp_behaviorUserDefinedMeets*  >
+  let g:acp_behaviorUserDefinedMeets = ''
 <
-        ユーザー定義補完の自動ポップアップを行うのに必要なカーソルの直前のパタ
-        ーン。
+        ユーザー定義補完の|g:acp_behavior-meets|。空ならこの補完は行われません
+        。
+
+                                             *g:acp_behaviorSnipmateLength*  >
+  let g:acp_behaviorSnipmateLength = -1
+<
+        snipMate トリガー補完の自動ポップアップを行うのに必要なカーソルの直前
+        のパターン。
 
                                              *g:acp_behaviorKeywordCommand*  >
   let g:acp_behaviorKeywordCommand = "\<C-n>"
@@ -140,55 +183,73 @@ ZIPファイルをランタイムディレクトリに展開します。
   let g:acp_behaviorKeywordLength = 2
 <
         キーワード補完の自動ポップアップを行うのに必要なカーソルの直前のキーワ
-        ード文字数。負数ならこの補完は行いません。
+        ード文字数。負数ならこの補完は行われません。
+
+                                             *g:acp_behaviorKeywordIgnores*  >
+  let g:acp_behaviorKeywordIgnores = []
+<
+        文字列のリスト。カーソル直前の単語がこれらの内いずれかの先頭部分にマッ
+        チする場合、この補完は行われません。
+
+        例えば、 "get" で始まる補完キーワードが多過ぎて、"g", "ge", "get" を入
+        力したときの自動ポップアップがレスポンスの低下を引き起こしている場合、
+        このオプションに ["get"] を設定することでそれを回避することができます。
 
                                                  *g:acp_behaviorFileLength*  >
   let g:acp_behaviorFileLength = 0
 <
         ファイル名補完の自動ポップアップを行うのに必要なカーソルの直前のキーワ
-        ード文字数。負数ならこの補完は行いません。
+        ード文字数。負数ならこの補完は行われません。
 
                                        *g:acp_behaviorRubyOmniMethodLength*  >
   let g:acp_behaviorRubyOmniMethodLength = 0
 <
         メソッド補完のための、Ruby オムニ補完の自動ポップアップを行うのに必要
-        なカーソルの直前のキーワード文字数。負数ならこの補完は行いません。
+        なカーソルの直前のキーワード文字数。負数ならこの補完は行われません。
 
                                        *g:acp_behaviorRubyOmniSymbolLength*  >
   let g:acp_behaviorRubyOmniSymbolLength = 1
 <
         シンボル補完のための、Ruby オムニ補完の自動ポップアップを行うのに必要
-        なカーソルの直前のキーワード文字数。負数ならこの補完は行いません。
+        なカーソルの直前のキーワード文字数。負数ならこの補完は行われません。
 
                                            *g:acp_behaviorPythonOmniLength*  >
   let g:acp_behaviorPythonOmniLength = 0
 <
         Python オムニ補完の自動ポップアップを行うのに必要なカーソルの直前のキ
-        ーワード文字数。負数ならこの補完は行いません。
+        ーワード文字数。負数ならこの補完は行われません。
+
+                                             *g:acp_behaviorPerlOmniLength*  >
+  let g:acp_behaviorPerlOmniLength = -1
+<
+        Perl オムニ補完の自動ポップアップを行うのに必要なカーソルの直前のキー
+        ワード文字数。負数ならこの補完は行われません。
+
+        See also: |acp-perl-omni|
 
                                               *g:acp_behaviorXmlOmniLength*  >
   let g:acp_behaviorXmlOmniLength = 0
 <
         XML オムニ補完の自動ポップアップを行うのに必要なカーソルの直前のキーワ
-        ード文字数。負数ならこの補完は行いません。
+        ード文字数。負数ならこの補完は行われません。
 
                                              *g:acp_behaviorHtmlOmniLength*  >
   let g:acp_behaviorHtmlOmniLength = 0
 <
         HTML オムニ補完の自動ポップアップを行うのに必要なカーソルの直前のキー
-        ワード文字数。負数ならこの補完は行いません。
+        ワード文字数。負数ならこの補完は行われません。
 
                                       *g:acp_behaviorCssOmniPropertyLength*  >
   let g:acp_behaviorCssOmniPropertyLength = 1
 <
         プロパティ補完のための、CSS オムニ補完の自動ポップアップを行うのに必要
-        なカーソルの直前のキーワード文字数。負数ならこの補完は行いません。
+        なカーソルの直前のキーワード文字数。負数ならこの補完は行われません。
 
                                          *g:acp_behaviorCssOmniValueLength*  >
   let g:acp_behaviorCssOmniValueLength = 0
 <
         値補完のための、CSS オムニ補完の自動ポップアップを行うのに必要なカーソ
-        ルの直前のキーワード文字数。負数ならこの補完は行いません。
+        ルの直前のキーワード文字数。負数ならこの補完は行われません。
 
                                                            *g:acp_behavior*  >
   let g:acp_behavior = {}
@@ -201,18 +262,22 @@ ZIPファイルをランタイムディレクトリに展開します。
         を表します。値はリスト型です。補完候補が得られるまでリストの先頭アイテ
         ムから順に評価します。各要素は|Dictionary|で詳細は次の通り：
 
-        "command":
+        "command":                                    *g:acp_behavior-command*
           補完メニューをポップアップするためのコマンド。
 
-        "completefunc":
+        "completefunc":                          *g:acp_behavior-completefunc*
           'completefunc' に設定する関数。 "command" が "<C-x><C-u>" のときだけ
-          意味があります。。
+          意味があります。
 
-        "pattern", "exclude":
-          カーソル直前テキストが "pattern" にマッチし、"exclude" にマッチしな
-          かった場合、補完メニューをポップアップします。
+        "meets":                                        *g:acp_behavior-meets*
+          この補完を行うかどうかを判断する関数の名前。この関数はカーソル直前の
+          テキストを引数に取り、補完を行うなら非 0 の値を返します。
 
-        "repeat":
+        "onPopupClose":                          *g:acp_behavior-onPopupClose*
+          この補完のポップアップメニューが閉じられたときに呼ばれる関数の名前。
+          この関数が 0 を返した場合、続いて行われる予定の補完は抑制されます。
+
+        "repeat":                                      *g:acp_behavior-repeat*
           真なら最後の補完が自動的に繰り返されます。
 
 
