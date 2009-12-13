@@ -1,4 +1,4 @@
-function! GetVisualRegionString()
+function! s:GetVisualRegionString()
 	let reg = getreg('a')
 	let regtype = getregtype('a')
 	silent normal! gv"ay
@@ -24,5 +24,5 @@ function! Alc(word)
 	endif
 endfunction
 
-nmap <silent> <S-K> :call Alc(expand("<cword>"))<CR>
-vmap <silent> <S-K> :call Alc(GetVisualRegionString())<CR>
+nnoremap <silent> alc :call Alc(expand("<cword>"))<CR>
+vnoremap <silent> alc :call Alc(<SID>GetVisualRegionString())<CR>
