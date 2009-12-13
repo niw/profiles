@@ -273,7 +273,7 @@ augroup Misc
   "autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h:gs? ?\\\\ ?")
 
   " vimgrep後にQuickFixを自動で開く
-  autocmd QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
+  "autocmd QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
 augroup END
 
 "}}}
@@ -283,9 +283,15 @@ augroup END
 " utf-8で開き直す
 command! Utf8 edit ++enc=utf-8
 
-" grep -r
-command! -nargs=* -bang Grepr grep<bang> -r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e <args>
-command! -nargs=* Gr Grepr! <args>
+" Grep
+function! s:GrepWithHilight(cmd, syntax, ...)
+  execute a:cmd . " " . a:syntax . join(a:000, " ")
+  execute "copen"
+  execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
+endfunction
+
+command! -nargs=* -bang GrepRecursive grep<bang> -r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e <args>
+command! -nargs=* Gr  call <SID>GrepWithHilight("GrepRecursive!", <f-args>)
 
 "}}}
 
