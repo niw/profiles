@@ -5,6 +5,9 @@
 let g:fuf_modesDisable = ['mrucmd']
 " Make mru list larger
 let g:fuf_mrufile_maxItem = 400
+" The key to show the preview in the status lines
+let g:fuf_keyPreview = '<Space>'
+
 " Keymapping
 nnoremap <silent> <C-m> :FufBuffer<CR>
 nnoremap <silent> <C-k> :FufFile<CR>
