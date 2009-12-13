@@ -224,6 +224,11 @@ onoremap gm :<C-u>normal gc<Enter>
 nnoremap vimrc  :<C-u>edit $MYVIMRC<Enter>
 nnoremap source :<C-u>source $MYVIMRC<Enter>
 
+" カーソルの下のキーワードでヘルプを開く
+nnoremap help :<C-u>help<Space><C-r><C-w><Enter>
+" カーソルの下をGrep -rする (コマンドを参照)
+nnoremap gr :<C-u>Gr<Space><C-r><C-w><Enter>
+
 "}}}
 
 " {{{ オートコマンド
@@ -277,6 +282,10 @@ augroup END
 
 " utf-8で開き直す
 command! Utf8 edit ++enc=utf-8
+
+" grep -r
+command! -nargs=* -bang Grepr grep<bang> -r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e <args>
+command! -nargs=* Gr Grepr! <args>
 
 "}}}
 
