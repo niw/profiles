@@ -212,9 +212,6 @@ noremap k gk
 noremap gj j
 noremap gk k
 
-" .vimrc再読み込み
-nnoremap s. :<C-u>source $MYVIMRC<Enter>
-
 " ハイライト削除
 noremap <C-h><C-n> :<C-u>nohlsearch<Enter>
 
@@ -222,6 +219,10 @@ noremap <C-h><C-n> :<C-u>nohlsearch<Enter>
 nnoremap gm `[v`]
 vnoremap gm :<C-u>normal gc<Enter>
 onoremap gm :<C-u>normal gc<Enter>
+
+" .vimrcの即時編集と再読み込み
+nnoremap vimrc  :<C-u>edit $MYVIMRC<Enter>
+nnoremap source :<C-u>source $MYVIMRC<Enter>
 
 "}}}
 
