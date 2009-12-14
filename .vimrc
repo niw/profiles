@@ -213,7 +213,7 @@ noremap gj j
 noremap gk k
 
 " ハイライト削除
-noremap <C-h><C-n> :<C-u>nohlsearch<Enter>
+noremap <C-h><C-h> :<C-u>nohlsearch<Enter>
 
 " 最後の変更のあったテキストを選択する
 nnoremap gm `[v`]
