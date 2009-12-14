@@ -227,10 +227,22 @@ nnoremap <space>s. :<C-u>source $MYVIMRC<Enter>
 " シェル起動
 nnoremap <space>: :shell<Enter>
 
+function! s:CommandWithVisualRegionString(cmd)
+	let reg = getreg('a')
+	let regtype = getregtype('a')
+	silent normal! gv"ay
+	let selected = @a
+	call setreg('a', reg, regtype)
+  execute a:cmd . ' ' . selected
+endfunction
+
 " カーソルの下のキーワードでヘルプを開く
-nnoremap help :<C-u>help<Space><C-r><C-w><Enter>
+nnoremap <space>h :<C-u>help<Space><C-r><C-w><Enter>
+vnoremap <space>h :call <SID>CommandWithVisualRegionString('help')<Enter>
+
 " カーソルの下をGrep -rする (コマンドを参照)
 nnoremap gr :<C-u>Gr<Space><C-r><C-w><Enter>
+vnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<Enter>
 
 "}}}
 
