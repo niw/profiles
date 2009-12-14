@@ -224,6 +224,9 @@ onoremap gm :<C-u>normal gc<Enter>
 nnoremap <space>.  :<C-u>edit $MYVIMRC<Enter>
 nnoremap <space>s. :<C-u>source $MYVIMRC<Enter>
 
+" シェル起動
+nnoremap <space>: :shell<Enter>
+
 " カーソルの下のキーワードでヘルプを開く
 nnoremap help :<C-u>help<Space><C-r><C-w><Enter>
 " カーソルの下をGrep -rする (コマンドを参照)
