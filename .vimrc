@@ -221,8 +221,8 @@ vnoremap gm :<C-u>normal gc<Enter>
 onoremap gm :<C-u>normal gc<Enter>
 
 " .vimrcの即時編集と再読み込み
-nnoremap vimrc  :<C-u>edit $MYVIMRC<Enter>
-nnoremap source :<C-u>source $MYVIMRC<Enter>
+nnoremap <space>.  :<C-u>edit $MYVIMRC<Enter>
+nnoremap <space>s. :<C-u>source $MYVIMRC<Enter>
 
 " カーソルの下のキーワードでヘルプを開く
 nnoremap help :<C-u>help<Space><C-r><C-w><Enter>
