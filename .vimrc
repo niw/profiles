@@ -193,9 +193,9 @@ set whichwrap+=<,>,[,],h,l
 "{{{ キーマッピング
 
 " ウィンドウ移動
-noremap <C-Down> <C-W>j
-noremap <C-Up> <C-W>k
-noremap <C-Left> <C-W>h
+noremap <C-Down>  <C-W>j
+noremap <C-Up>    <C-W>k
+noremap <C-Left>  <C-W>h
 noremap <C-Right> <C-W>l
 
 " バッファ切り替え
@@ -280,18 +280,18 @@ augroup END
 
 "{{{ コマンド
 
-" utf-8で開き直す
+" UTF-8で開き直す
 command! Utf8 edit ++enc=utf-8
 
-" Grep
 function! s:GrepWithHilight(cmd, syntax, ...)
   execute a:cmd . " " . a:syntax . join(a:000, " ")
   execute "copen"
   execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
 endfunction
 
+" Grep -rとハイライト
 command! -nargs=* -bang GrepRecursive grep<bang> -r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e <args>
-command! -nargs=* Gr  call <SID>GrepWithHilight("GrepRecursive!", <f-args>)
+command! -nargs=* Gr call <SID>GrepWithHilight("GrepRecursive!", <f-args>)
 
 "}}}
 
