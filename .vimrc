@@ -226,6 +226,7 @@ nnoremap <space>s. :<C-u>source $MYVIMRC<Enter>
 
 " シェル起動
 nnoremap <space>: :shell<Enter>
+nnoremap <space>; :shell<Enter>
 
 function! s:CommandWithVisualRegionString(cmd)
 	let reg = getreg('a')
