@@ -51,7 +51,8 @@ setopt prompt_subst
 set -A color_table black red green yellow blue magenta cyan white
 user_color=$color_table[$[$(whoami | sum | sed 's/\([0-9]*\) *\([0-9]*\)/\1/') % 7 + 1]]
 host_color=$color_table[$[$(hostname | sum | sed 's/\([0-9]*\) *\([0-9]*\)/\1/') % 7 + 1]]
-PROMPT='%F{yellow}%T%f [ %(!.%F{red}root.%F{${user_color}}%n)%f@%F{${host_color}}%m%f(${arch}):%F{blue}%2~%f ] %(!.#.%%) '
+shlvl_color=$color_table[$[($SHLVL + 3) % 7 + 1]]
+PROMPT='%F{yellow}%T%f [ %(!.%F{red}root.%F{${user_color}}%n)%f@%F{${host_color}}%m%f(${arch}):%F{${shlvl_color}}%2~%f ] %(!.#.%%) '
 
 # プロンプトにカレントディレクトリを指定
 #RPROMPT='[ %~ ]'
