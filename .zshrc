@@ -224,6 +224,9 @@ alias ge="grepedit"
 alias now="date +%Y%m%d%H%M%S"
 alias wget="wget -U Mozilla --no-check-certificate"
 
+# Terminal.app related
+alias t="term -t"
+
 ## }}}
 
 ## History {{{
