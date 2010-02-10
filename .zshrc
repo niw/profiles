@@ -302,7 +302,7 @@ bindkey -M viins '\C-t' transpose-words
 
 # }}}
 
-## Setup screen title {{{
+## Setup terminal title {{{
 
 case "${TERM}" in
 screen*|ansi*)
@@ -312,7 +312,16 @@ screen*|ansi*)
 	precmd() {
 		print -n "\ek$(whoami)@$(hostname -s):$(basename $(pwd))\e\\"
 	}
-    ;;
+	;;
+xterm*)
+	preexec() {
+		print -n "\e]0;$1\a"
+	}
+	precmd() {
+		#print -n "\e]0;$(whoami)@$(hostname -s):$(basename $(pwd))\a"
+		print -n "\e]0;$(basename $(pwd))\a"
+	}
+	;;
 esac
 
 # }}}
