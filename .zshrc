@@ -307,7 +307,7 @@ bindkey -M viins '\C-t' transpose-words
 
 # }}}
 
-## Setup terminal title {{{
+## Setup Terminal Title {{{
 
 case "${TERM}" in
 screen*|ansi*)
@@ -316,7 +316,7 @@ screen*|ansi*)
 	}
 	preexec_functions+=preexec_term_title
 	precmd_term_title() {
-		print -n "\ek$(whoami)@$(hostname -s):$(basename $(pwd))\e\\"
+		print -n "\ek$(whoami)@$(hostname -s):$(basename "${PWD}")\e\\"
 	}
 	precmd_functions+=precmd_term_title
 	;;
@@ -326,8 +326,7 @@ xterm*)
 	}
 	preexec_functions+=preexec_term_title
 	precmd_term_title() {
-		#print -n "\e]0;$(whoami)@$(hostname -s):$(basename $(pwd))\a"
-		print -n "\e]0;$(basename $(pwd))\a"
+		print -n "\e]0;$(basename "${PWD}")\a"
 	}
 	precmd_functions+=precmd_term_title
 	;;
