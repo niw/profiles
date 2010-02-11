@@ -15,6 +15,10 @@ fi
 # path of profiles itself
 profiles=~/.profiles
 
+# initialize hook functions array
+typeset -ga preexec_functions
+typeset -ga precmd_functions
+
 # }}}
 
 ## Basic Enviroment Variables {{{
@@ -150,11 +154,12 @@ select-word-style bash
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' formats '%s:%b'
 zstyle ':vcs_info:*' actionformats '%s:%b (%a)'
-precmd () {
+precmd_vcs_info() {
 	psvar=()
 	LANG=en_US.UTF-8 vcs_info
 	[[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
 }
+precmd_functions+=precmd_vcs_info
 RPROMPT="[ %1(v.%F{green}%v%f.%~) ]"
 
 # }}}
@@ -306,21 +311,25 @@ bindkey -M viins '\C-t' transpose-words
 
 case "${TERM}" in
 screen*|ansi*)
-	preexec() {
+	preexec_term_title() {
 		print -n "\ek$1\e\\"
 	}
-	precmd() {
+	preexec_functions+=preexec_term_title
+	precmd_term_title() {
 		print -n "\ek$(whoami)@$(hostname -s):$(basename $(pwd))\e\\"
 	}
+	precmd_functions+=precmd_term_title
 	;;
 xterm*)
-	preexec() {
+	preexec_term_title() {
 		print -n "\e]0;$1\a"
 	}
-	precmd() {
+	preexec_functions+=preexec_term_title
+	precmd_term_title() {
 		#print -n "\e]0;$(whoami)@$(hostname -s):$(basename $(pwd))\a"
 		print -n "\e]0;$(basename $(pwd))\a"
 	}
+	precmd_functions+=precmd_term_title
 	;;
 esac
 
