@@ -56,9 +56,12 @@ set -A color_table black red green yellow blue magenta cyan white
 user_color=$color_table[$[$(whoami | sum | sed 's/\([0-9]*\) *\([0-9]*\)/\1/') % 7 + 1]]
 host_color=$color_table[$[$(hostname | sum | sed 's/\([0-9]*\) *\([0-9]*\)/\1/') % 7 + 1]]
 shlvl_color=$color_table[$[($SHLVL + 3) % 7 + 1]]
-PROMPT='%F{yellow}%T%f [ %(!.%F{red}root.%F{${user_color}}%n)%f@%F{${host_color}}%m%f(${arch}):%F{${shlvl_color}}%2~%f ] %(!.#.%%) '
+# NOTE preserve backward compatibility
+#PROMPT='%F{yellow}%T%f [ %(!.%F{red}root.%F{${user_color}}%n)%f@%F{${host_color}}%m%f(${arch}):%F{${shlvl_color}}%2~%f ] %(!.#.%%) '
+PROMPT='%{$fg[yellow]%}%T%{$reset_color%} [ %(!.%{$fg[red]%}root.%{$fg[${user_color}]%}%n)%{$reset_color%}@%{$fg[${host_color}]%}%m%{$reset_color%}(${arch}):%{$fg[${shlvl_color}]%}%2~%{$reset_color%} ] %(!.#.%%) '
 
 # プロンプトにカレントディレクトリを指定
+# NOTE See vcs_info section
 #RPROMPT='[ %~ ]'
 
 # 指定したコマンド名がなく、ディレクトリ名と一致した場合 cd する
@@ -149,18 +152,22 @@ select-word-style bash
 
 # }}}
 
-## VCS Info  {{{
+## VCS Info and RPROMPT {{{
 
-autoload -Uz vcs_info
-zstyle ':vcs_info:*' formats '%s:%b'
-zstyle ':vcs_info:*' actionformats '%s:%b (%a)'
-precmd_vcs_info() {
-	psvar=()
-	LANG=en_US.UTF-8 vcs_info
-	[[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
-}
-precmd_functions+=precmd_vcs_info
-RPROMPT="[ %1(v.%F{green}%v%f.%~) ]"
+if autoload +X vcs_info 2> /dev/null; then
+	autoload -Uz vcs_info
+	zstyle ':vcs_info:*' formats '%s:%b'
+	zstyle ':vcs_info:*' actionformats '%s:%b (%a)'
+	precmd_vcs_info() {
+		psvar=()
+		LANG=en_US.UTF-8 vcs_info
+		[[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+	}
+	precmd_functions+=precmd_vcs_info
+	RPROMPT="[ %1(v.%F{green}%v%f.%~) ]"
+else
+	RPROMPT='[ %~ ]'
+fi
 
 # }}}
 
