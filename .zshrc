@@ -370,6 +370,18 @@ if type 'vim' > /dev/null 2>&1; then
 	alias vi='vim'
 fi
 
+# Load rvm if it exists
+# rvm requires 4.3.5
+autoload -Uz is-at-least
+if is-at-least 4.3.5; then
+	if [ -s "${HOME}/.rvm/scripts/rvm" ]; then
+		setopt nullglob
+		source "${HOME}/.rvm/scripts/rvm"
+        rvm default 1>/dev/null 2>&1
+		RPROMPT="${RPROMPT} %{$fg[red]%}\${rvm_ruby_interpreter}%{$reset_color%}"
+	fi
+fi
+
 # }}}
 
 # vim:ts=4:sw=4:noexpandtab:foldmethod=marker:
