@@ -204,7 +204,7 @@ fi
 
 ## }}}
 
-## Basic Alias {{{
+## Aliases {{{
 
 # ls typo
 alias ls-al='ls -al'
@@ -230,7 +230,7 @@ alias svnst="svn st | grep -v '^[X?]'"
 
 # grep related
 alias grepr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' . -e "
-alias gr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
+alias gr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='**/tmp' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
 alias ge="grepedit"
 
 alias now="date +%Y%m%d%H%M%S"
