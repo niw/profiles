@@ -13,7 +13,7 @@ class EchoServlet < WEBrick::HTTPServlet::AbstractServlet
   private
   def echo(req, res)
     res.content_type = "text/plain";
-    res.body = ["Request:", req.request_line, "Header:", req.header.inspect, "Body:", req.body.inspect].join("\r\n")
+    puts res.body = ["Request:", req.request_line, "Header:", req.header.inspect, "Body:", req.body.inspect].join("\r\n")
   end
 end
 
