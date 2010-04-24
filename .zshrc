@@ -44,7 +44,7 @@ export PATH=${PATH}:${profiles}/bin
 bindkey -e
 
 # 色を使う
-autoload -U colors
+autoload -Uz colors
 colors
 
 # プロンプトに色付けする
@@ -143,11 +143,11 @@ setopt auto_pushd
 setopt no_check_jobs
 
 # 先方予測機能
-#autoload predict-on
+#autoload -Uz predict-on
 #predict-on
 
 # C-wでディレクトリごとに消せるようにする
-autoload -U select-word-style
+autoload -Uz select-word-style
 select-word-style bash
 
 # }}}
@@ -174,7 +174,7 @@ fi
 ## Completion System {{{
 
 # コマンドラインオプションを補完
-autoload -U compinit
+autoload -Uz compinit
 compinit
 
 # 補完中の候補にも色をつける
@@ -280,7 +280,7 @@ setopt hist_ignore_dups
 unsetopt HISTVERIFY
 
 # 履歴検索
-autoload history-search-end
+autoload -Uz history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
