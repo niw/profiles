@@ -137,8 +137,6 @@ set wildmenu
 " テキスト挿入中の自動折り返しを日本語に対応させる
 set formatoptions&
 set formatoptions+=mM
-" 日本語整形スクリプト(by. 西岡拓洋さん)用の設定
-let format_allow_over_tw = 1  " ぶら下り可能幅
 " 行番号を非表示 (number:表示)
 set number
 " ルーラーを表示 (noruler:非表示)
@@ -245,6 +243,13 @@ vnoremap <space>h :call <SID>CommandWithVisualRegionString('help')<Enter>
 nnoremap gr :<C-u>Gr<Space><C-r><C-w><Enter>
 vnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<Enter>
 
+" 検索結果を画面中央に
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap * *zz
+nnoremap # #zz
+nnoremap g* g*zz
+nnoremap g# g#zz
 "}}}
 
 " {{{ オートコマンド
