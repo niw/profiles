@@ -377,7 +377,7 @@ if is-at-least 4.3.5; then
 	if [ -s "${HOME}/.rvm/scripts/rvm" ]; then
 		setopt nullglob
 		source "${HOME}/.rvm/scripts/rvm"
-        rvm default 1>/dev/null 2>&1
+		rvm default 1>/dev/null 2>&1
 		RPROMPT="${RPROMPT} %{$fg[red]%}\${rvm_ruby_interpreter}%{$reset_color%}"
 	fi
 fi
