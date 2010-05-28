@@ -213,6 +213,9 @@ noremap gk k
 " ハイライト削除
 noremap <C-h><C-h> :<C-u>nohlsearch<Enter>
 
+" シンタックスハイライトの初期化
+noremap <C-h><C-j> :<C-u>syntax sync clear<Enter>
+
 " 最後の変更のあったテキストを選択する
 nnoremap gm `[v`]
 vnoremap gm :<C-u>normal gc<Enter>
