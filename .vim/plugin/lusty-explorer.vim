@@ -345,6 +345,10 @@ module VIM
     def modified?
       VIM::nonzero? VIM::evaluate("getbufvar(#{number()}, '&modified')")
     end
+
+    def type
+      VIM::evaluate("getbufvar(#{number()}, '&buftype')")
+    end
   end
 
   # Print with colours
@@ -804,7 +808,7 @@ class BufferExplorer < Explorer
     def compute_buffer_entries
       buffer_entries = []
       (0..VIM::Buffer.count-1).each do |i|
-        buffer_entries << BufferEntry.new(VIM::Buffer[i])
+        buffer_entries << BufferEntry.new(VIM::Buffer[i]) if Vim::Buffer[i].type == ''
       end
 
       # Shorten each buffer name by removing all path elements which are not
