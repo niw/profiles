@@ -190,6 +190,9 @@ set whichwrap+=<,>,[,],h,l
 
 "{{{ キーマッピング
 
+" Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
+let g:plugin_dicwin_disable = 1
+
 " ウィンドウ移動
 noremap <C-Down>  <C-W>j
 noremap <C-Up>    <C-W>k
@@ -328,6 +331,13 @@ command! -nargs=* Gr call <SID>GrepWithHilight("GrepRecursive!", <f-args>)
 
 " git プラグイン(標準添付)
 autocmd FileType gitcommit DiffGitCached
+
+" LustyExplorer
+if has("ruby") || version >= 700
+  nnoremap <silent> <CR> :if !(&buftype ==? 'quickfix')<CR>execute('LustyBufferExplorer')<CR>else<CR>call feedkeys("\r", 'n')<CR>endif<CR>
+  nnoremap <silent> <C-j> :LustyFilesystemExplorer<CR>
+  nnoremap <silent> <C-k> :LustyFilesystemExplorerFromHere<CR>
+endif
 
 "}}}
 
