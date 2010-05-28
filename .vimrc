@@ -253,6 +253,11 @@ nnoremap * *zz
 nnoremap # #zz
 nnoremap g* g*zz
 nnoremap g# g#zz
+
+" QuickFix
+nnoremap <space>q :<C-u>copen<Enter>
+nnoremap <space>w :<C-u>cclose<Enter>
+
 "}}}
 
 " {{{ オートコマンド
