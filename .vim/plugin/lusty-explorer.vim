@@ -1464,11 +1464,7 @@ class Displayer
     end
 
     def self.max_height
-      stored_height = $curwin.height
-      $curwin.height = VIM::MOST_POSITIVE_INTEGER
-      highest_allowable = $curwin.height
-      $curwin.height = stored_height
-      highest_allowable
+      10
     end
 
     def self.max_width
