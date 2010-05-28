@@ -560,6 +560,9 @@ class Explorer
     def run
       return if @running
 
+      # Ignore if it runs on somewhere showing abnormal buffer
+      return if $curbuf.type != ''
+
       @settings.save
       @running = true
       @calling_window = $curwin
