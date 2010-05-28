@@ -44,7 +44,6 @@
 "               fuzzy matching algorithm.  Special keys include:
 "
 "                 <Enter>  open the selected match
-"                 <Tab>    open the selected match
 "                 <Esc>    cancel
 "                 <C-c>    cancel
 "                 <C-g>    cancel
@@ -53,6 +52,7 @@
 "                 <C-o>    open selected match in a new h[o]rizontal split
 "                 <C-v>    open selected match in a new [v]ertical split
 "
+"                 <Tab>    select the [n]ext match
 "                 <C-n>    select the [n]ext match
 "                 <C-p>    select the [p]revious match
 "
@@ -582,13 +582,13 @@ class Explorer
         when 8                # Backspace/Del/C-h
           @prompt.backspace!
           @selected_index = 0
-        when 9, 13            # Tab and Enter
+        when 13               # Tab and Enter
           choose(:current_tab)
           @selected_index = 0
         when 23               # C-w (delete 1 dir backward)
           @prompt.up_one_dir!
           @selected_index = 0
-        when 14               # C-n (select next)
+        when 9, 14            # C-n (select next)
           @selected_index = \
             (@selected_index + 1) % @ordered_matching_entries.size
           refresh_mode = :no_recompute
