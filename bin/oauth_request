@@ -33,7 +33,7 @@ parser = OptionParser.new do |opts|
   opts.on "-c", "--consumer-secret=VAL", "consumer secret for oauth request" do |value|
     options[:consumer_secret] = value
   end
-  opts.on "-h", "--site=VAL", "host name for oauth request", "default: http://twitter.com" do |value|
+  opts.on "-h", "--site=VAL", "host name for oauth request", "default: https://api.twitter.com" do |value|
     options[:site] = value
   end
   opts.on "-r", "--request-token-path=VAL", "path to request the request token", "default: /oauth/request_token" do |value|
@@ -129,7 +129,7 @@ if options[:verbose]
 end
 
 consumer = OAuth::Consumer.new(options[:consumer_key], options[:consumer_secret], {
-  :site               => options[:site]               || "http://twitter.com",
+  :site               => options[:site]               || "https://api.twitter.com",
   :request_token_path => options[:request_token_path] || "/oauth/request_token",
   :authorize_path     => options[:authorize_path]     || "/oauth/authorize",
   :access_token_path  => options[:access_token_path]  || "/oauth/access_token",
