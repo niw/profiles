@@ -21,10 +21,10 @@ server = WEBrick::HTTPServer.new(
   :Port => 3000,
   :BindAddress => '0.0.0.0',
   :DocumentRoot => File.expand_path(Dir.pwd),
-  :MimeTypes => WEBrick::HTTPUtils::DefaultMimeTypes.merge(
+  :MimeTypes => WEBrick::HTTPUtils::DefaultMimeTypes.merge({
     # place additional MIME types here
     # "jpg" => "image/jpeg"
-  )
+  })
 )
 server.mount("/echo", EchoServlet);
 
