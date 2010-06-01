@@ -258,8 +258,13 @@ nnoremap g* g*zz
 nnoremap g# g#zz
 
 " QuickFix
-nnoremap <space>q :<C-u>copen<Enter>
-nnoremap <space>w :<C-u>cclose<Enter>
+function! s:OpenQuickFixWithSyntex(syntax)
+  execute "copen"
+  execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
+endfunction
+
+nnoremap <silent> <Space>q :if exists('g:LastQuickFixSyntax')<CR>call <SID>OpenQuickFixWithSyntex(g:LastQuickFixSyntax)<CR>else<CR>copen<CR>endif<CR>
+nnoremap <silent> <Space>w :<C-u>cclose<CR>
 
 "}}}
 
@@ -317,8 +322,8 @@ command! Utf8 edit ++enc=utf-8
 
 function! s:GrepWithHilight(cmd, syntax, ...)
   execute a:cmd . " " . a:syntax . join(a:000, " ")
-  execute "copen"
-  execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
+  let g:LastQuickFixSyntax = a:syntax
+  call s:OpenQuickFixWithSyntex(a:syntax)
 endfunction
 
 " Grep -rとハイライト
