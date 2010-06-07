@@ -261,6 +261,7 @@ nnoremap g# g#zz
 function! s:OpenQuickFixWithSyntex(syntax)
   execute "copen"
   execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
+  call feedkeys("\<C-w>J", "n")
 endfunction
 
 nnoremap <silent> <Space>q :if exists('g:LastQuickFixSyntax')<CR>call <SID>OpenQuickFixWithSyntex(g:LastQuickFixSyntax)<CR>else<CR>copen<CR>endif<CR>
