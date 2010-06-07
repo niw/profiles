@@ -314,6 +314,33 @@ augroup Misc
   "autocmd QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
 augroup END
 
+" Keep No End Of Line
+" See http://vim.wikia.com/wiki/Preserve_missing_end-of-line_at_end_of_text_files
+function! s:SetBinaryForNoeol()
+  let g:save_binary_for_noeol = &binary
+  if ! &endofline && ! &binary
+    setlocal binary
+    if &ff == "dos"
+      silent 1,$-1s/$/\="\\".nr2char(13)
+    endif
+  endif
+endfunction
+
+function! s:RestoreBinaryForNoeol()
+  if ! &endofline && ! g:save_binary_for_noeol
+    if &ff == "dos"
+      silent 1,$-1s/\r$/
+    endif
+    setlocal nobinary
+  endif
+endfunction
+
+augroup PreserveNoeol
+  autocmd!
+  autocmd BufWritePre  * :call <SID>SetBinaryForNoeol()
+  autocmd BufWritePost * :call <SID>RestoreBinaryForNoeol()
+aug END
+
 "}}}
 
 "{{{ コマンド
