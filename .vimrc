@@ -366,6 +366,7 @@ command! -nargs=* Gr call <SID>GrepWithHilight("GrepRecursive!", <f-args>)
 autocmd FileType gitcommit DiffGitCached
 
 " LustyExplorer
+let g:LustyExplorerSuppressRubyWarning = 1
 if has("ruby") || version >= 700
   nnoremap <silent> <CR> :if !(&buftype ==? 'quickfix')<CR>execute('LustyBufferExplorer')<CR>else<CR>call feedkeys("\r", 'n')<CR>endif<CR>
   nnoremap <silent> <C-j> :LustyFilesystemExplorer<CR>
