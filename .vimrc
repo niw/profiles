@@ -162,7 +162,7 @@ syntax on
 " 画面を黒地に白にする (次行の先頭の " を削除すれば有効になる)
 "colorscheme evening " (Windows用gvim使用時はgvimrcを編集すること)
 " ステータスラインを変更、文字コードと改行文字を表示する
-set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']['.&ft.']'}%=%l,%c%V%8P
+set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']['.&ft.']'}%=%l,%c%V%8P%3n
 " 編集中の内容を保ったまま別の画面に切替えられるようにする(デフォルトだと一度保存しないと切り替えられない)
 set hid
 " バックアップファイルを作成しない (次行の先頭の " を削除すれば有効になる)
@@ -192,6 +192,11 @@ set whichwrap+=<,>,[,],h,l
 
 " Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
 let g:plugin_dicwin_disable = 1
+
+" Reserve q for prefix key then assign Q for original actions.
+" Q is for Ex-mode which we don't need to use.
+nnoremap q <Nop>
+nnoremap Q q
 
 " ウィンドウ移動
 noremap <C-Down>  <C-W>j
