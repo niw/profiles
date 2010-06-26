@@ -214,23 +214,23 @@ noremap gj j
 noremap gk k
 
 " ハイライト削除
-noremap <C-h><C-h> :<C-u>nohlsearch<Enter>
+noremap <C-h><C-h> :<C-u>nohlsearch<CR>
 
 " シンタックスハイライトの初期化
-noremap <C-h><C-j> :<C-u>syntax sync clear<Enter>
+noremap <C-h><C-j> :<C-u>syntax sync clear<CR>
 
 " 最後の変更のあったテキストを選択する
 nnoremap gm `[v`]
-vnoremap gm :<C-u>normal gc<Enter>
-onoremap gm :<C-u>normal gc<Enter>
+vnoremap gm :<C-u>normal gc<CR>
+onoremap gm :<C-u>normal gc<CR>
 
 " .vimrcの即時編集と再読み込み
-nnoremap <space>.  :<C-u>edit $MYVIMRC<Enter>
-nnoremap <space>s. :<C-u>source $MYVIMRC<Enter>
+nnoremap <Space>.  :<C-u>edit $MYVIMRC<CR>
+nnoremap <Space>s. :<C-u>source $MYVIMRC<CR>
 
 " シェル起動
-nnoremap <space>: :shell<Enter>
-nnoremap <space>; :shell<Enter>
+nnoremap <Space>: :shell<CR>
+nnoremap <Space>; :shell<CR>
 
 function! s:CommandWithVisualRegionString(cmd)
 	let reg = getreg('a')
@@ -242,12 +242,12 @@ function! s:CommandWithVisualRegionString(cmd)
 endfunction
 
 " カーソルの下のキーワードでヘルプを開く
-nnoremap <space>h :<C-u>help<Space><C-r><C-w><Enter>
-vnoremap <space>h :call <SID>CommandWithVisualRegionString('help')<Enter>
+nnoremap <Space>h :<C-u>help<Space><C-r><C-w><CR>
+vnoremap <Space>h :call <SID>CommandWithVisualRegionString('help')<CR>
 
 " カーソルの下をGrep -rする (コマンドを参照)
-nnoremap gr :<C-u>Gr<Space><C-r><C-w><Enter>
-vnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<Enter>
+nnoremap gr :<C-u>Gr<Space><C-r><C-w><CR>
+vnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<CR>
 
 " 検索結果を画面中央に
 nnoremap n nzz
