@@ -427,27 +427,33 @@ endif
 
 set runtimepath&
 
+function s:AddRuntimePaths()
+  let after = []
+  for dir in split(glob($HOME . "/.vim/runtimes/*"))
+    if isdirectory(dir)
+      " 追加の設定ファイルを読み込む
+      for vimfile in [dir . "/.vimrc", dir . ".vim"]
+        if filereadable(vimfile)
+          execute "source " . vimfile
+        endif
+      endfor
+      let &runtimepath = dir . "," . &runtimepath
+      if isdirectory(dir . "/after")
+        let after += [dir . "/after"]
+      endif
+    endif
+  endfor
+  " afterは最後に追加
+  let &runtimepath = &runtimepath . "," . join(after, ",")
+endfunction
+
 " ~/.vimをランタイムパスに加える (Windows/Cygwin互換用)
 if has('win32')
   set runtimepath+=$HOME/.vim
 endif
 
 " 追加のラインタイムパス
-for s:dir in split(glob($HOME . "/.vim/runtimes/*"))
-  if isdirectory(s:dir)
-    let &runtimepath = s:dir . "," . &runtimepath
-    if isdirectory(s:dir . "/after")
-      let &runtimepath = s:dir . "/after" . "," . &runtimepath
-    endif
-
-    " 追加の設定ファイルを読み込む
-    for s:vimfile in [s:dir . "/.vimrc", s:dir . ".vim"]
-      if filereadable(s:vimfile)
-        execute "source " . s:vimfile
-      endif
-    endfor
-  endif
-endfor
+call s:AddRuntimePaths()
 
 "}}}
 
