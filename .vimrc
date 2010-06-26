@@ -264,7 +264,15 @@ function! s:OpenQuickFixWithSyntex(syntax)
   call feedkeys("\<C-w>J", "n")
 endfunction
 
-nnoremap <silent> <Space>q :if exists('g:LastQuickFixSyntax')<CR>call <SID>OpenQuickFixWithSyntex(g:LastQuickFixSyntax)<CR>else<CR>copen<CR>endif<CR>
+function! s:OpenQuickFix()
+  if exists('g:LastQuickFixSyntax')
+    call s:OpenQuickFixWithSyntex(g:LastQuickFixSyntax)
+  else
+    execute "copen"
+  endif
+endfunction
+
+nnoremap <silent> <Space>q :call <SID>OpenQuickFix()<CR>
 nnoremap <silent> <Space>w :<C-u>cclose<CR>
 
 "}}}
@@ -368,7 +376,15 @@ autocmd FileType gitcommit DiffGitCached
 " LustyExplorer
 let g:LustyExplorerSuppressRubyWarning = 1
 if has("ruby") || version >= 700
-  nnoremap <silent> <CR> :if !(&buftype ==? 'quickfix')<CR>execute('LustyBufferExplorer')<CR>else<CR>call feedkeys("\r", 'n')<CR>endif<CR>
+  function! s:OpenLustyBufferExplorer()
+    if &buftype == ""
+      execute('LustyBufferExplorer')
+    else
+      call feedkeys("\r", 'n')
+    endif
+  endfunction
+
+  nnoremap <silent> <CR> :call <SID>OpenLustyBufferExplorer()<CR>
   nnoremap <silent> <C-j> :LustyFilesystemExplorer<CR>
   nnoremap <silent> <C-k> :LustyFilesystemExplorerFromHere<CR>
 endif
