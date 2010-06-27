@@ -205,8 +205,83 @@ noremap <C-Left>  <C-W>h
 noremap <C-Right> <C-W>l
 
 " バッファ切り替え
-noremap <silent> <F2> :bp<CR>
-noremap <silent> <F3> :bn<CR>
+function! s:NextNormalBuffer(loop)
+  let buffer_num = bufnr('%')
+  let last_buffer_num = bufnr('$')
+
+  let next_buffer_num = buffer_num
+  while 1
+    if next_buffer_num == last_buffer_num
+      if a:loop
+        let next_buffer_num = 1
+      else
+        break
+      endif
+    else
+      let next_buffer_num = next_buffer_num + 1
+    endif
+    if next_buffer_num == buffer_num
+      break
+    endif
+    if ! buflisted(next_buffer_num)
+      continue
+    endif
+    if getbufvar(next_buffer_num, '&buftype') == ""
+      return next_buffer_num
+      break
+    endif
+  endwhile
+  return 0
+endfunction
+
+function! s:OpenNextNormalBuffer(loop)
+  let buffer_num = s:NextNormalBuffer(a:loop)
+  if buffer_num
+    execute "buffer" buffer_num
+  endif
+endfunction
+
+function! s:PrevNormalBuffer(loop)
+  let buffer_num = bufnr('%')
+  let last_buffer_num = bufnr('$')
+
+  let prev_buffer_num = buffer_num
+  while 1
+    if prev_buffer_num == 1
+      if a:loop
+        let prev_buffer_num = last_buffer_num
+      else
+        break
+      endif
+    else
+      let prev_buffer_num = prev_buffer_num - 1
+    endif
+    if prev_buffer_num == buffer_num
+      break
+    endif
+    if ! buflisted(prev_buffer_num)
+      continue
+    endif
+    if getbufvar(prev_buffer_num, '&buftype') == ""
+      return prev_buffer_num
+      break
+    endif
+  endwhile
+  return 0
+endfunction
+
+function! s:OpenPrevNormalBuffer(loop)
+  let buffer_num = s:PrevNormalBuffer(a:loop)
+  if buffer_num
+    execute "buffer" buffer_num
+  endif
+endfunction
+
+noremap <silent> <F1> :call <SID>OpenPrevNormalBuffer(0)<CR>
+noremap <silent> <F2> :call <SID>OpenPrevNormalBuffer(1)<CR>
+noremap <silent> <F3> :call <SID>OpenNextNormalBuffer(1)<CR>
+noremap <silent> <F4> :call <SID>OpenNextNormalBuffer(0)<CR>
+
 noremap <silent> <F5> :make<CR>
 
 " ;でもExコマンド
@@ -373,6 +448,40 @@ command! -nargs=* Gr call <SID>GrepWithHilight("GrepRecursive!", <f-args>)
 
 " 編集中のファイル名変更
 command! -nargs=1 -complete=file Rename file <args>|call delete(expand('#'))
+
+" ウィンドウを保存してバッファを削除
+function! s:WipeBuffer(bang)
+  if &mod && a:bang != '!'
+    return
+  endif
+
+  let buffer_num = bufnr('%')
+  let win_num = winnr()
+
+  let next_buffer_num = s:NextNormalBuffer(1)
+  if ! next_buffer_num
+    enew
+    let next_buffer_num = bufnr('%')
+    if next_buffer_num == buffer_num
+      return
+    end
+  endif
+
+  " FIXME we have to check the other tabs because bufwinnr doesn't care them
+  while 1
+    let n = bufwinnr(buffer_num)
+    if n < 0
+      break
+    endif
+    execute n "wincmd w"
+    execute "buffer" next_buffer_num
+  endwhile
+
+  execute win_num "wincmd w"
+  execute "silent bwipeout" . a:bang buffer_num
+endfunction
+
+command! -bang Bw call <SID>WipeBuffer("<bang>")
 
 "}}}
 
