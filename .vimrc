@@ -56,7 +56,7 @@ function! s:DetermineFileencodings()
     " EUC-JP環境向けにfileencodingsを設定する
     let value = value. s:enc_jisx. ','. s:enc_utf8. ','. s:enc_cp932
   else
-    " TODO: 必要ならばその他のエンコード向けの設定をココに追加する
+    " 必要ならばその他のエンコード向けの設定をここに追加する
   endif
   if has('guess_encode')
     let value = 'guess,'. value
@@ -99,14 +99,14 @@ if !has('gui_running') && &encoding != 'cp932' && &term == 'win32'
   set termencoding=cp932
 endif
 " メニューファイルが存在しない場合は予め'guioptions'を調整しておく
-if 1 && !filereadable($VIMRUNTIME . '/menu.vim') && has('gui_running')
+if !filereadable($VIMRUNTIME . '/menu.vim') && has('gui_running')
   set guioptions&
   set guioptions+=M
 endif
 
 "}}}
 
-"{{{ 各種設定
+"{{{ グルーバルな設定
 
 " <CR>だけのファイルを読むように
 set fileformats=unix,dos,mac
@@ -162,7 +162,7 @@ syntax on
 " 画面を黒地に白にする (次行の先頭の " を削除すれば有効になる)
 "colorscheme evening " (Windows用gvim使用時はgvimrcを編集すること)
 " ステータスラインを変更、文字コードと改行文字を表示する
-set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']['.&ft.']'}%=%l,%c%V%8P%3n
+set statusline=%3n\ %<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']['.&ft.']'}%=%l,%c%V%8P
 " 編集中の内容を保ったまま別の画面に切替えられるようにする(デフォルトだと一度保存しないと切り替えられない)
 set hid
 " バックアップファイルを作成しない (次行の先頭の " を削除すれば有効になる)
@@ -277,8 +277,8 @@ function! s:OpenQuickFix()
   endif
 endfunction
 
-nnoremap <silent> <Space>q :call <SID>OpenQuickFix()<CR>
-nnoremap <silent> <Space>w :<C-u>cclose<CR>
+nnoremap <silent> qq :call <SID>OpenQuickFix()<CR>
+nnoremap <silent> qw :<C-u>cclose<CR>
 
 "}}}
 
@@ -361,15 +361,18 @@ aug END
 " UTF-8で開き直す
 command! Utf8 edit ++enc=utf-8
 
+" Grep -rとハイライト
 function! s:GrepWithHilight(cmd, syntax, ...)
   execute a:cmd . " " . a:syntax . join(a:000, " ")
   let g:LastQuickFixSyntax = a:syntax
   call s:OpenQuickFixWithSyntex(a:syntax)
 endfunction
 
-" Grep -rとハイライト
 command! -nargs=* -bang GrepRecursive grep<bang> -r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e <args>
 command! -nargs=* Gr call <SID>GrepWithHilight("GrepRecursive!", <f-args>)
+
+" 編集中のファイル名変更
+command! -nargs=1 -complete=file Rename file <args>|call delete(expand('#'))
 
 "}}}
 
@@ -427,7 +430,7 @@ endif
 
 set runtimepath&
 
-function s:AddRuntimePaths()
+function! s:AddRuntimePaths()
   let after = []
   for dir in split(glob($HOME . "/.vim/runtimes/*"))
     if isdirectory(dir)
