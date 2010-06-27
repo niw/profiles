@@ -77,17 +77,6 @@ call s:DetermineFileencodings()
 " □とか○の文字があってもカーソル位置がずれないようにする
 set ambiwidth=double
 
-" メッセージを日本語にする (Windowsでは自動的に判断・設定されている)
-if !(has('win32') || has('mac')) && has('multi_lang')
-  if !exists('$LANG') || $LANG.'X' ==# 'X'
-    if !exists('$LC_CTYPE') || $LC_CTYPE.'X' ==# 'X'
-      language ctype ja_JP.eucJP
-    endif
-    if !exists('$LC_MESSAGES') || $LC_MESSAGES.'X' ==# 'X'
-      language messages ja_JP.eucJP
-    endif
-  endif
-endif
 " 日本語入力用のkeymapの設定例 (コメントアウト)
 if has('keymap')
   " ローマ字仮名のkeymap
@@ -97,11 +86,6 @@ endif
 " 非GUI日本語コンソールを使っている場合の設定
 if !has('gui_running') && &encoding != 'cp932' && &term == 'win32'
   set termencoding=cp932
-endif
-" メニューファイルが存在しない場合は予め'guioptions'を調整しておく
-if !filereadable($VIMRUNTIME . '/menu.vim') && has('gui_running')
-  set guioptions&
-  set guioptions+=M
 endif
 
 "}}}
