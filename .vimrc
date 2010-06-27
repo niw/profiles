@@ -344,7 +344,6 @@ nnoremap <silent> qw :<C-u>cclose<CR>
 augroup FileTypeRelated
   autocmd!
   autocmd FileType ruby,eruby setlocal tabstop=2 shiftwidth=2 expandtab nowrap
-  autocmd BufNewFile,BufRead *.md setlocal filetype=markdown fileencoding=utf-8
   autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
   autocmd BufNewFile,BufRead *.rl setlocal filetype=ragel
   autocmd BufNewFile,BufRead *.srt setlocal filetype=srt
