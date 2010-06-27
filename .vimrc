@@ -1,16 +1,14 @@
-"{{{ 日本語化とファイルエンコードの自動判別
+"{{{ Japanese Support
 
-" 日本語対応のための設定
-" 各エンコードを示す文字列のデフォルト値。s:CheckIconvCapabilityを()呼ぶことで
-" 実環境に合わせた値に修正される。
+" Strings shows each Japanese encodings
+" We can select the strings for the runtime environment by calling s:CheckIconvCapability
 let s:enc_cp932 = 'cp932'
 let s:enc_eucjp = 'euc-jp'
 let s:enc_jisx = 'iso-2022-jp'
 let s:enc_utf8 = 'utf-8'
 
-" encodingを決定する
-" OSX GUIの場合はUTF-8でを基本とする。
-" 環境変数LANGにエンコード指定がある場合、LANGを優先する。
+" Select &encoding
+" On Mac OS X with GUI, We use UTF-8. Otherwise prefer to use same as LANG environment variables
 function! s:DetermineEncoding()
   " OSX GUIはUTF-8を基本にする
   if has('gui_running') && has('mac')
@@ -26,9 +24,9 @@ function! s:DetermineEncoding()
   endif
 endfunction
 
-" 利用しているiconvライブラリの性能を調べる。
-" 比較的新しいJISX0213をサポートしているか検査する。euc-jisx0213が定義してい
-" る範囲の文字をcp932からeuc-jisx0213へ変換できるかどうかで判断する。
+" Check availability of iconv library
+" Try to convert the cahrs which is defined in EUC JIS X 0213 to CP932
+" to check the iconv supprts JIS X 0213.
 function! s:CheckIconvCapability()
   if !has('iconv') | return | endif
   if iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
@@ -40,50 +38,49 @@ function! s:CheckIconvCapability()
   endif
 endfunction
 
-" 'fileencodings'を決定する。
-" 利用しているiconvライブラリの性能及び、現在利用している'encoding'の値に応じ
-" て、日本語で利用するのに最適な'fileencodings'を設定する。
+" Select fileencodings
+" We should check iconv and encoding to determin how fill out fileencodings
 function! s:DetermineFileencodings()
   if !has('iconv') | return | endif
   let value = ''
   if &encoding ==? 'utf-8'
-    " UTF-8環境向けにfileencodingsを設定する
+    " For UTF-8 runtime environment
     let value = value. s:enc_jisx. ','. s:enc_cp932. ','. s:enc_eucjp
   elseif &encoding ==? 'cp932'
-    " CP932環境向けにfileencodingsを設定する
+    " For CP932 runtime environment
     let value = value. s:enc_jisx. ','. s:enc_utf8. ','. s:enc_eucjp
   elseif &encoding ==? 'euc-jp' || &encoding ==? 'euc-jisx0213'
-    " EUC-JP環境向けにfileencodingsを設定する
+    " For EUC-JP runtime environment
     let value = value. s:enc_jisx. ','. s:enc_utf8. ','. s:enc_cp932
   else
-    " 必要ならばその他のエンコード向けの設定をここに追加する
+    " NOTE if neede, we can place the settings for the other runtime environments
   endif
   if has('guess_encode')
     let value = 'guess,'. value
   endif
+  " FIXME UTF-16 support
   "let value = value. ',ucs-bom,ucs-2le,ucs-2'
   let &fileencodings = value
 endfunction
 
-" ファイルを読込む時にトライする文字エンコードの順序を確定する。漢字コード自
-" 動判別機能を利用する場合には別途iconv.dllが必要。iconv.dllについては
-" README_j.txtを参照。ユーティリティスクリプトを読み込むことで設定される。
+" Update encoding and fileencodings for current environment
 set encoding=japan
 call s:DetermineEncoding()
 set fileencodings=japan
 call s:CheckIconvCapability()
 call s:DetermineFileencodings()
 
-" □とか○の文字があってもカーソル位置がずれないようにする
+" Address the issue for using □ or ●.
+" NOTE We also need to apply some patch for Mac OS X Terminal.app
 set ambiwidth=double
 
-" 日本語入力用のkeymapの設定例 (コメントアウト)
+" Settings for Japanese Input Methods
 if has('keymap')
-  " ローマ字仮名のkeymap
   "silent! set keymap=japanese
   set iminsert=0 imsearch=0
 endif
-" 非GUI日本語コンソールを使っている場合の設定
+
+" On Windows, set CP932 to termencoding
 if !has('gui_running') && &encoding != 'cp932' && &term == 'win32'
   set termencoding=cp932
 endif
@@ -172,7 +169,7 @@ set whichwrap+=<,>,[,],h,l
 
 "}}}
 
-"{{{ キーマッピング
+"{{{ Key Mappings
 
 " Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
 let g:plugin_dicwin_disable = 1
@@ -182,13 +179,13 @@ let g:plugin_dicwin_disable = 1
 nnoremap q <Nop>
 nnoremap Q q
 
-" ウィンドウ移動
+" Window Switching
 noremap <C-Down>  <C-W>j
 noremap <C-Up>    <C-W>k
 noremap <C-Left>  <C-W>h
 noremap <C-Right> <C-W>l
 
-" バッファ切り替え
+" Buffer Switching
 function! s:NextNormalBuffer(loop)
   let buffer_num = bufnr('%')
   let last_buffer_num = bufnr('$')
@@ -266,36 +263,38 @@ noremap <silent> <F2> :call <SID>OpenPrevNormalBuffer(1)<CR>
 noremap <silent> <F3> :call <SID>OpenNextNormalBuffer(1)<CR>
 noremap <silent> <F4> :call <SID>OpenNextNormalBuffer(0)<CR>
 
+" Make
 noremap <silent> <F5> :make<CR>
 
-" ;でもExコマンド
+" Run EX commands by ; for US Keyboard
 noremap ; :
 
-" 表示行で移動
+" Move cursor by display line
 noremap j gj
 noremap k gk
 noremap gj j
 noremap gk k
 
-" ハイライト削除
+" Disable highlight
 noremap <C-h><C-h> :<C-u>nohlsearch<CR>
 
-" シンタックスハイライトの初期化
+" Reset syntax highlight
 noremap <C-h><C-j> :<C-u>syntax sync clear<CR>
 
-" 最後の変更のあったテキストを選択する
+" Select the last modified texts
 nnoremap gm `[v`]
 vnoremap gm :<C-u>normal gc<CR>
 onoremap gm :<C-u>normal gc<CR>
 
-" .vimrcの即時編集と再読み込み
+" Quick edit and reload .vimrc
 nnoremap <Space>.  :<C-u>edit $MYVIMRC<CR>
 nnoremap <Space>s. :<C-u>source $MYVIMRC<CR>
 
-" シェル起動
+" Run shell
 nnoremap <Space>: :shell<CR>
 nnoremap <Space>; :shell<CR>
 
+" Operation for the words under the cursor or the visual region
 function! s:CommandWithVisualRegionString(cmd)
 	let reg = getreg('a')
 	let regtype = getregtype('a')
@@ -305,15 +304,13 @@ function! s:CommandWithVisualRegionString(cmd)
   execute a:cmd . ' ' . selected
 endfunction
 
-" カーソルの下のキーワードでヘルプを開く
 nnoremap <Space>h :<C-u>help<Space><C-r><C-w><CR>
 vnoremap <Space>h :call <SID>CommandWithVisualRegionString('help')<CR>
 
-" カーソルの下をGrep -rする (コマンドを参照)
 nnoremap gr :<C-u>Gr<Space><C-r><C-w><CR>
 vnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<CR>
 
-" 検索結果を画面中央に
+" Centering search result
 nnoremap n nzz
 nnoremap N Nzz
 nnoremap * *zz
@@ -341,9 +338,9 @@ nnoremap <silent> qw :<C-u>cclose<CR>
 
 "}}}
 
-" {{{ オートコマンド
+" {{{ Auto Commands
 
-" ファイルタイプ
+" File Types
 augroup FileTypeRelated
   autocmd!
   autocmd FileType ruby,eruby setlocal tabstop=2 shiftwidth=2 expandtab nowrap
@@ -359,7 +356,7 @@ augroup FileTypeRelated
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
 augroup END
 
-" バイナリ編集
+" Editing Binary File
 augroup Binary
   autocmd!
   autocmd BufReadPre *.bin let &bin=1
@@ -374,15 +371,15 @@ augroup END
 augroup Misc
   autocmd!
 
-  " カーソル行をハイライト
+  " Highlight Cursour Line
   "autocmd WinEnter,BufEnter * setlocal cursorline
   "autocmd WinLeave,BufLeave * setlocal nocursorline
 
-  " ウィンドウのカレントディレクトリをバッファ切り替えで変更
+  " Change current directory by switching the buffers
   " :help cmdline-special
   "autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h:gs? ?\\\\ ?")
 
-  " vimgrep後にQuickFixを自動で開く
+  " Open QuickFix after vimgrep
   "autocmd QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
 augroup END
 
@@ -415,25 +412,25 @@ aug END
 
 "}}}
 
-"{{{ コマンド
+"{{{ Commands
 
-" UTF-8で開き直す
+" Open as UTF-8
 command! Utf8 edit ++enc=utf-8
 
-" Grep -rとハイライト
-function! s:GrepWithHilight(cmd, syntax, ...)
+" Recursive Grep and Highlight
+function! s:GrepWithHighlight(cmd, syntax, ...)
   execute a:cmd . " " . a:syntax . join(a:000, " ")
   let g:LastQuickFixSyntax = a:syntax
   call s:OpenQuickFixWithSyntex(a:syntax)
 endfunction
 
 command! -nargs=* -bang GrepRecursive grep<bang> -r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e <args>
-command! -nargs=* Gr call <SID>GrepWithHilight("GrepRecursive!", <f-args>)
+command! -nargs=* Gr call <SID>GrepWithHighlight("GrepRecursive!", <f-args>)
 
-" 編集中のファイル名変更
+" Change file name editing
 command! -nargs=1 -complete=file Rename file <args>|call delete(expand('#'))
 
-" ウィンドウを保存してバッファを削除
+" Preserve window splits when wiping the buffer
 function! s:WipeBuffer(bang)
   if &mod && a:bang != '!'
     return
@@ -469,9 +466,9 @@ command! -bang Bw call <SID>WipeBuffer("<bang>")
 
 "}}}
 
-"{{{ プラグインの設定
+"{{{ Plugins
 
-" git プラグイン(標準添付)
+" Git Plugin (Standard Plugin)
 autocmd FileType gitcommit DiffGitCached
 
 " LustyExplorer
@@ -519,7 +516,7 @@ endif
 
 "}}}
 
-"{{{ ランタイムパス
+"{{{ Runtime Paths
 
 set runtimepath&
 
@@ -527,7 +524,7 @@ function! s:AddRuntimePaths()
   let after = []
   for dir in split(glob($HOME . "/.vim/runtimes/*"))
     if isdirectory(dir)
-      " 追加の設定ファイルを読み込む
+      " Include additional settings for runtimes
       for vimfile in [dir . "/.vimrc", dir . ".vim"]
         if filereadable(vimfile)
           execute "source " . vimfile
@@ -539,16 +536,16 @@ function! s:AddRuntimePaths()
       endif
     endif
   endfor
-  " afterは最後に追加
+  " We need to add after to the end of &runtimepath
   let &runtimepath = &runtimepath . "," . join(after, ",")
 endfunction
 
-" ~/.vimをランタイムパスに加える (Windows/Cygwin互換用)
+" Add ~/.vim to &runtimepath for Cygwin
 if has('win32')
   set runtimepath+=$HOME/.vim
 endif
 
-" 追加のラインタイムパス
+" Add runtime paths
 call s:AddRuntimePaths()
 
 "}}}
