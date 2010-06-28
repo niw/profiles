@@ -237,9 +237,11 @@ function! s:NextNormalBuffer(loop)
 endfunction
 
 function! s:OpenNextNormalBuffer(loop)
-  let buffer_num = s:NextNormalBuffer(a:loop)
-  if buffer_num
-    execute "buffer" buffer_num
+  if &buftype == ""
+    let buffer_num = s:NextNormalBuffer(a:loop)
+    if buffer_num
+      execute "buffer" buffer_num
+    endif
   endif
 endfunction
 
@@ -273,9 +275,11 @@ function! s:PrevNormalBuffer(loop)
 endfunction
 
 function! s:OpenPrevNormalBuffer(loop)
-  let buffer_num = s:PrevNormalBuffer(a:loop)
-  if buffer_num
-    execute "buffer" buffer_num
+  if &buftype == ""
+    let buffer_num = s:PrevNormalBuffer(a:loop)
+    if buffer_num
+      execute "buffer" buffer_num
+    endif
   endif
 endfunction
 
@@ -494,15 +498,15 @@ autocmd FileType gitcommit DiffGitCached
 " LustyExplorer
 let g:LustyExplorerSuppressRubyWarning = 1
 if has("ruby") || version >= 700
-  function! s:OpenLustyBufferExplorer()
+  function! s:ExecuteCommandOnCR(command)
     if &buftype == ""
-      execute('LustyBufferExplorer')
+      execute(a:command)
     else
       call feedkeys("\r", 'n')
     endif
   endfunction
 
-  nnoremap <silent> <CR> :call <SID>OpenLustyBufferExplorer()<CR>
+  nnoremap <silent> <CR> :call <SID>ExecuteCommandOnCR("LustyBufferExplorer")<CR>
   nnoremap <silent> <C-j> :LustyFilesystemExplorer<CR>
   nnoremap <silent> <C-k> :LustyFilesystemExplorerFromHere<CR>
 endif
