@@ -1,3 +1,12 @@
+"{{{ Initialize
+
+if !exists('s:loaded_vimrc')
+  " Don't reset twice on reloading, 'compatible' has many side effects.
+  set nocompatible
+endif
+
+"}}}
+
 "{{{ Japanese Support
 
 " Strings shows each Japanese encodings
@@ -556,5 +565,16 @@ endif
 call s:AddRuntimePaths()
 
 "}}}
+
+" {{{ Finalize
+
+if !exists('s:loaded_vimrc')
+  let s:loaded_vimrc = 1
+endif
+
+" See :help secure
+set secure
+
+" }}}
 
 " vim:tabstop=2:shiftwidth=2:expandtab:foldmethod=marker:nowrap:
