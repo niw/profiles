@@ -14,7 +14,15 @@ let g:fuf_keyPreview = '<Space>'
 let g:plugin_dicwin_disable = 1
 
 " Keymapping
-nnoremap <silent> <CR> :if !(&buftype ==? 'quickfix')<CR>execute('FufBuffer')<CR>else<CR>call feedkeys("\r", 'n')<CR>endif<CR>
+function! s:ExecuteCommandOnCR(command)
+  if &buftype == ""
+    execute(a:command)
+  else
+    call feedkeys("\r", 'n')
+  endif
+endfunction
+
+nnoremap <silent> <CR>  :call <SID>ExecuteCommandOnCR("FufBuffer")<CR>
 nnoremap <silent> <C-j> :FufFile<CR>
 nnoremap <silent> <C-k> :FufFileWithCurrentBufferDir<CR>
 nnoremap <silent> <C-l> :FufMruFile<CR>
