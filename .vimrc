@@ -171,6 +171,14 @@ set whichwrap+=<,>,[,],h,l
 
 "{{{ Key Mappings
 
+" Define <Leader>, <LocalLeader>
+let mapleader = ','
+let maplocalleader = '.'
+
+" Disable <Leader>, <LocalLeader> to avoid unexpected behavior.
+noremap <Leader>  <Nop>
+noremap <LocalLeader>  <Nop>
+
 " Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
 let g:plugin_dicwin_disable = 1
 
