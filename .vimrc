@@ -1,3 +1,7 @@
+" .vimrc
+" http://github.com/niw/profiles
+" Some original code sniped was created by http://github.com/kana/config
+
 "{{{ Initialize
 
 if !exists('s:loaded_vimrc')
