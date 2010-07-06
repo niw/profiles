@@ -232,6 +232,7 @@ alias ge="grepedit"
 
 alias now="date +%Y%m%d%H%M%S"
 alias wget="wget -U Mozilla --no-check-certificate"
+alias fn="find . -not -ipath '*/tmp/*' -not -ipath '*/.*/*' -name "
 
 # Terminal.app related
 alias t="term -t"
