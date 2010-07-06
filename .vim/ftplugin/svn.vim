@@ -41,16 +41,17 @@ function! Svn_diff_windows()
     
     new
     silent! setlocal ft=diff previewwindow bufhidden=delete nobackup noswf nobuflisted nowrap buftype=nofile
-    exe 'normal :r!env LANG=C svn diff ' . list_of_files . "\n"
+    exe 'normal :r!LANG=C svn diff ' . list_of_files . "\n"
     setlocal nomodifiable
     goto 1
     redraw!
     wincmd R
-"    wincmd p
-"    goto 1
-"    redraw!
+    wincmd p
+    goto 1
+    redraw!
 endfunction
 
 set nowarn
-set nowb
+
 call Svn_diff_windows()
+set nowb
