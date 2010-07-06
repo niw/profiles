@@ -366,7 +366,7 @@ nnoremap <silent> qw :<C-u>cclose<CR>
 " {{{ Auto Commands
 
 " File Types
-augroup FileTypeRelated
+augroup MyFileTypeCommands
   autocmd!
   autocmd FileType ruby,eruby setlocal tabstop=2 shiftwidth=2 expandtab nowrap
   autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
@@ -381,7 +381,7 @@ augroup FileTypeRelated
 augroup END
 
 " Editing Binary File
-augroup Binary
+augroup MyBinaryCommands
   autocmd!
   autocmd BufReadPre *.bin let &bin=1
   autocmd BufReadPost *.bin if &bin | silent %!xxd -g 1
@@ -392,7 +392,7 @@ augroup Binary
   autocmd BufWritePost *.bin setlocal nomod | endif
 augroup END
 
-augroup Misc
+augroup MyMiscCommands
   autocmd!
 
   " Highlight Cursour Line
