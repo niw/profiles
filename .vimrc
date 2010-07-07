@@ -369,14 +369,15 @@ nnoremap <silent> qw :<C-u>cclose<CR>
 augroup MyFileTypeCommands
   autocmd!
   autocmd FileType ruby,eruby setlocal tabstop=2 shiftwidth=2 expandtab nowrap
-  autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
+  autocmd FileType php setlocal tabstop=2 shiftwidth=2 expandtab nowrap
+  autocmd FileType actionscript setlocal fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
+  autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript
   autocmd BufNewFile,BufRead *.rl setlocal filetype=ragel
   autocmd BufNewFile,BufRead *.srt setlocal filetype=srt
-  autocmd BufNewFile,BufRead *.haml setlocal filetype=haml
-  autocmd BufNewFile,BufRead nginx.conf* setlocal filetype=nginx
+  autocmd BufNewFile,BufRead nginx.* setlocal filetype=nginx
   autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
   autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
-  autocmd BufNewFile,BufRead *.module setlocal filetype=php tabstop=2 shiftwidth=2 expandtab nowrap
+  autocmd BufNewFile,BufRead *.module setlocal filetype=php
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
 augroup END
 
