@@ -171,9 +171,8 @@ set ttyfast
 set wildmode=longest,list,full
 " omni保管をシンタックス保管に
 "setlocal omnifunc=syntaxcomplete#Complete
-" ファイルタイプを有効に
-filetype plugin on
-"filetype indent on
+" Enable file type detection, plugin and indent
+filetype plugin indent on
 " プレビューウィンドウの高さを大きめに
 set previewheight=40
 " カーソルキーとバックスペースで前後の行に移動
@@ -572,6 +571,9 @@ endif
 " Add runtime paths
 call s:AddRuntimePaths()
 
+" Re-enable filetype plugin for ftdetect directory of each runtimepath
+filetype off
+filetype on
 "}}}
 
 " {{{ Finalize
