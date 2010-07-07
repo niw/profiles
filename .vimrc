@@ -100,7 +100,8 @@ endif
 
 "}}}
 
-"{{{ グルーバルな設定
+"{{{ Global Settings
+" FIXME translate the comments
 
 " <CR>だけのファイルを読むように
 set fileformats=unix,dos,mac
@@ -514,27 +515,25 @@ endif
 
 "}}}
 
-"{{{ プラットフォーム依存の設定
+"{{{ Platform Dependents
 
-" ファイル名に大文字小文字の区別がないシステム用の設定:
-" (例: DOS/Windows/MacOS)
+" Support for the file system which ignore case
 if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMrC')
-  " tagsファイルの重複防止
+  " Do not duplicate tags file
   set tags=./tags,tags
 endif
 
-" コンソール版で環境変数$DISPLAYが設定されていると起動が遅くなる件へ対応
+" If $DISPLAY environment variable is defined, vim works slow
 if !has('gui_running') && has('xterm_clipboard')
   set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
 endif
 
-" プラットホーム依存の特別な設定
-" WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正
+" On Windows, if $PATH doesn't includes $VIM, it can not find out the exe file
 if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
   let $PATH = $VIM . ';' . $PATH
 endif
 
-" Macではデフォルトの'iskeyword'がcp932に対応しきれていないので修正
+" On Mac, default 'iskeyword' doesn't support for cp932
 if has('mac')
   set iskeyword=@,48-57,_,128-167,224-235
 endif
