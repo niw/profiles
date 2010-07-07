@@ -553,7 +553,7 @@ function! s:AddRuntimePaths()
           execute "source " . vimfile
         endif
       endfor
-      let &runtimepath = dir . "," . &runtimepath
+      let &runtimepath = &runtimepath . "," . dir
       if isdirectory(dir . "/after")
         let after += [dir . "/after"]
       endif
