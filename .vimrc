@@ -172,7 +172,8 @@ set wildmode=longest,list,full
 " omni保管をシンタックス保管に
 "setlocal omnifunc=syntaxcomplete#Complete
 " Enable file type detection, plugin and indent
-filetype plugin indent on
+filetype plugin on
+"filetype indent on
 " プレビューウィンドウの高さを大きめに
 set previewheight=40
 " カーソルキーとバックスペースで前後の行に移動
