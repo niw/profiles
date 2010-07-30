@@ -344,6 +344,9 @@ nnoremap # #zz
 nnoremap g* g*zz
 nnoremap g# g#zz
 
+" Centering cursor after splitting window
+nnoremap <C-w>s <C-w>szz
+
 " QuickFix
 function! s:OpenQuickFixWithSyntex(syntax)
   execute "copen"
