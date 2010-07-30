@@ -52,10 +52,22 @@ def filename_for(title)
   filename
 end
 
-YOUTUBE_FORMATS = [37, 22, 18, 6]
-YOUTUBE_GET_VIDEO_URL = 'http://www.youtube.com/get_video?video_id=%s&t=%s&fmt=%s'
+# Original format list is http://userscripts.org/scripts/show/25105
+YOUTUBE_FORMATS = {
+  5  => {:name => "flv 240p",     :ext => "flv" },
+  18 => {:name => "mp4 360p",     :ext => "mp4" },
+  22 => {:name => "mp4 720p",     :ext => "mp4" },
+  34 => {:name => "flv 360p",     :ext => "flv" },
+  35 => {:name => "flv 480p",     :ext => "flv" },
+  37 => {:name => "mp4 1080p",    :ext => "mp4" },
+  38 => {:name => "mp4 original", :ext => "mp4" },
+  43 => {:name => "webm 480p",    :ext => "webm"},
+  45 => {:name => "webm 720p",    :ext => "webm"}
+}
+YOUTUBE_FORMAT_KEYS = [38, 37, 22, 35, 34, 18, 5]
+YOUTUBE_GET_VIDEO_URL = 'http://www.youtube.com/get_video?video_id=%s&t=%s&fmt=%s&asv=3'
 def get_video_url(id, t)
-  YOUTUBE_FORMATS.each do |fmt|
+  YOUTUBE_FORMAT_KEYS.each do |fmt|
     begin
       url = redirect(YOUTUBE_GET_VIDEO_URL % [id, t, fmt])
       return url, fmt
@@ -75,8 +87,8 @@ get_ids(ARGF).each do |id|
     video_url, fmt = get_video_url(id, t)
     title = find_title(body)
     filename = filename_for(title)
-    puts "wget -O '#{filename}.mp4' '#{video_url}'"
-    STDERR.puts "Video id: #{id} title: #{title} fmt: #{fmt}"
+    puts "curl -o '#{filename}.#{YOUTUBE_FORMATS[fmt][:ext]}' '#{video_url}'"
+    STDERR.puts "Video id: #{id} Title: #{title} Format: #{YOUTUBE_FORMATS[fmt][:name]}"
   rescue => e
     STDERR.puts "Exception: " << e
   end
