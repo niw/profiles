@@ -113,6 +113,11 @@ function s:handler.getCompleteItems(patternPrimary)
 endfunction
 
 "
+function s:handler.predictOpen(word, mode)
+  return filereadable(a:word)
+endfunction
+
+"
 function s:handler.onOpen(word, mode)
   call fuf#openFile(a:word, a:mode, g:fuf_reuseWindow)
 endfunction

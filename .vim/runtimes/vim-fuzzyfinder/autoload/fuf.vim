@@ -925,6 +925,9 @@ let s:handlerBase = {}
 " "
 " s:handler.getCompleteItems(patternSet)
 " 
+" " Predict which we can open the word in specified mode or not.
+" s:handler.predictOpen(word, mode)
+"
 " "
 " s:handler.onOpen(word, mode)
 " 
@@ -1074,7 +1077,11 @@ function s:handlerBase.onCr(openType, fCheckDir)
     echo ''
     return
   endif
-  let s:reservedCommand = [self.removePrompt(getline('.')), a:openType]
+  let cmd = [self.removePrompt(getline('.')), a:openType]
+  if exists("self.predictOpen") && !self.predictOpen(cmd[0], cmd[1])
+    return
+  endif
+  let s:reservedCommand = cmd
   call feedkeys("\<Esc>", 'n') " stopinsert behavior is strange...
 endfunction
 
