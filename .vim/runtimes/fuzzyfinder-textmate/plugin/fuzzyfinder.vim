@@ -657,6 +657,11 @@ function! g:FuzzyFinderMode.Base.on_command_pre(cmd)
 endfunction
 
 "
+function! g:FuzzyFinderMode.Base.on_predict_open(expr, mode)
+  return 1
+endfunction
+
+"
 function! g:FuzzyFinderMode.Base.on_cr(index, dir_check)
   if pumvisible()
     call feedkeys(printf("\<C-y>\<C-r>=%s(%d, 1) ? '' : ''\<CR>", self.to_str('on_cr'), a:index), 'n')
@@ -666,6 +671,10 @@ function! g:FuzzyFinderMode.Base.on_cr(index, dir_check)
     call self.add_stat(self.last_base, s:RemovePrompt(getline('.'), self.prompt))
   endif
   if a:dir_check && getline('.') =~ '[/\\]$'
+    return
+  endif
+  let cmd = [s:RemovePrompt(getline('.'), self.prompt), a:index]
+  if !self.on_predict_open(cmd[0], cmd[1])
     return
   endif
   let s:reserved_command = [s:RemovePrompt(getline('.'), self.prompt), a:index]
@@ -914,6 +923,11 @@ function! g:FuzzyFinderMode.File.on_complete(base)
   let result = self.cached_glob(patterns.head.base, patterns.tail.re, self.excluded_path, s:SuffixNumber(patterns.tail.base), self.enumerating_limit)
   let result = filter(result, 'bufnr("^" . v:val.word . "$") != self.prev_bufnr')
   return map(result, 's:SetRanks(v:val, s:SplitPath(matchstr(v:val.word, ''^.*[^/\\]'')).tail, patterns.tail.base, stats)')
+endfunction
+
+"
+function! g:FuzzyFinderMode.File.on_predict_open(expr, mode)
+  return filereadable(a:expr)
 endfunction
 
 "
