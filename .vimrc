@@ -497,22 +497,6 @@ command! -bang Bw call <SID>WipeBuffer("<bang>")
 " Git Plugin (Standard Plugin)
 autocmd FileType gitcommit DiffGitCached
 
-" LustyExplorer
-let g:LustyExplorerSuppressRubyWarning = 1
-if has("ruby") || version >= 700
-  function! s:ExecuteCommandOnCR(command)
-    if &buftype == ""
-      execute(a:command)
-    else
-      call feedkeys("\r", 'n')
-    endif
-  endfunction
-
-  nnoremap <silent> <CR> :call <SID>ExecuteCommandOnCR("LustyBufferExplorer")<CR>
-  nnoremap <silent> <C-j> :LustyFilesystemExplorer<CR>
-  nnoremap <silent> <C-k> :LustyFilesystemExplorerFromHere<CR>
-endif
-
 "}}}
 
 "{{{ Platform Dependents
