@@ -9,6 +9,8 @@ let g:fuf_modesDisable = ['mrucmd']
 let g:fuf_mrufile_maxItem = 400
 " The key to show the preview in the status lines
 let g:fuf_keyPreview = '<Space>'
+" Increase length of completion menu width
+let g:fuf_maxMenuWidth = 120
 
 " Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
 let g:plugin_dicwin_disable = 1
