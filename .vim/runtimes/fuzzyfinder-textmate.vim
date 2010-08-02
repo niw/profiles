@@ -5,16 +5,8 @@ let g:FuzzyFinderOptions.MruCmd.max_item = 200
 " Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
 let g:plugin_dicwin_disable = 1
 
-" Keymapping
-function! s:ExecuteCommandOnCR(command)
-  if &buftype == ""
-    execute(a:command)
-  else
-    call feedkeys("\r", 'n')
-  endif
-endfunction
-
-nnoremap <silent> <CR>  :call <SID>ExecuteCommandOnCR("FuzzyFinderBuffer")<CR>
+" I'm not sure why but we can't use <SID>ExecuteCommandOnCR with FuzzyFinderBuffer
+nnoremap <silent> <CR>  :if &buftype == ''<CR>execute('FuzzyFinderBuffer')<CR>else<CR>call feedkeys("\r", 'n')<CR>endif<CR>
 nnoremap <silent> <C-j> :FuzzyFinderTextMate<CR>
 nnoremap <silent> <C-k> :FuzzyFinderFileWithCurrentBufferDir<CR>
 nnoremap <silent> <C-l> :FuzzyFinderMruFile<CR>
