@@ -20,12 +20,12 @@ endfunction
 command! -bang -narg=? -complete=file   FuzzyFinderTextMate   call FuzzyFinderTextMateLauncher(<q-args>, len(<q-bang>))
 command! FuzzyFinderTextMateRefreshFiles ruby refresh_finder
 
+" This line must be outside of any function, see help.
+let s:sfile = expand('<sfile>')
 function! InstantiateTextMateMode() "{{{
 ruby << RUBY
   begin
-    # FIXME Will be rewritten working without the fixed path.
-    #require "#{ENV['HOME']}/.vim/ruby/fuzzy_file_finder"
-    require "#{ENV['HOME']}/.vim/runtimes/fuzzyfinder-textmate/lib/fuzzy_file_finder"
+	require File.expand_path(File.join(File.dirname(VIM.evaluate("s:sfile")), "..", "lib", "fuzzy_file_finder"))
   rescue LoadError
     begin
       require 'rubygems'
