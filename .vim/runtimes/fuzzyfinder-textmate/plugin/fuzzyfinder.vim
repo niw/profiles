@@ -680,7 +680,7 @@ function! g:FuzzyFinderMode.Base.on_cr(index, dir_check)
   if !self.on_predict_open(cmd[0], cmd[1])
     return
   endif
-  let s:reserved_command = [s:RemovePrompt(getline('.'), self.prompt), a:index]
+  let s:reserved_command = cmd
   call feedkeys("\<Esc>", 'n') " stopinsert behavior is strange...
 endfunction
 
@@ -930,7 +930,7 @@ endfunction
 
 "
 function! g:FuzzyFinderMode.File.on_predict_open(expr, mode)
-  return filereadable(a:expr)
+  return filereadable(expand(a:expr))
 endfunction
 
 "
