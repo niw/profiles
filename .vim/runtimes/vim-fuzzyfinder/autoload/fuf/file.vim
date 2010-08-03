@@ -113,8 +113,8 @@ function s:handler.getCompleteItems(patternPrimary)
 endfunction
 
 "
-function s:handler.predictOpen(word, mode)
-  return filereadable(a:word)
+function s:handler.onPredictOpen(word, mode)
+  return filereadable(expand(a:word))
 endfunction
 
 "
