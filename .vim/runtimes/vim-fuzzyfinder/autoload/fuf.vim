@@ -424,6 +424,9 @@ function fuf#launch(modeName, initialPattern, partialMatching)
         \ ]
     call fuf#defineKeyMappingInHandler(key, func)
   endfor
+  " Map <Tab> to next item, previous item on the popup menu.
+  execute 'inoremap <buffer> <silent> <Tab>   <C-r>=pumvisible() ? "\<lt>C-n>" : ""<CR>'
+  execute 'inoremap <buffer> <silent> <S-Tab> <C-r>=pumvisible() ? "\<lt>C-p>" : ""<CR>'
   " Starts Insert mode and makes CursorMovedI event now. Command prompt is
   " needed to forces a completion menu to update every typing.
   call setline(1, s:runningHandler.getPrompt() . a:initialPattern)
