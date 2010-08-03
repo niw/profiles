@@ -110,8 +110,10 @@ RUBY
         matches_length = matches.length
         matches.sort_by { |a| [-a[:score], a[:path]] }[0,enumerating_limit].each_with_index do |match, index|
           word = match[:path]
-          abbr = "%2d: %s" % [index+1, match[path_display.to_sym]]
-          menu = "[%5d]" % [match[:score] * 10000]
+          #abbr = "%2d: %s" % [index+1, match[path_display.to_sym]]
+          abbr = match[path_display.to_sym]
+          #menu = "[%5d]" % [match[:score] * 10000]
+		  menu = "%5s" % File.extname(word).gsub(/^\./, '')
           VIM.evaluate("add(result, { 'word' : fnamemodify(#{word.inspect},':~:.'), 'abbr' : #{abbr.inspect}, 'menu' : #{menu.inspect}, 'ranks': [#{index}] })")
         end
       rescue FuzzyFileFinder::TooManyEntries
