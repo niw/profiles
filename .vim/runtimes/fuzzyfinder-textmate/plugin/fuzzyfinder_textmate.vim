@@ -23,8 +23,7 @@ command! FuzzyFinderTextMateRefreshFiles ruby refresh_finder
 function! InstantiateTextMateMode() "{{{
 ruby << RUBY
   begin
-    # Temporary modification by Yoshimasa Niwa <niw@niw.at>
-    # Will be rewritten working without the fixed path.
+    # FIXME Will be rewritten working without the fixed path.
     #require "#{ENV['HOME']}/.vim/ruby/fuzzy_file_finder"
     require "#{ENV['HOME']}/.vim/runtimes/fuzzyfinder-textmate/lib/fuzzy_file_finder"
   rescue LoadError
@@ -101,20 +100,22 @@ RUBY
     endif
     let result = []
     ruby << RUBY
-
       text = VIM.evaluate('s:RemovePrompt(a:base,self.prompt)') rescue ''
       enumerating_limit = VIM.evaluate('l:enumerating_limit').to_i
       path_display = VIM.evaluate("g:fuzzy_path_display")
       ceiling = VIM.evaluate('g:fuzzy_ceiling').to_i
 
-      matches = finder.find(text, ceiling)
-      matches_length = matches.length
-      matches.sort_by { |a| [-a[:score], a[:path]] }[0,enumerating_limit].each_with_index do |match, index|
-        word = match[:path]
-        abbr = "%2d: %s" % [index+1, match[path_display.to_sym]]
-        menu = "[%5d]" % [match[:score] * 10000]
-        VIM.evaluate("add(result, { 'word' : fnamemodify(#{word.inspect},':~:.'), 'abbr' : #{abbr.inspect}, 'menu' : #{menu.inspect}, 'ranks': [#{index}] })")
-      end
+      begin
+        matches = finder.find(text, ceiling)
+        matches_length = matches.length
+        matches.sort_by { |a| [-a[:score], a[:path]] }[0,enumerating_limit].each_with_index do |match, index|
+          word = match[:path]
+          abbr = "%2d: %s" % [index+1, match[path_display.to_sym]]
+          menu = "[%5d]" % [match[:score] * 10000]
+          VIM.evaluate("add(result, { 'word' : fnamemodify(#{word.inspect},':~:.'), 'abbr' : #{abbr.inspect}, 'menu' : #{menu.inspect}, 'ranks': [#{index}] })")
+        end
+      rescue FuzzyFileFinder::TooManyEntries
+	  end
 RUBY
     return result
   endfunction
