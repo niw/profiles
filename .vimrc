@@ -362,9 +362,10 @@ function! s:OpenQuickFix()
   endif
 endfunction
 
-nnoremap <silent> qq :call <SID>OpenQuickFix()<CR>
-nnoremap <silent> qw :<C-u>cclose<CR>
+nnoremap <silent> <space>q :call <SID>OpenQuickFix()<CR>
+nnoremap <silent> <space>w :<C-u>cclose<CR>
 
+nnoremap <silent> qq :<C-u>quit<CR>
 "}}}
 
 " {{{ Auto Commands
