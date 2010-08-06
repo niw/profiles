@@ -24,4 +24,4 @@ eval `cat "${AGENT_STATUS_FILE}"` > /dev/null
 echo "${MESSAGE_COLOR}Now ${AGENT_COMMAND} is running (pid: ${SSH_AGENT_PID}), and add the private key...$reset_color"
 ${AGENT_ADD_CMD} "${SSH_PRIVATE_KEY}"
 
-# vim:ts=4:sw=4:noexpandtab:ft=zsh
+# vim:ts=4:sw=4:noexpandtab:ft=sh
