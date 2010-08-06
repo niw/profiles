@@ -90,7 +90,7 @@ init_additionl_configration() {
 		done
 
 		# Additional initialize scripts
-		for f in "$i"/$1 "$1"/*.sh; do
+		for f in "$i"/$1 "$i"/*.sh; do
 			if [ -f "$f" ]; then
 				source "$f"
 			fi
