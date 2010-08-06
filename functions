@@ -1,0 +1,113 @@
+get_arch() {
+	local arch=`uname`
+	if [ $(uname|sed 's/\(.*\)_.*/\1/') = 'CYGWIN' ]; then
+		result='cygwin'
+	elif [ "${arch}" = 'Linux' ]; then
+		result='linux'
+	elif [ "${arch}" = 'Darwin' ]; then
+		result='darwin'
+	elif [ "${arch}" = 'FreeBSD' ]; then
+		result=-'freebsd'
+	fi
+}
+
+get_hash_id() {
+	result=$($1|sum|awk '{print $1}')
+}
+
+get_color_index() {
+	# There are 7 colors and black then use them cyclic.
+	result=$(($1 % 7 + 1))
+}
+
+get_prompt_color_indexes() {
+	get_hash_id "whoami"; get_color_index $result
+	local user=$result
+	get_hash_id "hostname"; get_color_index $result
+	local host=$result
+	get_color_index $(($SHLVL + 2))
+	local shlvl=$result
+	result=($user $host $shlvl)
+}
+
+init_basic_environment_variables() {
+	# editor
+	export EDITOR=vim
+	# default language
+	export LANG=ja_JP.UTF-8
+	# profile bin path
+	export PATH="$PATH:$profiles/bin"
+}
+
+init_aliases() {
+	get_arch
+	local arch=$result
+
+	# ls typo
+	alias ls-al='ls -al'
+
+	# colors ls
+	if [ "$arch" = "darwin" -o "$arch" = "freebsd" ]; then
+		alias ls='ls -hG'
+	else
+		alias ls='ls -p -h --show-control-chars --color=auto'
+	fi
+
+	# subversion related
+	alias svndiff="svn diff -x --ignore-all-space -x --ignore-eol-style | vi -v -"
+	alias svndiffd="svn diff -x --ignore-all-space -x --ignore-eol-style -r \"{\`date -v-1d +%Y%m%d\`}\" | vi -v -"
+	alias svnst="svn st | grep -v '^[X?]'"
+
+	# grep related
+	alias grepr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' . -e "
+	alias gr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='**/tmp' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
+	alias ge="grepedit"
+
+	alias now="date +%Y%m%d%H%M%S"
+	alias wget="wget -U Mozilla --no-check-certificate"
+	alias fn="find . -not -ipath '*/tmp/*' -not -ipath '*/.*/*' -name "
+
+	# Terminal.app related
+	alias t="term -t"
+
+	# if we have vim, vi is vim
+	if type 'vim' > /dev/null 2>&1; then
+		alias vi='vim'
+	fi
+}
+
+init_additionl_configration() {
+	get_arch
+	local arch=$result
+
+	for i in "$profiles" "$profiles/$arch"; do
+		# Additional PATH enviroment variables
+		for f in "$i"/*.path; do
+			if [ -f "$f" ]; then
+				p=$(sed -e ':a' -e '$!N' -e '$!b a' -e 's/\n/:/g' < "$f")
+				export PATH="${p}:${PATH}"
+			fi
+		done
+
+		# Additional initialize scripts
+		for f in "$i"/$1 "$1"/*.sh; do
+			if [ -f "$f" ]; then
+				source "$f"
+			fi
+		done
+	done
+}
+
+init_rvm() {
+	if [ -s "$HOME/.rvm/scripts/rvm" ]; then
+		source "$HOME/.rvm/scripts/rvm"
+		rvm default 1>/dev/null 2>&1
+		if [ -f ".rvmrc" ]; then
+			source ".rvmrc"
+		fi
+		return 0
+	fi
+	return 1
+}
+
+# vim:ts=4:sw=4:noexpandtab:foldmethod=marker:nowrap:ft=sh:

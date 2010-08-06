@@ -1,41 +1,25 @@
-## Local Variables {{{
-
-# define architecture
-arch=`uname`
-if [ $(uname | sed 's/\(.*\)_.*/\1/') = 'CYGWIN' ]; then
-	arch='cygwin'
-elif [ "${arch}" = 'Linux' ]; then
-	arch='linux'
-elif [ "${arch}" = 'Darwin' ]; then
-	arch='darwin'
-elif [ "${arch}" = 'FreeBSD' ]; then
-	arch='freebsd'
-fi
-
-# path of profiles itself
 profiles=~/.profiles
+source "${profiles}/functions"
+
+## Aliases {{{
+
+init_aliases
+
+# pipe aliasa
+alias -g V="| vi -v -"
+alias -g G="| grep"
+alias -g T="| tail"
+alias -g H="| head"
+alias -g L="| less -r"
+
+## }}}
+
+## Zsh Basic Configurations {{{
+## based on http://devel.aquahill.net/zsh/zshoptions
 
 # initialize hook functions array
 typeset -ga preexec_functions
 typeset -ga precmd_functions
-
-# }}}
-
-## Basic Enviroment Variables {{{
-
-# editor
-export EDITOR=vim
-
-# default language
-export LANG=ja_JP.UTF-8
-
-# profile bin path
-export PATH=${PATH}:${profiles}/bin
-
-# }}}
-
-## Basic Configurations {{{
-## based on http://devel.aquahill.net/zsh/zshoptions
 
 # viキーバインド
 #bindkey -v
@@ -52,16 +36,27 @@ setopt prompt_subst
 
 # プロンプトにユーザー名、ホスト名、カレントディレクトリを表示
 # ルートの場合は名前を色づけ
-set -A color_table black red green yellow blue magenta cyan white
-user_color=$color_table[$[$(whoami | sum | sed 's/\([0-9]*\) *\([0-9]*\)/\1/') % 7 + 1]]
-host_color=$color_table[$[$(hostname | sum | sed 's/\([0-9]*\) *\([0-9]*\)/\1/') % 7 + 1]]
-shlvl_color=$color_table[$[($SHLVL + 3) % 7 + 1]]
-# NOTE preserve backward compatibility, here we're not using %F and  %f
-# see RPROMPT for vcs_info
-PROMPT='%{$fg[yellow]%}%T%{$reset_color%} %(!.%{$fg[red]%}root.%{$fg[${user_color}]%}%n)%{$reset_color%}@%{$fg[${host_color}]%}%m%{$reset_color%}(${arch}):%{$fg[${shlvl_color}]%}%2~%{$reset_color%} %(!.#.%%) '
+get_prompt() {
+	get_arch
+	local arch=$result
+
+	local color_table
+	color_table=(red green yellow blue magenta cyan white)
+
+	get_prompt_color_indexes
+	local user_color=${color_table[${result[1]}]}
+	local host_color=${color_table[${result[2]}]}
+	local shlvl_color=${color_table[${result[3]}]}
+
+	# NOTE preserve backward compatibility, here we're not using %F and  %f
+	# see RPROMPT for vcs_info
+	result="%{$fg[yellow]%}%T%{$reset_color%} %{$fg[${user_color}]%}%n%{$reset_color%}@%{$fg[${host_color}]%}%m%{$reset_color%}(${arch}):%{$fg[${shlvl_color}]%}%2~%{$reset_color%} %(!.#.$) "
+}
+get_prompt
+PROMPT=$result
 
 # プロンプトにカレントディレクトリを指定
-RPROMPT='%{$fg[blue]%}%~%{$reset_color%}'
+RPROMPT="%{$fg[blue]%}%~%{$reset_color%}"
 
 # 指定したコマンド名がなく、ディレクトリ名と一致した場合 cd する
 setopt auto_cd
@@ -151,7 +146,7 @@ select-word-style bash
 
 # }}}
 
-## VCS Info and RPROMPT {{{
+## Zsh VCS Info and RPROMPT {{{
 
 if autoload +X vcs_info 2> /dev/null; then
 	autoload -Uz vcs_info
@@ -168,7 +163,7 @@ fi
 
 # }}}
 
-## Completion System {{{
+## Zsh Completion System {{{
 
 # コマンドラインオプションを補完
 autoload -Uz compinit
@@ -201,45 +196,7 @@ fi
 
 ## }}}
 
-## Aliases {{{
-
-# ls typo
-alias ls-al='ls -al'
-
-# colors ls
-if [ "${arch}" = "darwin" -o "${arch}" = "freebsd" ]; then
-	alias ls='ls -hG'
-else
-	alias ls='ls -p -h --show-control-chars --color=auto'
-fi
-
-# pipe
-alias -g V="| vi -v -"
-alias -g G="| grep"
-alias -g T="| tail"
-alias -g H="| head"
-alias -g L="| less -r"
-
-# subversion related
-alias svndiff="svn diff -x --ignore-all-space -x --ignore-eol-style | vi -v -"
-alias svndiffd="svn diff -x --ignore-all-space -x --ignore-eol-style -r \"{\`date -v-1d +%Y%m%d\`}\" | vi -v -"
-alias svnst="svn st | grep -v '^[X?]'"
-
-# grep related
-alias grepr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' . -e "
-alias gr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='**/tmp' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
-alias ge="grepedit"
-
-alias now="date +%Y%m%d%H%M%S"
-alias wget="wget -U Mozilla --no-check-certificate"
-alias fn="find . -not -ipath '*/tmp/*' -not -ipath '*/.*/*' -name "
-
-# Terminal.app related
-alias t="term -t"
-
-## }}}
-
-## History {{{
+## Zsh History {{{
 
 # 履歴をファイルに保存する
 HISTFILE="${HOME}"/.zsh-history
@@ -284,7 +241,7 @@ zle -N history-beginning-search-forward-end history-search-end
 
 ## }}}
 
-## Improve Keybinds {{{
+## Zsh Keybinds {{{
 ## based on http://github.com/kana/config/
 
 # to delete characters beyond the starting point of the current insertion.
@@ -312,7 +269,7 @@ bindkey -M viins '\C-t' transpose-words
 
 # }}}
 
-## Setup Terminal Title {{{
+## Zsh Terminal Title Changes {{{
 
 case "${TERM}" in
 screen*|ansi*)
@@ -342,50 +299,22 @@ esac
 ## Scan Additonal Configurations {{{
 
 setopt no_nomatch
-for i in "${profiles}" "${profiles}/${arch}"
-do
-	# Additional PATH enviroment variables
-	for f in "${i}"/*.path
-	do
-		if [ -f "${f}" ]; then
-			p=$(sed -e ':a' -e '$!N' -e '$!b a' -e 's/\n/:/g' < "${f}")
-			export PATH="${p}:${PATH}"
-		fi
-	done
-
-	# Additional initialize scripts
-	for f in "${i}"/*.zsh
-	do
-		if [ -f "${f}" ]; then
-			source "${f}"
-		fi
-	done
-done
+init_additionl_configration "*.zsh"
 
 # }}}
 
 ## Post Configurations {{{
 
-# vimがあったらviはvim
-if type 'vim' > /dev/null 2>&1; then
-	alias vi='vim'
-fi
-
 # Load rvm if it exists
 # rvm requires 4.3.5
 autoload -Uz is-at-least
 if is-at-least 4.3.5; then
-	if [ -s "${HOME}/.rvm/scripts/rvm" ]; then
-		setopt nullglob
-		source "${HOME}/.rvm/scripts/rvm"
-		rvm default 1>/dev/null 2>&1
-		if [ -f ".rvmrc" ]; then
-			source ".rvmrc"
-		fi
+	setopt nullglob
+	if init_rvm; then
 		RPROMPT="${RPROMPT} %{$fg[red]%}\${rvm_ruby_interpreter}%{$reset_color%}"
 	fi
 fi
 
 # }}}
 
-# vim:ts=4:sw=4:noexpandtab:foldmethod=marker:
+# vim:ts=4:sw=4:noexpandtab:foldmethod=marker:nowrap:
