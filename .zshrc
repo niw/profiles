@@ -37,9 +37,6 @@ setopt prompt_subst
 # プロンプトにユーザー名、ホスト名、カレントディレクトリを表示
 # ルートの場合は名前を色づけ
 get_prompt() {
-	get_arch
-	local arch=$result
-
 	local color_table
 	color_table=(red green yellow blue magenta cyan white)
 
@@ -50,7 +47,7 @@ get_prompt() {
 
 	# NOTE preserve backward compatibility, here we're not using %F and  %f
 	# see RPROMPT for vcs_info
-	result="%{$fg[yellow]%}%T%{$reset_color%} %{$fg[${user_color}]%}%n%{$reset_color%}@%{$fg[${host_color}]%}%m%{$reset_color%}(${arch}):%{$fg[${shlvl_color}]%}%2~%{$reset_color%} %(!.#.$) "
+	result="%{$fg[yellow]%}%T%{$reset_color%} %{$fg[${user_color}]%}%n%{$reset_color%}@%{$fg[${host_color}]%}%m%{$reset_color%}:%{$fg[${shlvl_color}]%}%2~%{$reset_color%} %(!.#.$) "
 }
 get_prompt
 PROMPT=$result

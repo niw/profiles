@@ -19,10 +19,6 @@ init_aliases
 ## Bash Basic Configurations {{{
 
 get_prompt() {
-	# Set arch variable
-	get_arch
-	local arch=$result
-
 	# ANSI Colors: 30 black 31 red 32 green 33 yellow 34 blue 35 magenta 36 cyan 37 white
 	local color_table
 	color_table=(30 31 32 33 34 35 36 37)
@@ -34,7 +30,7 @@ get_prompt() {
 
 	# based on http://d.hatena.ne.jp/mrkn/20090121/the_prompt_of_bash
   	local rprompt='\[\e[$[COLUMNS-$(echo -n " \w" | wc -c)]C\e[35m\w\e[0m\e[$[COLUMNS]D\]'
-	result="$rprompt\e[33m\\A\e[0m \e[${user_color}m\\u\e[0m@\e[${host_color}m\\h\e[0m(${arch}):\e[${shlvl_color}m\\W\e[0m \$ "
+	result="$rprompt\e[33m\\A\e[0m \e[${user_color}m\\u\e[0m@\e[${host_color}m\\h\e[0m:\e[${shlvl_color}m\\W\e[0m \$ "
 }
 get_prompt
 PS1=$result
