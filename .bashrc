@@ -43,6 +43,7 @@ get_prompt() {
 
 get_rprompt() {
 	# lazy evalutaion to content of $PROMPT
+	# FIXME any good code?
 	eval "echo -n \"$RPROMPT\""
 }
 
@@ -54,6 +55,15 @@ PS1=$result
 ## Bash History {{{
 
 HISTSIZE=100000
+
+# ignore duplicates
+HISTCONTROL=ignoredups
+
+# ignore fg, bg and history command
+HISTIGNORE="fg*:bg*:history*"
+
+# Do not overwrite history file
+shopt -u histappend
 
 # }}}
 
