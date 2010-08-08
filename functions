@@ -43,15 +43,16 @@ init_aliases() {
 	get_arch
 	local arch=$result
 
-	# ls typo
-	alias ls-al='ls -al'
-
 	# colors ls
 	if [ "$arch" = "darwin" -o "$arch" = "freebsd" ]; then
 		alias ls='ls -hG'
 	else
 		alias ls='ls -p -h --show-control-chars --color=auto'
 	fi
+
+	# ls
+	alias ls-al="ls -al"
+	alias ll="ls -al"
 
 	# subversion related
 	alias svndiff="svn diff -x --ignore-all-space -x --ignore-eol-style | vi -v -"
@@ -62,6 +63,11 @@ init_aliases() {
 	alias grepr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' . -e "
 	alias gr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='**/tmp' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
 	alias ge="grepedit"
+
+	# git related
+	alias d="git diff"
+	alias s="git status"
+	alias a="git add"
 
 	alias now="date +%Y%m%d%H%M%S"
 	alias wget="wget -U Mozilla --no-check-certificate"
