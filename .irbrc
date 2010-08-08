@@ -1,8 +1,10 @@
-require 'rubygems'
-
-$KCODE='u'
-
 begin
+  require 'rubygems'
+
+  if RUBY_VERSION < '1.9.0'
+    $KCODE='u'
+  end
+
   require 'wirble'
   Wirble.init
   Wirble.colorize
@@ -22,7 +24,7 @@ begin
       File.open(real_path, perms) { |fh| fh.puts lines }
     end
   end
-rescue
+rescue LoadError
   require 'irb/completion'
   ARGV.concat [ "--readline", "--prompt-mode", "simple" ]
 
