@@ -873,7 +873,7 @@ endfunction
 "
 function! g:FuzzyFinderMode.Buffer.on_mode_enter_post()
   let self.items = map(filter(range(1, bufnr('$')),
-        \                     'buflisted(v:val) && v:val != self.prev_bufnr'),
+        \                     'buflisted(v:val) && getbufvar(v:val, "&buftype") == "" && v:val != self.prev_bufnr'),
         \              'self.make_item(v:val)')
   if self.mru_order
     call s:MapToSetSerialIndex(sort(self.items, 's:CompareTimeDescending'), 1)
