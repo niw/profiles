@@ -26,15 +26,13 @@ function! s:DetermineEncoding()
   " OSX GUIはUTF-8を基本にする
   if has('gui_running') && has('mac')
     let &encoding = s:enc_utf8
-    return
   endif
   " LANG設定があったら上書き
-  " デフォルトはUTF-8
   if $LANG =~# 'euc'
     let &encoding = s:enc_eucjp
   elseif $LANG =~# 'SJIS'
     let &encoding = s:enc_cp932
-  else
+  elseif $LANG =~# 'UTF-8'
     let &encoding = s:enc_utf8
   endif
 endfunction

@@ -33,6 +33,8 @@ get_prompt_color_indexes() {
 init_basic_environment_variables() {
 	# editor
 	export EDITOR=vim
+	# language
+	export LANG=en_US.UTF-8
 	# profile bin path
 	export PATH="$PATH:$profiles/bin"
 }
