@@ -116,4 +116,12 @@ init_rvm() {
 	return 1
 }
 
+init_locallib() {
+	if [ -s "/Users/niw/.perl5/lib/perl5/local/lib.pm" ]; then
+		eval $(perl -I$HOME/.perl5/lib/perl5 -Mlocal::lib=$HOME/.perl5)
+		return 0
+	fi
+	return 1
+}
+
 # vim:ts=4:sw=4:noexpandtab:foldmethod=marker:nowrap:ft=sh:

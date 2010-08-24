@@ -79,6 +79,8 @@ if init_rvm; then
 	RPROMPT="$RPROMPT \$rvm_ruby_interpreter"
 fi
 
+init_locallib
+
 # }}}
 
 # vim:ts=4:sw=4:noexpandtab:foldmethod=marker:nowrap:

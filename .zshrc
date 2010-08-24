@@ -315,6 +315,9 @@ if is-at-least 4.3.5; then
 	fi
 fi
 
+# Load Perl local::lib
+init_locallib
+
 # }}}
 
 # vim:ts=4:sw=4:noexpandtab:foldmethod=marker:nowrap:
