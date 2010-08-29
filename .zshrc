@@ -147,6 +147,7 @@ select-word-style bash
 
 if autoload +X vcs_info 2> /dev/null; then
 	autoload -Uz vcs_info
+	zstyle ':vcs_info:*' enable git cvs svn # hg - slow, it scans all parent directories.
 	zstyle ':vcs_info:*' formats '%s:%b'
 	zstyle ':vcs_info:*' actionformats '%s:%b (%a)'
 	precmd_vcs_info() {
