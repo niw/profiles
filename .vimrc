@@ -365,7 +365,13 @@ endfunction
 nnoremap <silent> <space>q :call <SID>OpenQuickFix()<CR>
 nnoremap <silent> <space>w :<C-u>cclose<CR>
 
+" Easy to quit.
 nnoremap <silent> qq :<C-u>quit<CR>
+
+" Avoid run K mistakenly with C-k, remap K to <space>k
+nnoremap K <Nop>
+nnoremap <Space>k K
+
 "}}}
 
 " {{{ Auto Commands
