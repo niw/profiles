@@ -66,12 +66,20 @@ init_aliases() {
 
 	# git related
 	alias d="git diff"
+	alias dm="git diff master"
 	alias s="git status"
 	alias a="git add"
 
 	alias now="date +%Y%m%d%H%M%S"
 	alias wget="wget -U Mozilla --no-check-certificate"
 	alias fn="find . -not -ipath '*/tmp/*' -not -ipath '*/.*/*' -name "
+
+	# awk
+	alias a1="awk '{print \$1}'"
+	alias a2="awk '{print \$2}'"
+	alias a3="awk '{print \$3}'"
+	alias a4="awk '{print \$4}'"
+	alias a5="awk '{print \$5}'"
 
 	# Terminal.app related
 	alias t="term -t"
