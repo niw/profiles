@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ ! -e /usr/bin/hdid ]; then
-	echo "This command must run on Mac OS X"
+	echo "hdid command is not found, This command must run under Mac OS X."
 	exit 0
 fi
 
@@ -9,11 +9,17 @@ if [ -z "$SIZE" ]; then
 	SIZE=$1
 fi
 if [ -z "$SIZE" ]; then
-	echo "Usage: $0 [size in Mega byte]"
+	echo "Usage: $0 SIZE_IN_MEGABYTE [VOLUME_NAME]"
 	exit 0
 fi
 
-VOLUME_NAME=ramdisk
+if [ -z "$VOLUME_NAME" ]; then
+	VOLUME_NAME=$2
+fi
+if [ -z "$VOLUME_NAME" ]; then
+	VOLUME_NAME=ramdisk
+fi
+
 VOLUME_PATH="/Volumes/$VOLUME_NAME"
 
 if [ -e "$VOLUME_PATH" ]; then
