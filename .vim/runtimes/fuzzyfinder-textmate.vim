@@ -4,6 +4,7 @@ let g:FuzzyFinderOptions.MruCmd.max_item = 200
 
 " Ignore temporary files
 let g:fuzzy_ignore = "*.log,tmp/*,.svn/*,.git/*"
+let g:fuzzy_ceiling = 20000
 
 " Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
 let g:plugin_dicwin_disable = 1
