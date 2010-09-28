@@ -6,7 +6,6 @@ begin
 rescue LoadError
   puts "Please install oauth gem prior to use this command."
 end
-require 'pp'
 require 'optparse'
 
 # FIX use UTC instead of localtime
@@ -153,6 +152,8 @@ unless options[:access_token] && options[:access_secret]
   access_token = consumer.get_access_token(request_token, :oauth_verifier => pin)
   puts "Please pass next options when you request authorized request next:"
   puts "-t '#{access_token.token}' -s '#{access_token.secret}'"
+  puts "Or, adding next lines into config file."
+  puts ({:access_token => access_token.token, :access_secret => access_token.secret}).to_yaml
 else
   access_token = OAuth::AccessToken.new(consumer, options[:access_token], options[:access_secret])
 end
@@ -168,5 +169,8 @@ end
 
 response = access_token.request(options[:http_method] || :get, options[:url], request_options)
 
-pp response.to_hash
+if options[:verbose]
+  require 'pp'
+  pp response.to_hash
+end
 puts response.body
