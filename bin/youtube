@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
+# encoding: UTF-8
 require 'uri'
 require 'net/http'
 require 'kconv'
 
-$KCODE='u'
+$KCODE = 'u' if RUBY_VERSION < '1.9'
 
 def redirect(url, limit = 10)
   raise 'HTTP Redirection exceeded limit' if limit == 0
