@@ -1,13 +1,12 @@
 "=============================================================================
-" Copyright (c) 2007-2009 Takeshi NISHIDA
+" Copyright (c) 2007-2010 Takeshi NISHIDA
 "
 "=============================================================================
 " LOAD GUARD {{{1
 
-if exists('g:loaded_autoload_fuf_file') || v:version < 702
+if !l9#guardScriptLoading(expand('<sfile>:p'), 702, 100)
   finish
 endif
-let g:loaded_autoload_fuf_file = 1
 
 " }}}1
 "=============================================================================
@@ -21,6 +20,11 @@ endfunction
 "
 function fuf#file#getSwitchOrder()
   return g:fuf_file_switchOrder
+endfunction
+
+"
+function fuf#file#getEditableDataNames()
+  return []
 endfunction
 
 "
@@ -61,7 +65,7 @@ endfunction
 function s:enumNonCurrentItems(dir, bufNrPrev, cache)
   let key = a:dir . 'AVOIDING EMPTY KEY'
   if !exists('a:cache[key]')
-    " NOTE: Comparing filenames is faster than bufnr()
+    " NOTE: Comparing filenames is faster than bufnr('^' . fname . '$')
     let bufNamePrev = bufname(a:bufNrPrev)
     let a:cache[key] =
           \ filter(copy(s:enumItems(a:dir)), 'v:val.word !=# bufNamePrev')
@@ -82,7 +86,7 @@ endfunction
 
 "
 function s:handler.getPrompt()
-  return fuf#formatPrompt(g:fuf_file_prompt, self.partialMatching)
+  return fuf#formatPrompt(g:fuf_file_prompt, self.partialMatching, '')
 endfunction
 
 "
@@ -91,8 +95,8 @@ function s:handler.getPreviewHeight()
 endfunction
 
 "
-function s:handler.targetsPath()
-  return 1
+function s:handler.isOpenable(enteredPattern)
+  return a:enteredPattern =~# '[^/\\]$'
 endfunction
 
 "
@@ -110,11 +114,6 @@ endfunction
 function s:handler.getCompleteItems(patternPrimary)
   return s:enumNonCurrentItems(
         \ fuf#splitPath(a:patternPrimary).head, self.bufNrPrev, self.cache)
-endfunction
-
-"
-function s:handler.onPredictOpen(word, mode)
-  return filereadable(expand(a:word))
 endfunction
 
 "
