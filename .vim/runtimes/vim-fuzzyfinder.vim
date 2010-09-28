@@ -25,6 +25,6 @@ function! s:ExecuteCommandOnCR(command)
 endfunction
 
 nnoremap <silent> <CR>  :call <SID>ExecuteCommandOnCR("FufBuffer")<CR>
-nnoremap <silent> <C-j> :FufFile<CR>
+nnoremap <silent> <C-j> :FufCoverageFile<CR>
 nnoremap <silent> <C-k> :FufFileWithCurrentBufferDir<CR>
 nnoremap <silent> <C-l> :FufMruFile<CR>
