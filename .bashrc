@@ -76,7 +76,7 @@ init_additionl_configration "*.bash"
 ## Post Configurations {{{
 
 if init_rvm; then
-	RPROMPT="$RPROMPT \$rvm_ruby_interpreter"
+	RPROMPT="$RPROMPT \$RUBY_VERSION"
 fi
 
 init_locallib

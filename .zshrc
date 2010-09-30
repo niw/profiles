@@ -312,7 +312,7 @@ autoload -Uz is-at-least
 if is-at-least 4.3.5; then
 	setopt nullglob
 	if init_rvm; then
-		RPROMPT="${RPROMPT} %{$fg[red]%}\${rvm_ruby_interpreter}%{$reset_color%}"
+		RPROMPT="${RPROMPT} %{$fg[red]%}\${RUBY_VERSION}%{$reset_color%}"
 	fi
 fi
 
