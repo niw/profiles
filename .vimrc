@@ -500,6 +500,10 @@ endfunction
 
 command! -bang Bw call <SID>WipeBuffer("<bang>")
 
+" Vars, require vim-prettyprint
+" See http://d.hatena.ne.jp/thinca/20100711/1278849707
+command! -nargs=+ Vars PP filter(copy(g:), 'v:key =~# "^<args>"')
+
 "}}}
 
 "{{{ Plugins
