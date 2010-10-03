@@ -13,3 +13,6 @@
 [submodule ".vim/runtimes/vim-surround"]
 	path = .vim/runtimes/vim-surround
 	url = git://github.com/tpope/vim-surround.git
+[submodule ".vim/runtimes/vim-prettyprint"]
+	path = .vim/runtimes/vim-prettyprint
+	url = git://github.com/thinca/vim-prettyprint.git
