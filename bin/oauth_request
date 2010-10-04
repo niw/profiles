@@ -138,6 +138,9 @@ consumer = OAuth::Consumer.new(options[:consumer_key], options[:consumer_secret]
 # Obtain access_token if it is not specified
 unless options[:access_token] && options[:access_secret]
   request_token = consumer.get_request_token
+  puts "------------------------------"
+  puts "OAuth Authentication Required!"
+  puts "------------------------------"
   puts "Please access next url to obtain authorization:"
   puts request_token.authorize_url
   begin
@@ -150,10 +153,12 @@ unless options[:access_token] && options[:access_secret]
   pin = gets.chomp
 
   access_token = consumer.get_access_token(request_token, :oauth_verifier => pin)
+  puts "------------------------------"
   puts "Please pass next options when you request authorized request next:"
   puts "-t '#{access_token.token}' -s '#{access_token.secret}'"
   puts "Or, adding next lines into config file."
   puts ({:access_token => access_token.token, :access_secret => access_token.secret}).to_yaml
+  puts "------------------------------"
 else
   access_token = OAuth::AccessToken.new(consumer, options[:access_token], options[:access_secret])
 end
