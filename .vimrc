@@ -389,6 +389,7 @@ augroup MyFileTypeCommands
   autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
   autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
   autocmd BufNewFile,BufRead *.module setlocal filetype=php
+  autocmd BufNewFile,BufRead *.mustache set syntax=mustache
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
 augroup END
 
