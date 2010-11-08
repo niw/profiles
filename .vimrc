@@ -367,6 +367,7 @@ nnoremap <silent> <space>w :<C-u>cclose<CR>
 
 " Easy to quit.
 nnoremap <silent> qq :<C-u>quit<CR>
+nnoremap <silent> qw :<C-u>Bw<CR>
 
 " Avoid run K mistakenly with C-k, remap K to <space>k
 nnoremap K <Nop>
