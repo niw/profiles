@@ -6,7 +6,7 @@ TMPFILE2=`mktemp -t $(basename $2)` || exit 1
 iconv -f utf-16 -t utf-8 $1 > $TMPFILE1
 iconv -f utf-16 -t utf-8 $2 > $TMPFILE2
 
-diff $TMPFILE1 $TMPFILE2
+diff -u $TMPFILE1 $TMPFILE2
 
 rm -f $TMPFILE1
 rm -f $TMPFILE2
