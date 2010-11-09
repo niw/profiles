@@ -16,3 +16,6 @@
 [submodule ".vim/runtimes/vim-prettyprint"]
 	path = .vim/runtimes/vim-prettyprint
 	url = git://github.com/thinca/vim-prettyprint.git
+[submodule ".vim/runtimes/vim-coffee-script"]
+	path = .vim/runtimes/vim-coffee-script
+	url = git://github.com/kchmck/vim-coffee-script.git
