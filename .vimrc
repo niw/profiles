@@ -538,6 +538,11 @@ if has('mac')
   set iskeyword=@,48-57,_,128-167,224-235
 endif
 
+" MacVim-KaoriYa 20101102 requires this setting to enable Ruby.
+if has('mac') && has('gui_running') && has('kaoriya')
+  let $RUBY_DLL = "/usr/lib/libruby.dylib"
+endif
+
 "}}}
 
 "{{{ Runtime Paths
