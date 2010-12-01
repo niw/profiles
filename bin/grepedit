@@ -20,7 +20,7 @@ regions_set = Hash.new{[]}
 pattern = ARGV.shift.gsub(/'/, "\\'")
 args = ((ARGV.empty? ? ['-r .'] : ARGV) + EXCLUDEDIRS.map{|excludedir| "--exclude-dir=#{excludedir}"}).join(' ')
 
-%x(grep '#{pattern}' #{args} -E -H -n).each do |line|
+%x(grep '#{pattern}' #{args} -E -H -n).lines.each do |line|
   next unless /.*:.*:.*/ === line
   filename,lineno = line.split(/:/)
   lineno = [lineno.to_i - AROUND - 1, 0].max
@@ -83,7 +83,7 @@ puts regions_set.map{|filename, regions| filename}.uniq
 # Parse the result.
 after = Hash.new{[]}
 
-tmp.read.inject("") do |filename, line|
+tmp.read.lines.inject("") do |filename, line|
   if /^#{IDLINE}(.*)$/ === line
     after[$1] <<= []
     next $1
