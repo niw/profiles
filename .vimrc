@@ -427,7 +427,7 @@ function! s:SetBinaryForNoeol()
   let g:save_binary_for_noeol = &binary
   if ! &endofline && ! &binary
     setlocal binary
-    if &ff == "dos"
+    if &fileformat == "dos"
       silent 1,$-1s/$/\="\\".nr2char(13)
     endif
   endif
@@ -435,7 +435,7 @@ endfunction
 
 function! s:RestoreBinaryForNoeol()
   if ! &endofline && ! g:save_binary_for_noeol
-    if &ff == "dos"
+    if &fileformat == "dos"
       silent 1,$-1s/\r$/
     endif
     setlocal nobinary
@@ -505,6 +505,11 @@ command! -bang Bw call <SID>WipeBuffer("<bang>")
 " Vars, require vim-prettyprint
 " See http://d.hatena.ne.jp/thinca/20100711/1278849707
 command! -nargs=+ Vars PP filter(copy(g:), 'v:key =~# "^<args>"')
+
+" Large font
+if has('mac') && has('gui_running')
+  command! GuiLargeFont set guifont=Marker\ Felt:h48 cmdheight=1
+endif
 
 "}}}
 
