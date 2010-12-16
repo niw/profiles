@@ -8,6 +8,9 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+# Add PATH and MAN_PATH
+init_paths
+
 # }}}
 
 ## Aliases {{{

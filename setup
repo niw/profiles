@@ -3,10 +3,6 @@
 list=".*"
 uname=`uname`
 
-if [ "${uname}" = 'Darwin' ]; then
-	list="${list} darwin/.*"
-fi
-
 if [ "$1" = '--replace' -o "$1" = '-r' ]; then
 	replace=1
 fi
