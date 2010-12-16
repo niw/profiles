@@ -1,1 +1,0 @@
-export HGENCODING=UTF-8

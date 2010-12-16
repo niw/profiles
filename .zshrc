@@ -1,6 +1,13 @@
 profiles=~/.profiles
 source "${profiles}/functions"
 
+## Pre Configurations {{{
+
+# Add PATH and MAN_PATH
+init_paths
+
+## }}}
+
 ## Aliases {{{
 
 init_aliases

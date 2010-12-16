@@ -574,7 +574,7 @@ function! s:AddRuntimePaths()
   let &runtimepath = &runtimepath . "," . join(after, ",")
 endfunction
 
-" Add ~/.vim to &runtimepath for Cygwin
+" Add ~/.vim to &runtimepath for win32
 if has('win32')
   set runtimepath+=$HOME/.vim
 endif

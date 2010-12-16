@@ -1,16 +1,3 @@
-get_arch() {
-	local arch=`uname`
-	if [ $(uname|sed 's/\(.*\)_.*/\1/') = 'CYGWIN' ]; then
-		result='cygwin'
-	elif [ "${arch}" = 'Linux' ]; then
-		result='linux'
-	elif [ "${arch}" = 'Darwin' ]; then
-		result='darwin'
-	elif [ "${arch}" = 'FreeBSD' ]; then
-		result=-'freebsd'
-	fi
-}
-
 get_hash_id() {
 	result=$($1|sum|awk '{print $1}')
 }
@@ -39,12 +26,34 @@ init_basic_environment_variables() {
 	export PATH="$PATH:$profiles/bin"
 }
 
-init_aliases() {
-	get_arch
-	local arch=$result
+init_paths() {
+	for i in /usr/local/* /opt/*; do
+		if [ -L "$i" ]; then
+			# PATH
+			local bin_path="$i/bin"
+			if [ -d "$bin_path" ]; then
+				if ! echo "$PATH" | grep -q "$bin_path" ; then
+					PATH=$bin_path:$PATH
+				fi
+			fi
+			# MANPATH
+			local man_path="$i/share/man"
+			if [ -d "$man_path" ]; then
+				if ! echo "$MANPATH" | grep -q "$man_path" ; then
+					MANPATH=$man_path:$MANPATH
+				fi
+			fi
+		fi
+	done
 
+	export PATH
+	export MANPATH
+}
+
+init_aliases() {
 	# colors ls
-	if [ "$arch" = "darwin" -o "$arch" = "freebsd" ]; then
+	local arch=`uname`
+	if [ "$arch" = "Darwin" -o "$arch" = "FreeBSD" ]; then
 		alias ls='ls -hG'
 	else
 		alias ls='ls -p -h --show-control-chars --color=auto'
@@ -92,18 +101,7 @@ init_aliases() {
 }
 
 init_additionl_configration() {
-	get_arch
-	local arch=$result
-
-	for i in "$profiles" "$profiles/$arch"; do
-		# Additional PATH enviroment variables
-		for f in "$i"/*.path; do
-			if [ -f "$f" ]; then
-				p=$(sed -e ':a' -e '$!N' -e '$!b a' -e 's/\n/:/g' < "$f")
-				export PATH="${p}:${PATH}"
-			fi
-		done
-
+	for i in "$profiles"; do
 		# Additional initialize scripts
 		for f in "$i"/$1 "$i"/*.sh; do
 			if [ -f "$f" ]; then
