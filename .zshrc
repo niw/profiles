@@ -326,6 +326,9 @@ fi
 # Load Perl local::lib
 init_locallib
 
+# Cleanup PATH, MANPATH
+clean_paths
+
 # }}}
 
 # vim:ts=4:sw=4:noexpandtab:foldmethod=marker:nowrap:

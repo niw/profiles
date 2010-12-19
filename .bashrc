@@ -78,11 +78,16 @@ init_additionl_configration "*.bash"
 
 ## Post Configurations {{{
 
+# Load rvm if it exists
 if init_rvm; then
 	RPROMPT="$RPROMPT \$RUBY_VERSION"
 fi
 
+# Load Perl local::lib
 init_locallib
+
+# Cleanup PATH, MANPATH
+clean_paths
 
 # }}}
 

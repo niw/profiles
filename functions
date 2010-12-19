@@ -27,27 +27,55 @@ init_basic_environment_variables() {
 }
 
 init_paths() {
+	if [ -x /usr/libexec/path_helper ]; then
+		# path_helper needs MANPATH env to assign values.
+		export MANPATH=$MANPATH
+		eval `/usr/libexec/path_helper -s`
+	fi
+
+	# /opt/local/bin, /usr/local/bin
+	for i in /usr/local /opt/local; do
+		local bin_path="$i/bin"
+		if [ -d "$bin_path" ]; then
+			PATH=$bin_path:$PATH
+		fi
+		local man_path="$i/share/man"
+		if [ -d "$man_path" ]; then
+			MANPATH=$man_path:$MANPATH
+		fi
+	done
+
+	# /opt/(symlink)/bin, /usr/local/(symlink)/bin
 	for i in /usr/local/* /opt/*; do
 		if [ -L "$i" ]; then
-			# PATH
 			local bin_path="$i/bin"
 			if [ -d "$bin_path" ]; then
-				if ! echo "$PATH" | grep -q "$bin_path" ; then
-					PATH=$bin_path:$PATH
-				fi
+				PATH=$bin_path:$PATH
 			fi
-			# MANPATH
 			local man_path="$i/share/man"
 			if [ -d "$man_path" ]; then
-				if ! echo "$MANPATH" | grep -q "$man_path" ; then
-					MANPATH=$man_path:$MANPATH
-				fi
+				MANPATH=$man_path:$MANPATH
 			fi
 		fi
 	done
 
-	export PATH
-	export MANPATH
+	clean_paths
+}
+
+clean_paths() {
+	for i in PATH MANPATH; do
+		get_path_cleaned $i
+		eval "export $i=$result"
+	done
+}
+
+get_path_cleaned() {
+	result=$(eval "echo -n \$$1" \
+		| tr -s ':' '\n' \
+		| awk '!($0 in a){a[$0]; print}' \
+		| tr -s '\n' ':' \
+		| sed -e 's/:$//' \
+		| sed -e 's/^://')
 }
 
 init_aliases() {
