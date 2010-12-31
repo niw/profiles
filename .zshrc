@@ -3,6 +3,9 @@ source "${profiles}/functions"
 
 ## Pre Configurations {{{
 
+# Avoid 'no matches found' error
+setopt nullglob
+
 # Add PATH and MAN_PATH
 init_paths
 
@@ -139,9 +142,6 @@ setopt auto_pushd
 
 # 終了時に警告を出さないようにする
 setopt no_check_jobs
-
-# Avoid 'no matches found' error
-setopt nullglob
 
 # 先方予測機能
 #autoload -Uz predict-on
