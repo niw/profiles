@@ -140,6 +140,9 @@ setopt auto_pushd
 # 終了時に警告を出さないようにする
 setopt no_check_jobs
 
+# Avoid 'no matches found' error
+setopt nullglob
+
 # 先方予測機能
 #autoload -Uz predict-on
 #predict-on
@@ -317,7 +320,6 @@ init_additionl_configration "*.zsh"
 # rvm requires 4.3.5
 autoload -Uz is-at-least
 if is-at-least 4.3.5; then
-	setopt nullglob
 	if init_rvm; then
 		RPROMPT="${RPROMPT} %{$fg[red]%}\${RUBY_VERSION}%{$reset_color%}"
 	fi
