@@ -129,7 +129,7 @@ init_aliases() {
 }
 
 init_additionl_configration() {
-	for i in "$profiles"; do
+	for i in "$profiles" "$profiles/local"; do
 		# Additional initialize scripts
 		for f in "$i"/$1 "$i"/*.sh; do
 			if [ -f "$f" ]; then
