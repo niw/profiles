@@ -570,6 +570,7 @@ call pathogen#helptags()
 " Re-enable filetype plugin for ftdetect directory of each runtimepath
 filetype off
 filetype on
+
 "}}}
 
 "{{{ Plugins
