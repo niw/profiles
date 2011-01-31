@@ -1,24 +1,24 @@
-[submodule ".vim/runtimes/vim-ruby"]
-	path = .vim/runtimes/vim-ruby
-	url = git://github.com/vim-ruby/vim-ruby.git
-[submodule ".vim/runtimes/vim-rails"]
-	path = .vim/runtimes/vim-rails
-	url = git://github.com/tpope/vim-rails.git
-[submodule ".vim/runtimes/vim-objj"]
-	path = .vim/runtimes/vim-objj
-	url = git://github.com/nanki/vim-objj.git
-[submodule ".vim/runtimes/git-vim"]
-	path = .vim/runtimes/git-vim
-	url = git://github.com/motemen/git-vim.git
-[submodule ".vim/runtimes/vim-surround"]
-	path = .vim/runtimes/vim-surround
-	url = git://github.com/tpope/vim-surround.git
-[submodule ".vim/runtimes/vim-prettyprint"]
-	path = .vim/runtimes/vim-prettyprint
-	url = git://github.com/thinca/vim-prettyprint.git
-[submodule ".vim/runtimes/vim-coffee-script"]
-	path = .vim/runtimes/vim-coffee-script
-	url = git://github.com/kchmck/vim-coffee-script.git
-[submodule ".vim/runtimes/vim-markdown"]
-	path = .vim/runtimes/vim-markdown
-	url = git://github.com/hallison/vim-markdown.git
+[submodule ".vim/bundle/vim-ruby"]
+	path = .vim/bundle/vim-ruby
+	url = https://github.com/vim-ruby/vim-ruby.git
+[submodule ".vim/bundle/vim-rails"]
+	path = .vim/bundle/vim-rails
+	url = https://github.com/tpope/vim-rails.git
+[submodule ".vim/bundle/vim-objj"]
+	path = .vim/bundle/vim-objj
+	url = https://github.com/nanki/vim-objj.git
+[submodule ".vim/bundle/git-vim"]
+	path = .vim/bundle/git-vim
+	url = https://github.com/motemen/git-vim.git
+[submodule ".vim/bundle/vim-surround"]
+	path = .vim/bundle/vim-surround
+	url = https://github.com/tpope/vim-surround.git
+[submodule ".vim/bundle/vim-prettyprint"]
+	path = .vim/bundle/vim-prettyprint
+	url = https://github.com/thinca/vim-prettyprint.git
+[submodule ".vim/bundle/vim-coffee-script"]
+	path = .vim/bundle/vim-coffee-script
+	url = https://github.com/kchmck/vim-coffee-script.git
+[submodule ".vim/bundle/vim-markdown"]
+	path = .vim/bundle/vim-markdown
+	url = https://github.com/hallison/vim-markdown.git
