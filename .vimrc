@@ -563,7 +563,7 @@ function! s:SourceRuntimeBundleScripts()
   endfor
 endfunction
 
-call pathogen#runtime_append_all_bundles('runtimes')
+call pathogen#runtime_append_all_bundles()
 call s:SourceRuntimeBundleScripts()
 call pathogen#helptags()
 
