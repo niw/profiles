@@ -565,6 +565,7 @@ endfunction
 
 call pathogen#runtime_append_all_bundles('runtimes')
 call s:SourceRuntimeBundleScripts()
+call pathogen#helptags()
 
 " Re-enable filetype plugin for ftdetect directory of each runtimepath
 filetype off
