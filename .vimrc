@@ -547,33 +547,13 @@ endif
 
 set runtimepath&
 
-function! s:AddRuntimePaths()
-  let after = []
-  for dir in split(glob($HOME . "/.vim/runtimes/*"))
-    if isdirectory(dir)
-      " Include additional settings for runtimes
-      for vimfile in [dir . "/.vimrc", dir . ".vim"]
-        if filereadable(vimfile)
-          execute "source " . vimfile
-        endif
-      endfor
-      let &runtimepath = &runtimepath . "," . dir
-      if isdirectory(dir . "/after")
-        let after += [dir . "/after"]
-      endif
-    endif
-  endfor
-  " We need to add after to the end of &runtimepath
-  let &runtimepath = &runtimepath . "," . join(after, ",")
-endfunction
-
 " Add ~/.vim to &runtimepath for win32
 if has('win32')
   set runtimepath+=$HOME/.vim
 endif
 
 " Add runtime paths
-call s:AddRuntimePaths()
+call pathogen#runtime_append_all_bundles('runtimes')
 
 " Re-enable filetype plugin for ftdetect directory of each runtimepath
 filetype off
