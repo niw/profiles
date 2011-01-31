@@ -552,8 +552,19 @@ if has('win32')
   set runtimepath+=$HOME/.vim
 endif
 
-" Add runtime paths
+" Add runtime paths (Using pathogen.vim)
+function! s:SourceRuntimeBundleScripts()
+  for dir in pathogen#split(&runtimepath)
+    for vimfile in [dir . '.vim', dir . '/.vimrc']
+      if filereadable(vimfile)
+        execute "source " . vimfile
+      endif
+    endfor
+  endfor
+endfunction
+
 call pathogen#runtime_append_all_bundles('runtimes')
+call s:SourceRuntimeBundleScripts()
 
 " Re-enable filetype plugin for ftdetect directory of each runtimepath
 filetype off
