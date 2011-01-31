@@ -513,13 +513,6 @@ endif
 
 "}}}
 
-"{{{ Plugins
-
-" Git Plugin (Standard Plugin)
-autocmd FileType gitcommit DiffGitCached
-
-"}}}
-
 "{{{ Platform Dependents
 
 " Support for the file system which ignore case
@@ -587,7 +580,14 @@ filetype off
 filetype on
 "}}}
 
-" {{{ Finalize
+"{{{ Plugins
+
+" Git Plugin (Standard Plugin)
+autocmd FileType gitcommit DiffGitCached
+
+"}}}
+
+"{{{ Finalize
 
 if !exists('s:loaded_vimrc')
   let s:loaded_vimrc = 1
@@ -596,6 +596,6 @@ endif
 " See :help secure
 set secure
 
-" }}}
+"}}}
 
 " vim:tabstop=2:shiftwidth=2:expandtab:foldmethod=marker:nowrap:
