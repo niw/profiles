@@ -1,16 +1,27 @@
-"{{{ 日本語化とファイルエンコードの自動判別
+" .vimrc
+" http://github.com/niw/profiles
+" Some original code sniped was created by http://github.com/kana/config
 
-" 日本語対応のための設定
-" 各エンコードを示す文字列のデフォルト値。s:CheckIconvCapabilityを()呼ぶことで
-" 実環境に合わせた値に修正される。
+"{{{ Initialize
+
+if !exists('s:loaded_vimrc')
+  " Don't reset twice on reloading, 'compatible' has many side effects.
+  set nocompatible
+endif
+
+"}}}
+
+"{{{ Japanese Support
+
+" Strings shows each Japanese encodings
+" We can select the strings for the runtime environment by calling s:CheckIconvCapability
 let s:enc_cp932 = 'cp932'
 let s:enc_eucjp = 'euc-jp'
 let s:enc_jisx = 'iso-2022-jp'
 let s:enc_utf8 = 'utf-8'
 
-" encodingを決定する
-" OSX GUIの場合はUTF-8でを基本とする。
-" 環境変数LANGにエンコード指定がある場合、LANGを優先する。
+" Select &encoding
+" On Mac OS X with GUI, We use UTF-8. Otherwise prefer to use same as LANG environment variables
 function! s:DetermineEncoding()
   " OSX GUIはUTF-8を基本にする
   if has('gui_running') && has('mac')
@@ -26,13 +37,13 @@ function! s:DetermineEncoding()
   endif
 endfunction
 
-" 利用しているiconvライブラリの性能を調べる。
-" 比較的新しいJISX0213をサポートしているか検査する。euc-jisx0213が定義してい
-" る範囲の文字をcp932からeuc-jisx0213へ変換できるかどうかで判断する。
+" Check availability of iconv library
+" Try to convert the cahrs which is defined in EUC JIS X 0213 to CP932
+" to check the iconv supprts JIS X 0213.
 function! s:CheckIconvCapability()
   if !has('iconv') | return | endif
   if iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
-    let s:enc_eucjp = 'euc-jisx0213'
+    let s:enc_eucjp = 'euc-jisx0213,euc-jp'
     let s:enc_jisx = 'iso-2022-jp-3'
   else
     let s:enc_eucjp = 'euc-jp'
@@ -40,74 +51,57 @@ function! s:CheckIconvCapability()
   endif
 endfunction
 
-" 'fileencodings'を決定する。
-" 利用しているiconvライブラリの性能及び、現在利用している'encoding'の値に応じ
-" て、日本語で利用するのに最適な'fileencodings'を設定する。
+" Select fileencodings
+" We should check iconv and encoding to determin how fill out fileencodings
 function! s:DetermineFileencodings()
   if !has('iconv') | return | endif
   let value = ''
   if &encoding ==? 'utf-8'
-    " UTF-8環境向けにfileencodingsを設定する
+    " For UTF-8 runtime environment
     let value = value. s:enc_jisx. ','. s:enc_cp932. ','. s:enc_eucjp
   elseif &encoding ==? 'cp932'
-    " CP932環境向けにfileencodingsを設定する
+    " For CP932 runtime environment
     let value = value. s:enc_jisx. ','. s:enc_utf8. ','. s:enc_eucjp
   elseif &encoding ==? 'euc-jp' || &encoding ==? 'euc-jisx0213'
-    " EUC-JP環境向けにfileencodingsを設定する
+    " For EUC-JP runtime environment
     let value = value. s:enc_jisx. ','. s:enc_utf8. ','. s:enc_cp932
   else
-    " TODO: 必要ならばその他のエンコード向けの設定をココに追加する
+    " NOTE if neede, we can place the settings for the other runtime environments
   endif
-  "let &fileencodings = value. ',ucs-bom,ucs-2le,ucs-2'
+  if has('guess_encode')
+    let value = 'guess,'. value
+  endif
+  " FIXME UTF-16 support
+  "let value = value. ',ucs-bom,ucs-2le,ucs-2'
   let &fileencodings = value
 endfunction
 
-" ファイルを読込む時にトライする文字エンコードの順序を確定する。漢字コード自
-" 動判別機能を利用する場合には別途iconv.dllが必要。iconv.dllについては
-" README_j.txtを参照。ユーティリティスクリプトを読み込むことで設定される。
+" Update encoding and fileencodings for current environment
 set encoding=japan
 call s:DetermineEncoding()
 set fileencodings=japan
 call s:CheckIconvCapability()
 call s:DetermineFileencodings()
 
-" □とか○の文字があってもカーソル位置がずれないようにする
+" Address the issue for using □ or ●.
+" NOTE We also need to apply some patch for Mac OS X Terminal.app
 set ambiwidth=double
 
-" メッセージを日本語にする (Windowsでは自動的に判断・設定されている)
-if !(has('win32') || has('mac')) && has('multi_lang')
-  if !exists('$LANG') || $LANG.'X' ==# 'X'
-    if !exists('$LC_CTYPE') || $LC_CTYPE.'X' ==# 'X'
-      language ctype ja_JP.eucJP
-    endif
-    if !exists('$LC_MESSAGES') || $LC_MESSAGES.'X' ==# 'X'
-      language messages ja_JP.eucJP
-    endif
-  endif
-endif
-" MacOS Xメニューの日本語化 (メニュー表示前に行なう必要がある)
-if has('mac')
-  set langmenu=japanese
-endif
-" 日本語入力用のkeymapの設定例 (コメントアウト)
+" Settings for Japanese Input Methods
 if has('keymap')
-  " ローマ字仮名のkeymap
   "silent! set keymap=japanese
   set iminsert=0 imsearch=0
 endif
-" 非GUI日本語コンソールを使っている場合の設定
+
+" On Windows, set CP932 to termencoding
 if !has('gui_running') && &encoding != 'cp932' && &term == 'win32'
   set termencoding=cp932
-endif
-" メニューファイルが存在しない場合は予め'guioptions'を調整しておく
-if 1 && !filereadable($VIMRUNTIME . '/menu.vim') && has('gui_running')
-  set guioptions&
-  set guioptions+=M
 endif
 
 "}}}
 
-"{{{ 各種設定
+"{{{ Global Settings
+" FIXME translate the comments
 
 " <CR>だけのファイルを読むように
 set fileformats=unix,dos,mac
@@ -138,8 +132,6 @@ set wildmenu
 " テキスト挿入中の自動折り返しを日本語に対応させる
 set formatoptions&
 set formatoptions+=mM
-" 日本語整形スクリプト(by. 西岡拓洋さん)用の設定
-let format_allow_over_tw = 1  " ぶら下り可能幅
 " 行番号を非表示 (number:表示)
 set number
 " ルーラーを表示 (noruler:非表示)
@@ -165,7 +157,7 @@ syntax on
 " 画面を黒地に白にする (次行の先頭の " を削除すれば有効になる)
 "colorscheme evening " (Windows用gvim使用時はgvimrcを編集すること)
 " ステータスラインを変更、文字コードと改行文字を表示する
-set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']['.&ft.']'}%=%l,%c%V%8P
+set statusline=%3n\ %<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']['.&ft.']'}%=%l,%c%V%8P
 " 編集中の内容を保ったまま別の画面に切替えられるようにする(デフォルトだと一度保存しないと切り替えられない)
 set hid
 " バックアップファイルを作成しない (次行の先頭の " を削除すれば有効になる)
@@ -179,7 +171,7 @@ set ttyfast
 set wildmode=longest,list,full
 " omni保管をシンタックス保管に
 "setlocal omnifunc=syntaxcomplete#Complete
-" ファイルタイプを有効に
+" Enable file type detection, plugin and indent
 filetype plugin on
 "filetype indent on
 " プレビューウィンドウの高さを大きめに
@@ -193,61 +185,219 @@ set completeopt=menuone
 
 "}}}
 
-"{{{ キーマッピング
+"{{{ Key Mappings
 
-" ウィンドウ移動
-noremap <C-Down> <C-W>j
-noremap <C-Up> <C-W>k
-noremap <C-Left> <C-W>h
+" Define <Leader>, <LocalLeader>
+let mapleader = ','
+let maplocalleader = '.'
+
+" Disable <Leader>, <LocalLeader> to avoid unexpected behavior.
+noremap <Leader>  <Nop>
+noremap <LocalLeader>  <Nop>
+
+" Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
+let g:plugin_dicwin_disable = 1
+
+" Reserve q for prefix key then assign Q for original actions.
+" Q is for Ex-mode which we don't need to use.
+nnoremap q <Nop>
+nnoremap Q q
+
+" Window Switching
+noremap <C-Down>  <C-W>j
+noremap <C-Up>    <C-W>k
+noremap <C-Left>  <C-W>h
 noremap <C-Right> <C-W>l
 
-" バッファ切り替え
-noremap <silent> <F2> :bp<CR>
-noremap <silent> <F3> :bn<CR>
+" Buffer Switching
+function! s:NextNormalBuffer(loop)
+  let buffer_num = bufnr('%')
+  let last_buffer_num = bufnr('$')
+
+  let next_buffer_num = buffer_num
+  while 1
+    if next_buffer_num == last_buffer_num
+      if a:loop
+        let next_buffer_num = 1
+      else
+        break
+      endif
+    else
+      let next_buffer_num = next_buffer_num + 1
+    endif
+    if next_buffer_num == buffer_num
+      break
+    endif
+    if ! buflisted(next_buffer_num)
+      continue
+    endif
+    if getbufvar(next_buffer_num, '&buftype') == ""
+      return next_buffer_num
+      break
+    endif
+  endwhile
+  return 0
+endfunction
+
+function! s:OpenNextNormalBuffer(loop)
+  if &buftype == ""
+    let buffer_num = s:NextNormalBuffer(a:loop)
+    if buffer_num
+      execute "buffer" buffer_num
+    endif
+  endif
+endfunction
+
+function! s:PrevNormalBuffer(loop)
+  let buffer_num = bufnr('%')
+  let last_buffer_num = bufnr('$')
+
+  let prev_buffer_num = buffer_num
+  while 1
+    if prev_buffer_num == 1
+      if a:loop
+        let prev_buffer_num = last_buffer_num
+      else
+        break
+      endif
+    else
+      let prev_buffer_num = prev_buffer_num - 1
+    endif
+    if prev_buffer_num == buffer_num
+      break
+    endif
+    if ! buflisted(prev_buffer_num)
+      continue
+    endif
+    if getbufvar(prev_buffer_num, '&buftype') == ""
+      return prev_buffer_num
+      break
+    endif
+  endwhile
+  return 0
+endfunction
+
+function! s:OpenPrevNormalBuffer(loop)
+  if &buftype == ""
+    let buffer_num = s:PrevNormalBuffer(a:loop)
+    if buffer_num
+      execute "buffer" buffer_num
+    endif
+  endif
+endfunction
+
+noremap <silent> <F1> :call <SID>OpenPrevNormalBuffer(0)<CR>
+noremap <silent> <F2> :call <SID>OpenPrevNormalBuffer(1)<CR>
+noremap <silent> <F3> :call <SID>OpenNextNormalBuffer(1)<CR>
+noremap <silent> <F4> :call <SID>OpenNextNormalBuffer(0)<CR>
+
+" Make
 noremap <silent> <F5> :make<CR>
 
-" ;でもExコマンド
+" Run EX commands by ; for US Keyboard
 noremap ; :
 
-" 表示行で移動
+" Move cursor by display line
 noremap j gj
 noremap k gk
 noremap gj j
 noremap gk k
 
-" .vimrc再読み込み
-nnoremap s. :<C-u>source $MYVIMRC<Enter>
+" Disable highlight
+noremap <C-h><C-h> :<C-u>nohlsearch<CR>
 
-" ハイライト削除
-noremap <C-h><C-n> :<C-u>nohlsearch<Enter>
+" Reset syntax highlight
+noremap <C-h><C-j> :<C-u>syntax sync clear<CR>
 
-" 最後の変更のあったテキストを選択する
+" Select the last modified texts
 nnoremap gm `[v`]
-vnoremap gm :<C-u>normal gc<Enter>
-onoremap gm :<C-u>normal gc<Enter>
+vnoremap gm :<C-u>normal gc<CR>
+onoremap gm :<C-u>normal gc<CR>
+
+" Quick edit and reload .vimrc
+nnoremap <Space>.  :<C-u>edit $MYVIMRC<CR>
+nnoremap <Space>s. :<C-u>source $MYVIMRC<CR>
+
+" Run shell
+nnoremap <Space>: :shell<CR>
+nnoremap <Space>; :shell<CR>
+
+" Operation for the words under the cursor or the visual region
+function! s:CommandWithVisualRegionString(cmd)
+	let reg = getreg('a')
+	let regtype = getregtype('a')
+	silent normal! gv"ay
+	let selected = @a
+	call setreg('a', reg, regtype)
+  execute a:cmd . ' ' . selected
+endfunction
+
+nnoremap <Space>h :<C-u>help<Space><C-r><C-w><CR>
+vnoremap <Space>h :call <SID>CommandWithVisualRegionString('help')<CR>
+
+nnoremap gr :<C-u>Gr<Space><C-r><C-w><CR>
+vnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<CR>
+
+" Centering search result
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap * *zz
+nnoremap # #zz
+nnoremap g* g*zz
+nnoremap g# g#zz
+
+" Centering cursor after splitting window
+nnoremap <C-w>s <C-w>szz
+
+" QuickFix
+function! s:OpenQuickFixWithSyntex(syntax)
+  execute "copen"
+  execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
+  call feedkeys("\<C-w>J", "n")
+endfunction
+
+function! s:OpenQuickFix()
+  if exists('g:LastQuickFixSyntax')
+    call s:OpenQuickFixWithSyntex(g:LastQuickFixSyntax)
+  else
+    execute "copen"
+  endif
+endfunction
+
+nnoremap <silent> <space>q :call <SID>OpenQuickFix()<CR>
+nnoremap <silent> <space>w :<C-u>cclose<CR>
+
+" Easy to quit.
+nnoremap <silent> qq :<C-u>quit<CR>
+nnoremap <silent> qw :<C-u>Bw<CR>
+
+" Avoid run K mistakenly with C-k, remap K to <space>k
+nnoremap K <Nop>
+nnoremap <Space>k K
 
 "}}}
 
-" {{{ オートコマンド
+" {{{ Auto Commands
 
-" ファイルタイプ
-augroup FileTypeRelated
+" File Types
+augroup MyFileTypeCommands
   autocmd!
-  autocmd FileType ruby,eruby setlocal tabstop=2 shiftwidth=2 expandtab nowrap
-  autocmd BufNewFile,BufRead *.md setlocal filetype=markdown fileencoding=utf-8
-  autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
+  autocmd FileType ruby,eruby,haml setlocal tabstop=2 shiftwidth=2 expandtab nowrap
+  autocmd FileType php setlocal tabstop=2 shiftwidth=2 expandtab nowrap
+  autocmd FileType actionscript setlocal fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
+  autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript
   autocmd BufNewFile,BufRead *.rl setlocal filetype=ragel
   autocmd BufNewFile,BufRead *.srt setlocal filetype=srt
-  autocmd BufNewFile,BufRead *.haml setlocal filetype=haml
-  autocmd BufNewFile,BufRead nginx.conf* setlocal filetype=nginx
+  autocmd BufNewFile,BufRead nginx.* setlocal filetype=nginx
   autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
   autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
-  autocmd BufNewFile,BufRead *.module setlocal filetype=php tabstop=2 shiftwidth=2 expandtab nowrap
+  autocmd BufNewFile,BufRead *.module setlocal filetype=php
+  autocmd BufNewFile,BufRead *.mustache set syntax=mustache
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
 augroup END
 
-" バイナリ編集
-augroup Binary
+" Editing Binary File
+augroup MyBinaryCommands
   autocmd!
   autocmd BufReadPre *.bin let &bin=1
   autocmd BufReadPost *.bin if &bin | silent %!xxd -g 1
@@ -258,99 +408,188 @@ augroup Binary
   autocmd BufWritePost *.bin setlocal nomod | endif
 augroup END
 
-augroup Misc
+augroup MyMiscCommands
   autocmd!
 
-  " カーソル行をハイライト
+  " Highlight Cursour Line
   "autocmd WinEnter,BufEnter * setlocal cursorline
   "autocmd WinLeave,BufLeave * setlocal nocursorline
 
-  " ウィンドウのカレントディレクトリをバッファ切り替えで変更
+  " Change current directory by switching the buffers
   " :help cmdline-special
-  autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h:gs? ?\\\\ ?")
+  "autocmd BufRead,BufEnter * execute ":lcd " . expand("%:p:h:gs? ?\\\\ ?")
 
-  " vimgrep後にQuickFixを自動で開く
-  autocmd QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
+  " Open QuickFix after vimgrep
+  "autocmd QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
 augroup END
 
+" Keep No End Of Line
+" See http://vim.wikia.com/wiki/Preserve_missing_end-of-line_at_end_of_text_files
+function! s:SetBinaryForNoeol()
+  let g:save_binary_for_noeol = &binary
+  if ! &endofline && ! &binary
+    setlocal binary
+    if &fileformat == "dos"
+      silent 1,$-1s/$/\="\\".nr2char(13)
+    endif
+  endif
+endfunction
+
+function! s:RestoreBinaryForNoeol()
+  if ! &endofline && ! g:save_binary_for_noeol
+    if &fileformat == "dos"
+      silent 1,$-1s/\r$/
+    endif
+    setlocal nobinary
+  endif
+endfunction
+
+augroup PreserveNoeol
+  autocmd!
+  autocmd BufWritePre  * :call <SID>SetBinaryForNoeol()
+  autocmd BufWritePost * :call <SID>RestoreBinaryForNoeol()
+aug END
+
 "}}}
 
-"{{{ コマンド
+"{{{ Commands
 
-" utf-8で開き直す
+" Open as UTF-8
 command! Utf8 edit ++enc=utf-8
 
+" Recursive Grep and Highlight
+function! s:GrepWithHighlight(cmd, syntax, ...)
+  execute a:cmd . " " . a:syntax . join(a:000, " ")
+  let g:LastQuickFixSyntax = a:syntax
+  call s:OpenQuickFixWithSyntex(a:syntax)
+endfunction
+
+command! -nargs=* -bang GrepRecursive grep<bang> -r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e <args>
+command! -nargs=* Gr call <SID>GrepWithHighlight("GrepRecursive!", <f-args>)
+
+" Change file name editing
+command! -nargs=1 -complete=file Rename file <args>|call delete(expand('#'))
+
+" Preserve window splits when wiping the buffer
+function! s:WipeBuffer(bang)
+  if &mod && a:bang != '!'
+    return
+  endif
+
+  let buffer_num = bufnr('%')
+  let win_num = winnr()
+
+  let next_buffer_num = s:NextNormalBuffer(1)
+  if ! next_buffer_num
+    enew
+    let next_buffer_num = bufnr('%')
+    if next_buffer_num == buffer_num
+      return
+    end
+  endif
+
+  " FIXME we have to check the other tabs because bufwinnr doesn't care them
+  while 1
+    let n = bufwinnr(buffer_num)
+    if n < 0
+      break
+    endif
+    execute n "wincmd w"
+    execute "buffer" next_buffer_num
+  endwhile
+
+  execute win_num "wincmd w"
+  execute "silent bwipeout" . a:bang buffer_num
+endfunction
+
+command! -bang Bw call <SID>WipeBuffer("<bang>")
+
+" Vars, require vim-prettyprint
+" See http://d.hatena.ne.jp/thinca/20100711/1278849707
+command! -nargs=+ Vars PP filter(copy(g:), 'v:key =~# "^<args>"')
+
+" Large font
+if has('mac') && has('gui_running')
+  command! GuiLargeFont set guifont=Marker\ Felt:h48 cmdheight=1
+endif
+
 "}}}
 
-"{{{ プラグインの設定
+"{{{ Platform Dependents
 
-" Fuzzyfinder プラグイン
-" http://vim.g.hatena.ne.jp/keyword/fuzzyfinder.vim
-let g:FuzzyFinderOptions = {'Base':{}, 'Buffer':{}, 'File':{}, 'Dir':{}, 'MruFile':{}, 'MruCmd':{}, 'Bookmark':{}, 'Tag':{}, 'TaggedFile':{}}
-let g:FuzzyFinderOptions.Base.ignore_case = 1
-nnoremap <silent> <C-n> :FuzzyFinderBuffer<CR>
-nnoremap <silent> <C-m> :FuzzyFinderFile <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
-nnoremap <silent> <C-j> :FuzzyFinderMruFile<CR>
-nnoremap <silent> <C-k> :FuzzyFinderMruCmd<CR>
-nnoremap <silent> <C-p> :FuzzyFinderDir <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
-
-" git プラグイン(標準添付)
-autocmd FileType gitcommit DiffGitCached
-
-"}}}
-
-"{{{ プラットフォーム依存の設定
-
-" ファイル名に大文字小文字の区別がないシステム用の設定:
-" (例: DOS/Windows/MacOS)
+" Support for the file system which ignore case
 if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMrC')
-  " tagsファイルの重複防止
+  " Do not duplicate tags file
   set tags=./tags,tags
 endif
 
-" コンソール版で環境変数$DISPLAYが設定されていると起動が遅くなる件へ対応
+" If $DISPLAY environment variable is defined, vim works slow
 if !has('gui_running') && has('xterm_clipboard')
   set clipboard=exclude:cons\\\|linux\\\|cygwin\\\|rxvt\\\|screen
 endif
 
-" プラットホーム依存の特別な設定
-" WinではPATHに$VIMが含まれていないときにexeを見つけ出せないので修正
+" On Windows, if $PATH doesn't includes $VIM, it can not find out the exe file
 if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
   let $PATH = $VIM . ';' . $PATH
 endif
 
-" Macではデフォルトの'iskeyword'がcp932に対応しきれていないので修正
+" On Mac, default 'iskeyword' doesn't support for cp932
 if has('mac')
   set iskeyword=@,48-57,_,128-167,224-235
 endif
 
+" MacVim-KaoriYa 20101102 requires this setting to enable Ruby.
+if has('mac') && has('gui_running') && has('kaoriya')
+  let $RUBY_DLL = "/usr/lib/libruby.dylib"
+endif
+
 "}}}
 
-"{{{ ランタイムパス
+"{{{ Runtime Paths
 
 set runtimepath&
 
-" ~/.vimをランタイムパスに加える (Windows/Cygwin互換用)
+" Add ~/.vim to &runtimepath for win32
 if has('win32')
   set runtimepath+=$HOME/.vim
 endif
 
-" 追加のラインタイムパス
-for s:dir in split(glob($HOME . "/.vim/runtimes/*"))
-  if isdirectory(s:dir)
-    let &runtimepath = s:dir . "," . &runtimepath
-    if isdirectory(s:dir . "/after")
-      let &runtimepath = s:dir . "/after" . "," . &runtimepath
-    endif
-
-    " 追加の設定ファイルを読み込む
-    for s:vimfile in [s:dir . "/.vimrc", s:dir . ".vim"]
-      if filereadable(s:vimfile)
-        execute "source " . s:vimfile
+" Add runtime paths (Using pathogen.vim)
+function! s:SourceRuntimeBundleScripts()
+  for dir in pathogen#split(&runtimepath)
+    for vimfile in [dir . '.vim', dir . '/.vimrc']
+      if filereadable(vimfile)
+        execute "source " . vimfile
       endif
     endfor
-  endif
-endfor
+  endfor
+endfunction
+
+call pathogen#runtime_append_all_bundles()
+call s:SourceRuntimeBundleScripts()
+call pathogen#helptags()
+
+" Re-enable filetype plugin for ftdetect directory of each runtimepath
+filetype off
+filetype on
+
+"}}}
+
+"{{{ Plugins
+
+" Git Plugin (Standard Plugin)
+autocmd FileType gitcommit DiffGitCached
+
+"}}}
+
+"{{{ Finalize
+
+if !exists('s:loaded_vimrc')
+  let s:loaded_vimrc = 1
+endif
+
+" See :help secure
+set secure
 
 "}}}
 

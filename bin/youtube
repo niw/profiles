@@ -1,52 +1,96 @@
 #!/usr/bin/env ruby
-
+# encoding: UTF-8
 require 'uri'
 require 'net/http'
 require 'kconv'
 
-$KCODE='u'
+$KCODE = 'u' if RUBY_VERSION < '1.9'
 
 def redirect(url, limit = 10)
-  raise ArgumentError, 'http redirect too deep' if limit == 0
+  raise 'HTTP Redirection exceeded limit' if limit == 0
   uri = URI.parse(url);
-  Net::HTTP.start(uri.host, uri.port) do |h|
-    r = h.head(uri.request_uri)
-    case r
+  Net::HTTP.start(uri.host, uri.port) do |http|
+    case response = http.head(uri.request_uri)
     when Net::HTTPSuccess
       url
     when Net::HTTPRedirection
-      redirect(r['location'], limit - 1)
+      redirect(response['location'], limit - 1)
     else
-      r.error!
+      response.error!
     end
   end
 end
 
-prefix = ARGV.shift || ''
-count = 1
-print "#/bin/sh\n"
-youtube_url_re = /http:\/\/([^\.]*\.?youtube\.com)(\/watch\?v=([a-zA-Z0-9\_\-]+))/
-ARGF.each do |line|
-  next if line.match(/^#/)
-  if (m = line.match(youtube_url_re)) && (m = redirect(m[0]).match(youtube_url_re))
-    id = m[3]
-    Net::HTTP.start(m[1]) do |h|
-      r, = h.get(m[2])
-      t = r.body.toutf8.match(/<meta name="title" content="(.*)">/)
-      title = t ? prefix + t[1] : "#{prefix}_#{count}"
-      title = title.gsub(/[ 　]+/, "_").gsub(/\//, "_")
-      n = r.body.match(/swfArgs = .+"t": "([^"]+)"/)
-      fmts = [22, 18, 6, 0]
-      while(fmt = fmts.shift)
-        begin
-          url = redirect("http://www.youtube.com/get_video?video_id=#{id}&t=#{n[1]}" + (fmt > 0 ? "&fmt=#{fmt}" : ""))
-          puts "wget -O \"#{title}.mp4\" \"#{url}\""
-          count = count + 1
-          STDERR.puts "#{title}\t#{url} (fmt=#{fmt})"
-          break
-        rescue
-        end
-      end
+YOUTUBE_URL_PATTERN = 'http://www.youtube.com/watch?v=%s'
+def youtube_url(id)
+  YOUTUBE_URL_PATTERN % id
+end
+
+YOUTUBE_ID_PATTERN = /[?&]v=([a-zA-Z0-9\_\-]+)/
+def get_ids(lines)
+  lines.map{|line| $1 if !(/^#/ === line) && YOUTUBE_ID_PATTERN === line}.compact
+end
+
+YOUTUBE_T_PATTERN = /&t=([^&]+)/
+def find_t(body)
+  if YOUTUBE_T_PATTERN === body
+    return URI.unescape($1)
+  end
+  raise "No t value found in:\n\t" << body.split(/\r?\n/).join("\n\t")
+end
+
+YOUTUBE_TITLE_PARTTERN = /<meta name="title" content="(.*)">/
+def find_title(body)
+  YOUTUBE_TITLE_PARTTERN === body ? $1 : ""
+end
+
+INVALID_FILENAME_PATTERNS = [/[ 　]+/, /\//, /\000/]
+def filename_for(title)
+  filename = title.to_s
+  INVALID_FILENAME_PATTERNS.each do |pattern|
+    filename.gsub!(pattern, '_')
+  end
+  filename
+end
+
+# Original format list is http://userscripts.org/scripts/show/25105
+YOUTUBE_FORMATS = {
+  5  => {:name => "flv 240p",     :ext => "flv" },
+  18 => {:name => "mp4 360p",     :ext => "mp4" },
+  22 => {:name => "mp4 720p",     :ext => "mp4" },
+  34 => {:name => "flv 360p",     :ext => "flv" },
+  35 => {:name => "flv 480p",     :ext => "flv" },
+  37 => {:name => "mp4 1080p",    :ext => "mp4" },
+  38 => {:name => "mp4 original", :ext => "mp4" },
+  43 => {:name => "webm 480p",    :ext => "webm"},
+  45 => {:name => "webm 720p",    :ext => "webm"}
+}
+YOUTUBE_FORMAT_KEYS = [38, 37, 22, 35, 34, 18, 5]
+YOUTUBE_GET_VIDEO_URL = 'http://www.youtube.com/get_video?video_id=%s&t=%s&fmt=%s&asv=3'
+def get_video_url(id, t)
+  YOUTUBE_FORMAT_KEYS.each do |fmt|
+    begin
+      url = redirect(YOUTUBE_GET_VIDEO_URL % [id, t, fmt])
+      return url, fmt
+    rescue
     end
+  end
+  raise "No video found id: #{id}"
+end
+
+puts "#/bin/sh"
+get_ids(ARGF).each do |id|
+  begin
+    uri = URI.parse(youtube_url(id))
+    response = Net::HTTP.start(uri.host, uri.port){|http| http.get(uri.request_uri)}
+    body = response.body.toutf8
+    t = find_t(body)
+    video_url, fmt = get_video_url(id, t)
+    title = find_title(body)
+    filename = filename_for(title)
+    puts "curl -o '#{filename}.#{YOUTUBE_FORMATS[fmt][:ext]}' '#{video_url}'"
+    STDERR.puts "Video id: #{id} Title: #{title} Format: #{YOUTUBE_FORMATS[fmt][:name]}"
+  rescue => e
+    STDERR.puts "Exception: " << e
   end
 end

@@ -1,0 +1,181 @@
+#!/usr/bin/env ruby
+
+begin
+  require 'rubygems'
+  require 'oauth'
+rescue LoadError
+  puts "Please install oauth gem prior to use this command."
+end
+require 'optparse'
+
+# FIX use UTC instead of localtime
+module OAuth
+  module Helper
+    def generate_timestamp
+      Time.now.utc.to_i.to_s
+    end
+  end
+end
+
+options = {}
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$0} -ck CONSUMER_KEY -cs CONSUMER_SECRET [options] url"
+
+  opts.on "-C", "--config=VAL", "path to configure yaml file" do |value|
+    options[:config] = value
+  end
+
+  # options for consumer token
+  opts.on "-k", "--consumer-key=VAL", "consumer key for oauth request" do |value|
+    options[:consumer_key] = value
+  end
+  opts.on "-c", "--consumer-secret=VAL", "consumer secret for oauth request" do |value|
+    options[:consumer_secret] = value
+  end
+  opts.on "-h", "--site=VAL", "host name for oauth request", "default: https://api.twitter.com" do |value|
+    options[:site] = value
+  end
+  opts.on "-r", "--request-token-path=VAL", "path to request the request token", "default: /oauth/request_token" do |value|
+    options[:request_token_path] = value
+  end
+  opts.on "-u", "--authorize-path=VAL", "path to reqst the access token", "default: /oauth/authorize" do |value|
+    options[:authorize_path] = value
+  end
+  opts.on "-a", "--access-token-path=VAL", "path to reqst the access token", "default: /oauth/access_token" do |value|
+    options[:access_token_path] = value
+  end
+
+  # options for access token
+  opts.on "-t", "--access-token=VAL", "access token for authorized oauth request" do |value|
+    options[:access_token] = value
+  end
+  opts.on "-s", "--access-secret=VAL", "consumer secret for authorized oauth request" do |value|
+    options[:access_secret] = value
+  end
+
+  # options for request
+  opts.on "-m", "--http-method=VAL", "http request method for authorized oauth request", "default: get" do |value|
+    options[:http_method] = value.downcase.to_sym
+  end
+  opts.on "-d", "--data=VAL", "a amp separated set of pair of key=valye for POST request" do |value|
+    options[:http_method] = :post
+    options[:post_data] = value
+  end
+
+  opts.on "-v", "--verbose", "turn on logging of HTTP request and response" do |value|
+    options[:verbose] = value
+  end
+
+  opts.on "--[no-]verify-ssl", "verify ssl certificate" do |value|
+    OAuth::Consumer.send :remove_const, :CA_FILE
+    OAuth::Consumer.send :const_set, :CA_FILE, nil unless value
+  end
+end
+parser.parse! ARGV
+
+# Load config YAML file when it was specified
+if options[:config]
+  require 'yaml'
+  begin
+    options = YAML.load(File.read(options[:config])).merge(options)
+  rescue
+  end
+end
+
+options[:url] = ARGV.shift unless options[:url] || /^-/ === ARGV.first
+unless options[:url] && options[:consumer_key] && options[:consumer_secret]
+  # Puts help
+  puts parser
+  exit
+end
+
+# Enable logging
+if options[:verbose]
+  Net::BufferedIO.class_eval do
+    alias :read_ :read
+    def read(*args)
+      rs = read_(*args)
+      STDERR.print rs.to_s
+      rs
+    end
+
+    alias :read_all_ :read_all
+    def read_all(*args)
+      rs = read_all_(*args)
+      STDERR.print rs.to_s
+      rs
+    end
+
+    alias :readuntil_ :readuntil
+    def readuntil(*args)
+      rs = readuntil_(*args)
+      STDERR.print rs.to_s
+      rs
+    end
+
+    alias :write_ :write
+    def write(arg)
+      STDERR.print arg.to_s
+      write_(arg)
+    end
+
+    alias :writeline_ :writeline
+    def writeline(arg)
+      STDERR.puts arg.to_s
+      writeline_(arg)
+    end
+  end
+end
+
+consumer = OAuth::Consumer.new(options[:consumer_key], options[:consumer_secret], {
+  :site               => options[:site]               || "https://api.twitter.com",
+  :request_token_path => options[:request_token_path] || "/oauth/request_token",
+  :authorize_path     => options[:authorize_path]     || "/oauth/authorize",
+  :access_token_path  => options[:access_token_path]  || "/oauth/access_token",
+  :ca_file => false
+})
+
+# Obtain access_token if it is not specified
+unless options[:access_token] && options[:access_secret]
+  request_token = consumer.get_request_token
+  puts "------------------------------"
+  puts "OAuth Authentication Required!"
+  puts "------------------------------"
+  puts "Please access next url to obtain authorization:"
+  puts request_token.authorize_url
+  begin
+    # On MacOS X, we can launch the web browser by open command
+    `open "#{request_token.authorize_url}"`
+  rescue 
+  end
+
+  puts "then put PIN code:"
+  pin = gets.chomp
+
+  access_token = consumer.get_access_token(request_token, :oauth_verifier => pin)
+  puts "------------------------------"
+  puts "Please pass next options when you request authorized request next:"
+  puts "-t '#{access_token.token}' -s '#{access_token.secret}'"
+  puts "Or, adding next lines into config file."
+  puts ({:access_token => access_token.token, :access_secret => access_token.secret}).to_yaml
+  puts "------------------------------"
+else
+  access_token = OAuth::AccessToken.new(consumer, options[:access_token], options[:access_secret])
+end
+
+request_options = {}
+if options[:post_data]
+  request_options = options[:post_data].split(/&/).inject({}) do |hash, option|
+    key, value = option.split(/=/, 2)
+    hash[key] = value
+    hash
+  end
+end
+
+response = access_token.request(options[:http_method] || :get, options[:url], request_options)
+
+if options[:verbose]
+  require 'pp'
+  pp response.to_hash
+end
+puts response.body

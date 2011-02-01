@@ -1,0 +1,36 @@
+#!/bin/sh
+
+if [ ! -e /usr/bin/hdid ]; then
+	echo "hdid command is not found, This command must run under Mac OS X."
+	exit 0
+fi
+
+if [ -z "$SIZE" ]; then
+	SIZE=$1
+fi
+if [ -z "$SIZE" ]; then
+	echo "Usage: $0 SIZE_IN_MEGABYTE [VOLUME_NAME]"
+	exit 0
+fi
+
+if [ -z "$VOLUME_NAME" ]; then
+	VOLUME_NAME=$2
+fi
+if [ -z "$VOLUME_NAME" ]; then
+	VOLUME_NAME=ramdisk
+fi
+
+VOLUME_PATH="/Volumes/$VOLUME_NAME"
+
+if [ -e "$VOLUME_PATH" ]; then
+	echo "$VOLUME_PATH already exists."
+	exit 1
+fi
+
+# make ramdisk
+NUMSECTORS=`expr 2048 \* $SIZE`
+DEVICE_NAME=`hdid -nomount ram://$NUMSECTORS`
+
+# format as HFS+
+diskutil eraseDisk HFS+ "$VOLUME_NAME" $DEVICE_NAME
+diskutil enableOwnership "$VOLUME_NAME"

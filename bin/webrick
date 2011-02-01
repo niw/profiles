@@ -13,14 +13,18 @@ class EchoServlet < WEBrick::HTTPServlet::AbstractServlet
   private
   def echo(req, res)
     res.content_type = "text/plain";
-    res.body = ["Request:", req.request_line, "Header:", req.header.inspect, "Body:", req.body.inspect].join("\r\n")
+    puts res.body = ["Request:", req.request_line, "Header:", req.header.inspect, "Body:", req.body.inspect].join("\r\n")
   end
 end
 
 server = WEBrick::HTTPServer.new(
   :Port => 3000,
   :BindAddress => '0.0.0.0',
-  :DocumentRoot => File.expand_path(Dir.pwd)
+  :DocumentRoot => File.expand_path(Dir.pwd),
+  :MimeTypes => WEBrick::HTTPUtils::DefaultMimeTypes.merge({
+    # place additional MIME types here
+    # "jpg" => "image/jpeg"
+  })
 )
 server.mount("/echo", EchoServlet);
 

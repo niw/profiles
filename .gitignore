@@ -1,4 +1,6 @@
 .DS_Store
 *.local.*
+local
 tags
 tags-*
+/.vim/.netrwhist

@@ -1,46 +1,44 @@
-## Local Variables {{{
-
-# define architecture
-arch=`uname`
-if [ $(uname | sed 's/\(.*\)_.*/\1/') = 'CYGWIN' ]; then
-	arch='cygwin'
-elif [ "${arch}" = 'Linux' ]; then
-	arch='linux'
-elif [ "${arch}" = 'Darwin' ]; then
-	arch='darwin'
-elif [ "${arch}" = 'FreeBSD' ]; then
-	arch='freebsd'
-fi
-
-# path of profiles itself
 profiles=~/.profiles
+source "${profiles}/functions"
 
-# }}}
+## Pre Configurations {{{
 
-## Basic Enviroment Variables {{{
+# Avoid 'no matches found' error
+setopt nullglob
 
-# editor
-export EDITOR=vim
+# Add PATH and MAN_PATH
+init_paths
 
-# default language
-export LANG=ja_JP.UTF-8
+## }}}
 
-# profile bin path
-export PATH=${PATH}:${profiles}/bin
+## Aliases {{{
 
-# }}}
+init_aliases
 
-## Basic Configurations {{{
+# pipe aliasa
+alias -g V="| vi -v -"
+alias -g G="| grep"
+alias -g T="| tail"
+alias -g H="| head"
+alias -g L="| less -r"
+
+## }}}
+
+## Zsh Basic Configurations {{{
 ## based on http://devel.aquahill.net/zsh/zshoptions
 
+# initialize hook functions array
+typeset -ga preexec_functions
+typeset -ga precmd_functions
+
 # viキーバインド
-bindkey -v
+#bindkey -v
 
 # emacsキーバインド
-#bindkey -e
+bindkey -e
 
 # 色を使う
-autoload -U colors
+autoload -Uz colors
 colors
 
 # プロンプトに色付けする
@@ -48,13 +46,24 @@ setopt prompt_subst
 
 # プロンプトにユーザー名、ホスト名、カレントディレクトリを表示
 # ルートの場合は名前を色づけ
-set -A color_table black red green yellow blue magenta cyan white
-user_color=$color_table[$[$(whoami | sum | sed 's/\([0-9]*\) *\([0-9]*\)/\1/') % 7 + 1]]
-host_color=$color_table[$[$(hostname | sum | sed 's/\([0-9]*\) *\([0-9]*\)/\1/') % 7 + 1]]
-PROMPT='%F{yellow}%T%f [ %(!.%F{red}root.%F{${user_color}}%n)%f@%F{${host_color}}%m%f(${arch}):%F{blue}%2~%f ] %(!.#.%%) '
+get_prompt() {
+	local color_table
+	color_table=(red green yellow blue magenta cyan white)
+
+	get_prompt_color_indexes
+	local user_color=${color_table[${result[1]}]}
+	local host_color=${color_table[${result[2]}]}
+	local shlvl_color=${color_table[${result[3]}]}
+
+	# NOTE preserve backward compatibility, here we're not using %F and  %f
+	# see RPROMPT for vcs_info
+	result="%{$fg[yellow]%}%T%{$reset_color%} %{$fg[${user_color}]%}%n%{$reset_color%}@%{$fg[${host_color}]%}%m%{$reset_color%}:%{$fg[${shlvl_color}]%}%2~%{$reset_color%} %(!.#.$) "
+}
+get_prompt
+PROMPT=$result
 
 # プロンプトにカレントディレクトリを指定
-#RPROMPT='[ %~ ]'
+RPROMPT="%{$fg[blue]%}%~%{$reset_color%}"
 
 # 指定したコマンド名がなく、ディレクトリ名と一致した場合 cd する
 setopt auto_cd
@@ -84,7 +93,7 @@ setopt no_flow_control
 setopt no_hup
 
 # Ctrl+D では終了しないようになる（exit, logout などを使う）
-setopt ignore_eof
+#setopt ignore_eof
 
 # 内部コマンド jobs の出力をデフォルトで jobs -l にする
 setopt long_list_jobs
@@ -111,7 +120,7 @@ setopt numeric_glob_sort
 setopt print_eightbit
 
 # 戻り値が 0 以外の場合終了コードを表示する
-setopt print_exit_value
+#setopt print_exit_value
 
 # ディレクトリスタックに同じディレクトリを追加しないようになる
 setopt pushd_ignore_dups
@@ -135,33 +144,37 @@ setopt auto_pushd
 setopt no_check_jobs
 
 # 先方予測機能
-#autoload predict-on
+#autoload -Uz predict-on
 #predict-on
 
 # C-wでディレクトリごとに消せるようにする
-autoload -U select-word-style
+autoload -Uz select-word-style
 select-word-style bash
 
 # }}}
 
-## VCS Info  {{{
+## Zsh VCS Info and RPROMPT {{{
 
-autoload -Uz vcs_info
-zstyle ':vcs_info:*' formats '%s:%b'
-zstyle ':vcs_info:*' actionformats '%s:%b (%a)'
-precmd () {
-	psvar=()
-	LANG=en_US.UTF-8 vcs_info
-	[[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
-}
-RPROMPT="[ %1(v.%F{green}%v%f.%~) ]"
+if autoload +X vcs_info 2> /dev/null; then
+	autoload -Uz vcs_info
+	zstyle ':vcs_info:*' enable git cvs svn # hg - slow, it scans all parent directories.
+	zstyle ':vcs_info:*' formats '%s:%b'
+	zstyle ':vcs_info:*' actionformats '%s:%b (%a)'
+	precmd_vcs_info() {
+		psvar[1]=""
+		LANG=en_US.UTF-8 vcs_info
+		[[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+	}
+	precmd_functions+=precmd_vcs_info
+	RPROMPT="${RPROMPT}%1(V. %F{green}%1v%f.)"
+fi
 
 # }}}
 
-## Completion System {{{
+## Zsh Completion System {{{
 
 # コマンドラインオプションを補完
-autoload -U compinit
+autoload -Uz compinit
 compinit
 
 # 補完中の候補にも色をつける
@@ -170,6 +183,9 @@ zstyle ':completion:*' list-colors ''
 # add colors to processes for kill completion
 zstyle ':completion:*:*:kill:*:processes' command 'ps -axco pid,user,command'
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([%0-9]#)*=0=01;31'
+
+# ignore case
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # formatting and messages
 zstyle ':completion:*' verbose yes
@@ -191,41 +207,7 @@ fi
 
 ## }}}
 
-## Basic Alias {{{
-
-# ls typo
-alias ls-al='ls -al'
-
-# colors ls
-if [ "${arch}" = "darwin" -o "${arch}" = "freebsd" ]; then
-	alias ls='ls -hG'
-else
-	alias ls='ls -p -h --show-control-chars --color=auto'
-fi
-
-# pipe
-alias -g V="| vi -v -"
-alias -g G="| grep"
-alias -g T="| tail"
-alias -g H="| head"
-alias -g L="| less -r"
-
-# subversion related
-alias svndiff="svn diff -x --ignore-all-space -x --ignore-eol-style | vi -v -"
-alias svndiffd="svn diff -x --ignore-all-space -x --ignore-eol-style -r \"{\`date -v-1d +%Y%m%d\`}\" | vi -v -"
-alias svnst="svn st | grep -v '^[X?]'"
-
-# grep related
-alias grepr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' . -e "
-alias gr="grep -r -E -n --color --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
-alias ge="grepedit"
-
-alias now="date +%Y%m%d%H%M%S"
-alias wget="wget -U Mozilla --no-check-certificate"
-
-## }}}
-
-## History {{{
+## Zsh History {{{
 
 # 履歴をファイルに保存する
 HISTFILE="${HOME}"/.zsh-history
@@ -264,13 +246,13 @@ setopt hist_ignore_dups
 unsetopt HISTVERIFY
 
 # 履歴検索
-autoload history-search-end
+autoload -Uz history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
 ## }}}
 
-## Keybinds {{{
+## Zsh Keybinds {{{
 ## based on http://github.com/kana/config/
 
 # to delete characters beyond the starting point of the current insertion.
@@ -289,23 +271,38 @@ bindkey -M vicmd '?' history-incremental-search-forward
 bindkey -M viins '^p' history-beginning-search-backward-end
 bindkey -M viins '^n' history-beginning-search-forward-end
 
+bindkey -M emacs '^p' history-beginning-search-backward-end
+bindkey -M emacs '^n' history-beginning-search-forward-end
+
 # transpose
 bindkey -M vicmd '\C-t' transpose-words
 bindkey -M viins '\C-t' transpose-words
 
 # }}}
 
-## Setup screen title {{{
+## Zsh Terminal Title Changes {{{
 
 case "${TERM}" in
 screen*|ansi*)
-	preexec() {
+	preexec_term_title() {
 		print -n "\ek$1\e\\"
 	}
-	precmd() {
-		print -n "\ek$(basename $(pwd))\e\\"
+	preexec_functions+=preexec_term_title
+	precmd_term_title() {
+		print -n "\ek$(whoami)@$(hostname -s):$(basename "${PWD}")\e\\"
 	}
-    ;;
+	precmd_functions+=precmd_term_title
+	;;
+xterm*)
+	preexec_term_title() {
+		print -n "\e]0;$1\a"
+	}
+	preexec_functions+=preexec_term_title
+	precmd_term_title() {
+		print -n "\e]0;$(basename "${PWD}")\a"
+	}
+	precmd_functions+=precmd_term_title
+	;;
 esac
 
 # }}}
@@ -313,35 +310,27 @@ esac
 ## Scan Additonal Configurations {{{
 
 setopt no_nomatch
-for i in "${profiles}" "${profiles}/${arch}"
-do
-	# Additional PATH enviroment variables
-	for f in "${i}"/*.path
-	do
-		if [ -f "${f}" ]; then
-			p=$(sed -e ':a' -e '$!N' -e '$!b a' -e 's/\n/:/g' < "${f}")
-			export PATH="${p}:${PATH}"
-		fi
-	done
-
-	# Additional initialize scripts
-	for f in "${i}"/*.zsh
-	do
-		if [ -f "${f}" ]; then
-			source "${f}"
-		fi
-	done
-done
+init_additionl_configration "*.zsh"
 
 # }}}
 
 ## Post Configurations {{{
 
-# vimがあったらviはvim
-if type 'vim' > /dev/null 2>&1; then
-	alias vi='vim'
+# Load rvm if it exists
+# rvm requires 4.3.5
+autoload -Uz is-at-least
+if is-at-least 4.3.5; then
+	if init_rvm; then
+		RPROMPT="${RPROMPT} %{$fg[red]%}\${RUBY_VERSION}%{$reset_color%}"
+	fi
 fi
+
+# Load Perl local::lib
+init_locallib
+
+# Cleanup PATH, MANPATH
+clean_paths
 
 # }}}
 
-# vim:ts=4:sw=4:noexpandtab:foldmethod=marker:
+# vim:ts=4:sw=4:noexpandtab:foldmethod=marker:nowrap:
