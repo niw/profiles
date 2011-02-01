@@ -1,3 +1,7 @@
 let g:rails_statusline = 1
-autocmd User Rails* map <buffer> <LocalLeader>ra <Plug>RailsAlternate
-autocmd User Rails* Rlcd
+
+augroup MyVimRails
+  autocmd!
+  autocmd User Rails* map <buffer> <LocalLeader>ra <Plug>RailsAlternate
+  autocmd User Rails* Rlcd
+augroup END
