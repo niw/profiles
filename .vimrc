@@ -513,6 +513,32 @@ if has('mac') && has('gui_running')
   command! GuiLargeFont set guifont=Marker\ Felt:h48 cmdheight=1
 endif
 
+" TabpageCD, wrapper of :cd to keep cwd for each tabpage
+" See https://gist.github.com/604543/
+function! s:StoreTabpageCD(path)
+  execute 'cd' fnameescape(expand(a:path))
+  let t:cwd = getcwd()
+endfunction
+
+nnoremap ,cd :<C-u>TabpageCD %:p:h<CR>
+
+command! -bar -complete=dir -nargs=? CD TabpageCD <args>
+command! -bar -complete=dir -nargs=? TabpageCD call <SID>StoreTabpageCD(<q-args>)
+
+function! s:RestoreTabpageCD()
+  if exists('t:cwd') && !isdirectory(t:cwd)
+    unlet t:cwd
+  endif
+  if !exists('t:cwd')
+    let t:cwd = getcwd()
+  endif
+  execute 'cd' fnameescape(expand(t:cwd))
+endfunction
+
+augroup TabpageCD
+  autocmd TabEnter * call <SID>RestoreTabpageCD()
+augroup END
+
 "}}}
 
 "{{{ Platform Dependents
