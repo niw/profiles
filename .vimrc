@@ -333,10 +333,10 @@ function! s:CommandWithVisualRegionString(cmd)
 endfunction
 
 nnoremap <Space>h :<C-u>help<Space><C-r><C-w><CR>
-vnoremap <Space>h :call <SID>CommandWithVisualRegionString('help')<CR>
+xnoremap <Space>h :call <SID>CommandWithVisualRegionString('help')<CR>
 
 nnoremap gr :<C-u>Gr<Space><C-r><C-w><CR>
-vnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<CR>
+xnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<CR>
 
 " Centering search result
 nnoremap n nzz
