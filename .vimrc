@@ -192,8 +192,8 @@ let mapleader = ','
 let maplocalleader = '.'
 
 " Disable <Leader>, <LocalLeader> to avoid unexpected behavior.
-noremap <Leader>  <Nop>
-noremap <LocalLeader>  <Nop>
+noremap <Leader> <Nop>
+noremap <LocalLeader> <Nop>
 
 " Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
 let g:plugin_dicwin_disable = 1
@@ -290,6 +290,23 @@ noremap <silent> <F1> :call <SID>OpenPrevNormalBuffer(0)<CR>
 noremap <silent> <F2> :call <SID>OpenPrevNormalBuffer(1)<CR>
 noremap <silent> <F3> :call <SID>OpenNextNormalBuffer(1)<CR>
 noremap <silent> <F4> :call <SID>OpenNextNormalBuffer(0)<CR>
+
+" Tab
+function! s:MapTabNextWithCount()
+  let tab_count = 1
+  while tab_count < 10
+    execute printf("noremap <silent> t%s :tabnext %s<CR>", tab_count, tab_count)
+    let tab_count = tab_count + 1
+  endwhile
+endfunction
+
+noremap <silent> tc :tabnew<CR>
+"noremap <silent> tt :tabnew<CR>
+noremap <silent> tq :tabclose<CR>
+noremap <silent> tn :tabnext<CR>
+noremap <silent> tp :tabprev<CR>
+
+call s:MapTabNextWithCount()
 
 " Make
 noremap <silent> <F5> :make<CR>
