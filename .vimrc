@@ -352,8 +352,11 @@ endfunction
 nnoremap <Space>h :<C-u>help<Space><C-r><C-w><CR>
 xnoremap <Space>h :call <SID>CommandWithVisualRegionString('help')<CR>
 
+" FIXME check availability then select appropriate grepprg.
 nnoremap gr :<C-u>Gr<Space><C-r><C-w><CR>
 xnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<CR>
+nnoremap ak :<C-u>Ak<Space><C-r><C-w><CR>
+xnoremap ak :call <SID>CommandWithVisualRegionString('Ak')<CR>
 
 " Centering search result
 nnoremap n nzz
@@ -481,8 +484,37 @@ function! s:GrepWithHighlight(cmd, syntax, ...)
   call s:OpenQuickFixWithSyntex(a:syntax)
 endfunction
 
-command! -nargs=* -bang GrepRecursive grep<bang> -r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e <args>
-command! -nargs=* Gr call <SID>GrepWithHighlight("GrepRecursive!", <f-args>)
+function! s:FlattenList(list)
+  let flatten = []
+  let i = 0
+  while i < len(a:list)
+    if type(a:list[i]) == type([])
+      call extend(flatten, s:FlattenList(a:list[i]))
+    else
+      call add(flatten, a:list[i])
+    endif
+    let i = i + 1
+  endwhile
+  return flatten
+endfunction
+
+function! s:Grep(grepprg, bang, ...)
+  let args = ["grep" . a:bang]
+  for arg in s:FlattenList(a:000)
+    call add(args, shellescape(arg, 1))
+  endfor
+
+  let grepprg = &grepprg
+  let &grepprg = a:grepprg
+  execute join(args, " ")
+  let &grepprg = grepprg
+endfunction
+
+" FIXME check availability then select appropriate grepprg.
+command! -nargs=+ -bang Ack call <SID>Grep("ack", "<bang>", <f-args>)
+command! -nargs=+ -bang GrepRecursive call <SID>Grep("grep", "<bang>", "-r", "-E", "-n", "--exclude='*.svn*'", "--exclude='*.log*'", "--exclude='*tmp*'", "--exclude-dir='CVS'", "--exclude-dir='.svn'", "--exclude-dir='.git'", ".", "-e", <f-args>) 
+command! -nargs=+ Gr call <SID>GrepWithHighlight("GrepRecursive!", <f-args>)
+command! -nargs=+ Ak call <SID>GrepWithHighlight("Ack!", <f-args>)
 
 " Change file name editing
 command! -nargs=1 -complete=file Rename file <args>|call delete(expand('#'))
