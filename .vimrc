@@ -377,8 +377,8 @@ function! s:OpenQuickFixWithSyntex(syntax)
 endfunction
 
 function! s:OpenQuickFix()
-  if exists('g:LastQuickFixSyntax')
-    call s:OpenQuickFixWithSyntex(g:LastQuickFixSyntax)
+  if exists('g:last_quick_fix_syntax')
+    call s:OpenQuickFixWithSyntex(g:last_quick_fix_syntax)
   else
     execute "copen"
   endif
@@ -480,7 +480,7 @@ command! Utf8 edit ++enc=utf-8
 " Recursive Grep and Highlight
 function! s:GrepWithHighlight(cmd, syntax, ...)
   execute a:cmd . " " . a:syntax . join(a:000, " ")
-  let g:LastQuickFixSyntax = a:syntax
+  let g:last_quick_fix_syntax = a:syntax
   call s:OpenQuickFixWithSyntex(a:syntax)
 endfunction
 
