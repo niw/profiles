@@ -352,11 +352,10 @@ endfunction
 nnoremap <Space>h :<C-u>help<Space><C-r><C-w><CR>
 xnoremap <Space>h :call <SID>CommandWithVisualRegionString('help')<CR>
 
-" FIXME check availability then select appropriate grepprg.
-nnoremap gr :<C-u>Gr<Space><C-r><C-w><CR>
-xnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<CR>
-nnoremap ak :<C-u>Ak<Space><C-r><C-w><CR>
-xnoremap ak :call <SID>CommandWithVisualRegionString('Ak')<CR>
+nnoremap gr :<C-u>Grep<Space><C-r><C-w><CR>
+xnoremap gr :call <SID>CommandWithVisualRegionString('Grep')<CR>
+"nnoremap ak :<C-u>Aak<Space><C-r><C-w><CR>
+"xnoremap ak :call <SID>CommandWithVisualRegionString('Ack')<CR>
 
 " Centering search result
 nnoremap n nzz
@@ -371,6 +370,7 @@ nnoremap <C-w>s <C-w>szz
 
 " QuickFix
 function! s:OpenQuickFixWithSyntex(syntax)
+  let g:last_quick_fix_syntax = a:syntax
   execute "copen"
   execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
   call feedkeys("\<C-w>J", "n")
@@ -478,12 +478,6 @@ aug END
 command! Utf8 edit ++enc=utf-8
 
 " Recursive Grep and Highlight
-function! s:GrepWithHighlight(cmd, syntax, ...)
-  execute a:cmd . " " . a:syntax . join(a:000, " ")
-  let g:last_quick_fix_syntax = a:syntax
-  call s:OpenQuickFixWithSyntex(a:syntax)
-endfunction
-
 function! s:FlattenList(list)
   let flatten = []
   let i = 0
@@ -498,23 +492,49 @@ function! s:FlattenList(list)
   return flatten
 endfunction
 
-function! s:Grep(grepprg, bang, ...)
-  let args = ["grep" . a:bang]
+function! s:Grep(grepprg, keyword, ...)
+  let args = ['grep!', shellescape(a:keyword)]
   for arg in s:FlattenList(a:000)
     call add(args, shellescape(arg, 1))
   endfor
 
   let grepprg = &grepprg
   let &grepprg = a:grepprg
-  execute join(args, " ")
+  execute join(args, ' ')
   let &grepprg = grepprg
+
+  call s:OpenQuickFixWithSyntex(a:keyword)
 endfunction
 
-" FIXME check availability then select appropriate grepprg.
-command! -nargs=+ -bang Ack call <SID>Grep("ack", "<bang>", <f-args>)
-command! -nargs=+ -bang GrepRecursive call <SID>Grep("grep", "<bang>", "-r", "-E", "-n", "--exclude='*.svn*'", "--exclude='*.log*'", "--exclude='*tmp*'", "--exclude-dir='CVS'", "--exclude-dir='.svn'", "--exclude-dir='.git'", ".", "-e", <f-args>) 
-command! -nargs=+ Gr call <SID>GrepWithHighlight("GrepRecursive!", <f-args>)
-command! -nargs=+ Ak call <SID>GrepWithHighlight("Ack!", <f-args>)
+function! s:HasCommand(cmd)
+  execute system('which ' . a:cmd . ' 2>&1 >/dev/null')
+  return !v:shell_error
+endfunction
+
+function! s:GrepPrg()
+  if exists('g:grepprg')
+    return g:grepprg
+  else
+    let g:grepprg = &grepprg
+  endif
+
+  if s:HasCommand('ack')
+    let g:grepprg = 'ack'
+  elseif s:HasCommand('grep')
+    let opts = "-r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*'"
+    if system('grep --help') =~# '--exclude-dir'
+      let opts .= " --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git'"
+    endif
+    let g:grepprg = 'grep ' . opts . ' . -e '
+  endif
+
+  return g:grepprg
+endfunction
+
+command! Hoge echo <SID>GrepPrg()
+
+command! -nargs=+ Grep call <SID>Grep(<SID>GrepPrg(), <f-args>)
+"command! -nargs=+ Ack call <SID>Grep('ack', <f-args>)
 
 " Change file name editing
 command! -nargs=1 -complete=file Rename file <args>|call delete(expand('#'))
