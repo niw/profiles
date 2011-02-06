@@ -97,8 +97,16 @@ init_aliases() {
 	alias svnst="svn st | grep -v '^[X?]'"
 
 	# grep related
-	alias grepr="grep -r -E -n --color=always --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' . -e "
-	alias gr="grep -r -E -n --color=always --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='**/tmp' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
+	if which ack 2>&1 >/dev/null; then
+		alias gr="ack"
+	else
+		if grep --help 2>&1|grep -e '--exclude-dir' 2>&1 >/dev/null; then
+			alias gr="grep -r -E -n --color=always --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='**/tmp' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
+		else
+			alias gr="grep -r -E -n --color=always --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' . -e "
+		fi
+	fi	
+
 	alias ge="grepedit"
 
 	# git related
