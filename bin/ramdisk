@@ -1,0 +1,307 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'yaml'
+require 'fileutils'
+require 'logger'
+
+class Command # {{{
+  class << self
+    @@default_config = {}
+
+    def run!
+      command = self.new
+      command.run!
+    end
+
+    def defaults(defaults_or_key, value = nil)
+      if value
+        @@default_config[defaults_or_key.to_sym] = value
+      else
+        @@default_config = defaults_or_key
+      end
+    end
+    alias :default :defaults
+
+    def config_path(path)
+      defaults :config_path => path
+    end
+  end
+
+  def initialize
+    @config_path = config[:config_path] || default_config_path
+  end
+
+  def run!(&block)
+    load_config
+
+    option_parser = OptionParser.new do |parser|
+      parser.banner = "Usage: #{$0} [options]"
+      parser.on "-c", "--config=PATH", String, "Path to config file (#{@config_path})" do |value|
+        @config_path = value
+      end
+      parse_option(parser)
+    end
+    option_parser.parse!
+
+    yield(self, ARGV) if block_given?
+
+    run_command
+
+    save_config
+  end
+
+  def config
+    @config ||= Hash.new do |hash, key|
+      @@default_config[key]
+    end
+  end
+
+  def options
+    @options ||= {}
+  end
+
+  private
+
+  def default_config_path
+    name = self.class.name
+    name.gsub!(/command$/i, '')
+    name.gsub!(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+    name.gsub!(/([a-z\d])([A-Z])/, '\1_\2')
+    name.tr!("-", "_")
+    name.downcase!
+    "~/.#{name}"
+  end
+
+  def load_config
+    c = YAML.load(File.read(config_path)) rescue {}
+    config.merge!(c)
+  end
+
+  def save_config
+    File.open(config_path, "w") do |f|
+      f.write config.to_yaml
+    end
+  end
+
+  def config_path
+    File.expand_path(@config_path)
+  end
+
+  def parse_option(parser); end
+
+  def run_comand; end
+end # }}}
+
+class Ramdisk # {{{
+  HDID = "/usr/bin/hdid"
+  DISKUTIL = "/usr/sbin/diskutil"
+  VOLUMES_PATH = "/Volumes"
+
+  class Error < RuntimeError; end
+  class AlreadyExistsError < Error; end
+
+  attr_reader :size, :name, :device_name
+
+  class << self
+    def create!(size_in_mb, name)
+      ramdisk = self.new(size_in_mb, name)
+      ramdisk.create!.enable_ownership!
+    end
+  end
+
+  def initialize(size_in_mb, name = "ramdisk")
+    @size = size_in_mb.to_i
+    @name = name
+  end
+
+  def sectors
+    size * 2048
+  end
+
+  def path
+    File.join(VOLUMES_PATH, name)
+  end
+
+  def create!
+    raise AlreadyExistsError if File.exist?(path)
+
+    @device_name = `#{HDID} -nomount ram://#{sectors}`
+    unless $?.exited?
+      raise Error.new "Couldn't create RAM disk (#{$?.to_i})"
+    end
+
+    unless system(%{#{DISKUTIL} eraseDisk HFS+ "#{name}" #{@device_name}})
+      raise Error.new "Couldn't erase disk #{@device_name} (#{$?.to_i})"
+    end
+    self
+  end
+
+  def enable_ownership!
+    unless system(%{sudo #{DISKUTIL} enableOwnership "#{name}"})
+      raise Error.new "Couldn't enable ownership of #{name} (#{$?.to_i})"
+    end
+    self
+  end
+end # }}}
+
+class SimpleLoggerFormatter < Logger::Formatter # {{{
+  def call(severity, timestamp, progname, msg)
+    "#{String === msg ? msg : msg.inspect}\n"
+  end
+end # }}}
+
+class RamdiskPath  # {{{
+  FREEZED_EXT = ".freeze"
+
+  attr_reader :ramdisk, :path
+
+  def initialize(ramdisk, path, is_file = nil)
+    @ramdisk = ramdisk
+    @path = File.expand_path(path)
+    @is_file = is_file
+  end
+
+  def logger=(logger)
+    logger
+  end
+
+  def logger
+    @logger ||= begin
+      logger = Logger.new(STDOUT)
+      logger.formatter = SimpleLoggerFormatter.new
+      logger
+    end
+  end
+
+  def freezed_path
+    @freezed_path ||= path + FREEZED_EXT
+  end
+
+  def ramdisk_path
+    @ramdisk_path ||= File.join(@ramdisk.path, path)
+  end
+
+  def file?
+    @is_file ||= File.file?(path)
+  end
+
+  def exists?
+    File.exists?(path)
+  end
+  alias :exist? :exists?
+
+  def freezed?
+    File.exists?(freezed_path)
+  end
+
+  def linked?
+    File.symlink?(path) && (File.readlink(path) == ramdisk_path)
+  end
+
+  def ramdisked?
+    File.exists?(ramdisk_path)
+  end
+
+  def freeze!
+    if !freezed? && File.exist?(path) && !linked?
+      logger.info "[freeze] Copy #{path} to #{freezed_path}"
+      FileUtils.cp_r(path, feezed_path)
+    end
+    self
+  end
+
+  def ramdisk!
+    if !ramdisked? && (linked? || !exists?)
+      if freezed?
+        logger.info "[ramdisk] Copy #{freezed_paht} to #{ramdisk_path}"
+        FileUtils.cp_r(freezed_path, ramdisk_path)
+      elsif file?
+        logger.info "[ramdisk] Touch #{ramdisk_path}"
+        FileUtils.touch(ramdisk_path)
+      else
+        logger.info "[ramdisk] Create #{ramdisk_path}"
+        FileUtils.mkdir_p(ramdisk_path)
+      end
+    end
+    self
+  end
+
+  def link!
+    if !exists? && !linked?
+      logger.info "[link] Symlink #{ramdisk_path} to #{path}"
+      File.symlink(ramdisk_path, path)
+    end
+    self
+  end
+
+  def unlink!
+    if linked?
+      logger.info "[unlink] Remove #{path}"
+      File.rm(path)
+    end
+    self
+  end
+end # }}}
+
+class RamdiskCommand < Command
+  defaults :size => 1024, :volume_name => "ramdisk"
+
+  def parse_option(parser)
+    parser.on "-s", "--size=SIZE_IN_MBYTE", Integer, "Disk size in mega byte (#{config[:size]} MB)" do |value|
+      config[:size] = value
+    end
+
+    parser.on "-n", "--name=VOLUME_NAME", String, "Volume name (#{config[:volume_name]})" do |value|
+      config[:volume_name] = value
+    end
+
+    parser.on "-f", "--file", "Add path as file" do |value|
+      options[:is_file] = value
+    end
+  end
+
+  def run_command
+    case ARGV.shift.to_s.downcase
+    when "add"
+      add_path(ARGV.shift)
+    when "remove", "delete"
+      remove_path(ARGV.shift)
+    when "", "mount"
+      mount
+    end
+  end
+
+  def add_path(path)
+    path = File.expand_path(path)
+    remove_path(path)
+    entries << {:path => path, :is_file => !!options[:is_file]}
+  end
+
+  def remove_path(path)
+    path = File.expand_path(path)
+    entries.reject! do |entry|
+      entry[:path] == path
+    end
+  end
+
+  def mount
+    ramdisk = Ramdisk.new config[:size], config[:volume_name]
+    begin
+      ramdisk.create!
+    rescue Ramdisk::AlreadyExistsError
+    end
+
+    entries.each do |entry|
+      path = RamdiskPath.new(ramdisk, entry[:path], entry[:is_file])
+      path.ramdisk!.link!
+    end
+  end
+
+  def entries
+    config[:entries] ||= []
+  end
+end
+
+RamdiskCommand.run!
+
+# vim:set foldmethod=marker:

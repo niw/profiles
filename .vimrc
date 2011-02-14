@@ -192,8 +192,8 @@ let mapleader = ','
 let maplocalleader = '.'
 
 " Disable <Leader>, <LocalLeader> to avoid unexpected behavior.
-noremap <Leader>  <Nop>
-noremap <LocalLeader>  <Nop>
+noremap <Leader> <Nop>
+noremap <LocalLeader> <Nop>
 
 " Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
 let g:plugin_dicwin_disable = 1
@@ -291,6 +291,23 @@ noremap <silent> <F2> :call <SID>OpenPrevNormalBuffer(1)<CR>
 noremap <silent> <F3> :call <SID>OpenNextNormalBuffer(1)<CR>
 noremap <silent> <F4> :call <SID>OpenNextNormalBuffer(0)<CR>
 
+" Tab
+function! s:MapTabNextWithCount()
+  let tab_count = 1
+  while tab_count < 10
+    execute printf("noremap <silent> t%s :tabnext %s<CR>", tab_count, tab_count)
+    let tab_count = tab_count + 1
+  endwhile
+endfunction
+
+noremap <silent> tc :tabnew<CR>
+"noremap <silent> tt :tabnew<CR>
+noremap <silent> tq :tabclose<CR>
+noremap <silent> tn :tabnext<CR>
+noremap <silent> tp :tabprev<CR>
+
+call s:MapTabNextWithCount()
+
 " Make
 noremap <silent> <F5> :make<CR>
 
@@ -335,8 +352,10 @@ endfunction
 nnoremap <Space>h :<C-u>help<Space><C-r><C-w><CR>
 xnoremap <Space>h :call <SID>CommandWithVisualRegionString('help')<CR>
 
-nnoremap gr :<C-u>Gr<Space><C-r><C-w><CR>
-xnoremap gr :call <SID>CommandWithVisualRegionString('Gr')<CR>
+nnoremap gr :<C-u>Grep<Space><C-r><C-w><CR>
+xnoremap gr :call <SID>CommandWithVisualRegionString('Grep')<CR>
+"nnoremap ak :<C-u>Aak<Space><C-r><C-w><CR>
+"xnoremap ak :call <SID>CommandWithVisualRegionString('Ack')<CR>
 
 " Centering search result
 nnoremap n nzz
@@ -351,14 +370,15 @@ nnoremap <C-w>s <C-w>szz
 
 " QuickFix
 function! s:OpenQuickFixWithSyntex(syntax)
+  let g:last_quick_fix_syntax = a:syntax
   execute "copen"
   execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
   call feedkeys("\<C-w>J", "n")
 endfunction
 
 function! s:OpenQuickFix()
-  if exists('g:LastQuickFixSyntax')
-    call s:OpenQuickFixWithSyntex(g:LastQuickFixSyntax)
+  if exists('g:last_quick_fix_syntax')
+    call s:OpenQuickFixWithSyntex(g:last_quick_fix_syntax)
   else
     execute "copen"
   endif
@@ -394,6 +414,7 @@ augroup MyFileTypeCommands
   autocmd BufNewFile,BufRead *.module setlocal filetype=php
   autocmd BufNewFile,BufRead *.mustache set syntax=mustache
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
+  autocmd BufNewFile,BufRead *.json setlocal filetype=json
 augroup END
 
 " Editing Binary File
@@ -458,14 +479,63 @@ aug END
 command! Utf8 edit ++enc=utf-8
 
 " Recursive Grep and Highlight
-function! s:GrepWithHighlight(cmd, syntax, ...)
-  execute a:cmd . " " . a:syntax . join(a:000, " ")
-  let g:LastQuickFixSyntax = a:syntax
-  call s:OpenQuickFixWithSyntex(a:syntax)
+function! s:FlattenList(list)
+  let flatten = []
+  let i = 0
+  while i < len(a:list)
+    if type(a:list[i]) == type([])
+      call extend(flatten, s:FlattenList(a:list[i]))
+    else
+      call add(flatten, a:list[i])
+    endif
+    let i = i + 1
+  endwhile
+  return flatten
 endfunction
 
-command! -nargs=* -bang GrepRecursive grep<bang> -r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e <args>
-command! -nargs=* Gr call <SID>GrepWithHighlight("GrepRecursive!", <f-args>)
+function! s:Grep(grepprg, keyword, ...)
+  let args = ['grep!', shellescape(a:keyword)]
+  for arg in s:FlattenList(a:000)
+    call add(args, shellescape(arg, 1))
+  endfor
+
+  let grepprg = &grepprg
+  let &grepprg = a:grepprg
+  execute join(args, ' ')
+  let &grepprg = grepprg
+
+  call s:OpenQuickFixWithSyntex(a:keyword)
+endfunction
+
+function! s:HasCommand(cmd)
+  execute system('which ' . a:cmd . ' 2>&1 >/dev/null')
+  return !v:shell_error
+endfunction
+
+function! s:GrepPrg()
+  if exists('g:grepprg')
+    return g:grepprg
+  else
+    let g:grepprg = &grepprg
+  endif
+
+  if s:HasCommand('ack')
+    let g:grepprg = 'ack'
+  elseif s:HasCommand('grep')
+    let opts = "-r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*'"
+    if system('grep --help') =~# '--exclude-dir'
+      let opts .= " --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git'"
+    endif
+    let g:grepprg = 'grep ' . opts . ' . -e '
+  endif
+
+  return g:grepprg
+endfunction
+
+command! Hoge echo <SID>GrepPrg()
+
+command! -nargs=+ Grep call <SID>Grep(<SID>GrepPrg(), <f-args>)
+"command! -nargs=+ Ack call <SID>Grep('ack', <f-args>)
 
 " Change file name editing
 command! -nargs=1 -complete=file Rename file <args>|call delete(expand('#'))
@@ -512,6 +582,31 @@ command! -nargs=+ Vars PP filter(copy(g:), 'v:key =~# "^<args>"')
 if has('mac') && has('gui_running')
   command! GuiLargeFont set guifont=Marker\ Felt:h48 cmdheight=1
 endif
+
+" Change current directory to the one of current file.
+command! -bar Cd :cd %:p:h<CR>
+
+" TabpageCD, modified. I'm not sure it works good or not.
+" See https://gist.github.com/604543/
+
+function! s:StoreTabpageCD()
+  let t:cwd = getcwd()
+endfunction!
+
+function! s:RestoreTabpageCD()
+  if exists('t:cwd') && !isdirectory(t:cwd)
+    unlet t:cwd
+  endif
+  if !exists('t:cwd')
+    let t:cwd = getcwd()
+  endif
+  execute 'cd' fnameescape(expand(t:cwd))
+endfunction
+
+augroup TabpageCD
+  autocmd TabLeave * call <SID>StoreTabpageCD()
+  autocmd TabEnter * call <SID>RestoreTabpageCD()
+augroup END
 
 "}}}
 
