@@ -414,6 +414,7 @@ augroup MyFileTypeCommands
   autocmd BufNewFile,BufRead *.module setlocal filetype=php
   autocmd BufNewFile,BufRead *.mustache set syntax=mustache
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
+  autocmd BufNewFile,BufRead *.json setlocal filetype=json
 augroup END
 
 " Editing Binary File
