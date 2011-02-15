@@ -23,11 +23,11 @@ let s:enc_utf8 = 'utf-8'
 " Select &encoding
 " On Mac OS X with GUI, We use UTF-8. Otherwise prefer to use same as LANG environment variables
 function! s:DetermineEncoding()
-  " OSX GUIはUTF-8を基本にする
+  " Use UTF-8 on Mac OS X GUI
   if has('gui_running') && has('mac')
     let &encoding = s:enc_utf8
   endif
-  " LANG設定があったら上書き
+  " LANG environment variable takes precedence to &encoding.
   if $LANG =~# 'euc'
     let &encoding = s:enc_eucjp
   elseif $LANG =~# 'SJIS'
@@ -101,87 +101,59 @@ endif
 "}}}
 
 "{{{ Global Settings
-" FIXME translate the comments
 
-" <CR>だけのファイルを読むように
-set fileformats=unix,dos,mac
-" 検索時に大文字小文字を無視 (noignorecase:無視しない)
+" Search
 set ignorecase
-" 大文字小文字の両方が含まれている場合は大文字小文字を区別
 set smartcase
-" インクリメンタル検索
 set incsearch
-" 検索結果はハイライト
 set hlsearch
-" タブの画面上での幅
+set wrapscan
+
+" Tab and spaces
 set tabstop=4
 set shiftwidth=4
-" タブをスペースに展開しない (expandtab:展開する)
 set noexpandtab
-" 自動的にインデントする (noautoindent:インデントしない)
 set autoindent
 set smartindent
-" バックスペースでインデントや改行を削除できるようにする
-set backspace=2
-" 検索時にファイルの最後まで行ったら最初に戻る (nowrapscan:戻らない)
-set wrapscan
-" 括弧入力時に対応する括弧を表示 (noshowmatch:表示しない)
-set showmatch
-" コマンドライン補完するときに強化されたものを使う(参照 :help wildmenu)
-set wildmenu
-" テキスト挿入中の自動折り返しを日本語に対応させる
-set formatoptions&
-set formatoptions+=mM
-" 行番号を非表示 (number:表示)
-set number
-" ルーラーを表示 (noruler:非表示)
-set ruler
-" タブや改行を表示 (list:表示)
-set nolist
-" どの文字でタブや改行を表示するかを設定
-set listchars=tab:>-,extends:<,trail:-,eol:<
-" 長い行を折り返して表示 (nowrap:折り返さない)
-set wrap
-" 常にステータス行を表示 (詳細は:he laststatus)
-set laststatus=2
-" コマンドラインの高さ (Windows用gvim使用時はgvimrcを編集すること)
-set cmdheight=2
-" コマンドをステータス行に表示
-set showcmd
-" タイトルを表示
-set title
-" モード表示
-set showmode
-" シンタックスを有効に
-syntax on
-" 画面を黒地に白にする (次行の先頭の " を削除すれば有効になる)
-"colorscheme evening " (Windows用gvim使用時はgvimrcを編集すること)
-" ステータスラインを変更、文字コードと改行文字を表示する
-set statusline=%3n\ %<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']['.&ft.']'}%=%l,%c%V%8P
-" 編集中の内容を保ったまま別の画面に切替えられるようにする(デフォルトだと一度保存しないと切り替えられない)
-set hid
-" バックアップファイルを作成しない (次行の先頭の " を削除すれば有効になる)
-set nobackup
-set noswapfile
-" その他の設定
-set history=50
-" 端末で高速
-set ttyfast
-" ワイルドカード補完の設定
-set wildmode=longest,list,full
-" omni保管をシンタックス保管に
-"setlocal omnifunc=syntaxcomplete#Complete
-" Enable file type detection, plugin and indent
-filetype plugin on
-"filetype indent on
-" プレビューウィンドウの高さを大きめに
-set previewheight=40
-" カーソルキーとバックスペースで前後の行に移動
+
+" Cursor and Backspace
 set backspace=indent,eol,start
 set whichwrap&
 set whichwrap+=<,>,[,],h,l
-" 補完のオプション
+
+" Japanese support
+set formatoptions&
+set formatoptions+=mM
+
+" Displays
+set showmatch
+set wildmenu
+set number
+set ruler
+set nolist
+set listchars=tab:>-,extends:<,trail:-,eol:<
+set wrap
+set laststatus=2
+set cmdheight=2
+set previewheight=40
+set showcmd
+set title
+set showmode
+set statusline=%3n\ %<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']['.&ft.']'}%=%l,%c%V%8P
+
+" Backup files
+set nobackup
+set noswapfile
+
+" More
+set hid
+set history=50
+set ttyfast
+set wildmode=longest,list,full
 set completeopt=menuone
+set fileformats=unix,dos,mac
+syntax on
+filetype plugin on
 
 "}}}
 
