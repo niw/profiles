@@ -1,6 +1,5 @@
 let g:unite_source_file_mru_limit = 200
 let g:unite_source_file_mru_filename_format = ""
-let g:unite_enable_start_insert = 1
 
 nnoremap [unite] <Nop>
 nmap f [unite]
@@ -25,9 +24,9 @@ function! s:ExecuteCommandOnCR(command)
 endfunction
 
 nnoremap <silent> <CR>  :<C-u>call <SID>ExecuteCommandOnCR('Unite -buffer-name=files buffer')<CR>
-nnoremap <silent> <C-j> :<C-u>Unite -buffer-name=files file_rec<CR>
-nnoremap <silent> <C-k> :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
-nnoremap <silent> <C-l> :<C-u>Unite -buffer-name=files file_mru<CR>
+nnoremap <silent> <C-j> :<C-u>Unite -buffer-name=files -start-insert file_rec<CR>
+nnoremap <silent> <C-k> :<C-u>UniteWithBufferDir -buffer-name=files -start-insert buffer file_mru bookmark file<CR>
+nnoremap <silent> <C-l> :<C-u>Unite -buffer-name=files -start-insert file_mru<CR>
 
 " Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
 let g:plugin_dicwin_disable = 1
