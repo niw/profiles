@@ -286,10 +286,10 @@ function! s:OpenPrevNormalBuffer(loop)
   endif
 endfunction
 
-noremap <silent> <F1> :call <SID>OpenPrevNormalBuffer(0)<CR>
-noremap <silent> <F2> :call <SID>OpenPrevNormalBuffer(1)<CR>
-noremap <silent> <F3> :call <SID>OpenNextNormalBuffer(1)<CR>
-noremap <silent> <F4> :call <SID>OpenNextNormalBuffer(0)<CR>
+noremap <silent> <F1> :<C-u>call <SID>OpenPrevNormalBuffer(0)<CR>
+noremap <silent> <F2> :<C-u>call <SID>OpenPrevNormalBuffer(1)<CR>
+noremap <silent> <F3> :<C-u>call <SID>OpenNextNormalBuffer(1)<CR>
+noremap <silent> <F4> :<C-u>call <SID>OpenNextNormalBuffer(0)<CR>
 
 " Tab
 function! s:MapTabNextWithCount()
@@ -300,16 +300,16 @@ function! s:MapTabNextWithCount()
   endwhile
 endfunction
 
-noremap <silent> tc :tabnew<CR>
+noremap <silent> tc :<C-u>tabnew<CR>
 "noremap <silent> tt :tabnew<CR>
-noremap <silent> tq :tabclose<CR>
-noremap <silent> tn :tabnext<CR>
-noremap <silent> tp :tabprev<CR>
+noremap <silent> tq :<C-u>tabclose<CR>
+noremap <silent> tn :<C-u>tabnext<CR>
+noremap <silent> tp :<C-u>tabprev<CR>
 
 call s:MapTabNextWithCount()
 
 " Make
-noremap <silent> <F5> :make<CR>
+noremap <silent> <F5> :<C-u>make<CR>
 
 " Run EX commands by ; for US Keyboard
 noremap ; :
@@ -336,8 +336,8 @@ nnoremap <Space>.  :<C-u>edit $MYVIMRC<CR>
 nnoremap <Space>s. :<C-u>source $MYVIMRC<CR>
 
 " Run shell
-nnoremap <Space>: :shell<CR>
-nnoremap <Space>; :shell<CR>
+nnoremap <Space>: :<C-u>shell<CR>
+nnoremap <Space>; :<C-u>shell<CR>
 
 " Operation for the words under the cursor or the visual region
 function! s:CommandWithVisualRegionString(cmd)
@@ -350,12 +350,12 @@ function! s:CommandWithVisualRegionString(cmd)
 endfunction
 
 nnoremap <Space>h :<C-u>help<Space><C-r><C-w><CR>
-xnoremap <Space>h :call <SID>CommandWithVisualRegionString('help')<CR>
+xnoremap <Space>h :<C-u>call <SID>CommandWithVisualRegionString('help')<CR>
 
 nnoremap gr :<C-u>Grep<Space><C-r><C-w><CR>
-xnoremap gr :call <SID>CommandWithVisualRegionString('Grep')<CR>
+xnoremap gr :<C-u>call <SID>CommandWithVisualRegionString('Grep')<CR>
 "nnoremap ak :<C-u>Aak<Space><C-r><C-w><CR>
-"xnoremap ak :call <SID>CommandWithVisualRegionString('Ack')<CR>
+"xnoremap ak :<C-u>call <SID>CommandWithVisualRegionString('Ack')<CR>
 
 " Centering search result
 nnoremap n nzz

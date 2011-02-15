@@ -3,5 +3,5 @@ let g:vimshell_right_prompt = 'vimshell#vcs#info("%s:%b", "%s:%b - %a") . " " . 
 let g:vimshell_enable_smart_case = 1
 let g:vimshell_enable_auto_slash = 1
 
-nnoremap <Space>i :VimShellInteractive<CR>
-nnoremap <Space>\ :VimShellPop<CR>
+nnoremap <Space>i :<C-u>VimShellInteractive<CR>
+nnoremap <Space>\ :<C-u>VimShellPop<CR>
