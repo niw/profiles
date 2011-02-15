@@ -375,6 +375,7 @@ nnoremap <Space>k K
 augroup MyFileTypeCommands
   autocmd!
   autocmd FileType ruby,eruby,haml setlocal tabstop=2 shiftwidth=2 expandtab nowrap
+  autocmd FileType vim setlocal tabstop=2 shiftwidth=2 expandtab nowrap
   autocmd FileType php setlocal tabstop=2 shiftwidth=2 expandtab nowrap
   autocmd FileType actionscript setlocal fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
   autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript
