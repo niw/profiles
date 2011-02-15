@@ -558,7 +558,7 @@ if has('mac') && has('gui_running')
 endif
 
 " Change current directory to the one of current file.
-command! -bar Cd :cd %:p:h<CR>
+command! -bar Cd cd %:p:h
 
 " TabpageCD, modified. I'm not sure it works good or not.
 " See https://gist.github.com/604543/
