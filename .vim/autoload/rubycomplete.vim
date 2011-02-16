@@ -640,6 +640,7 @@ class VimRubyCompletion
       #when /^(((::)?[A-Z][^:.\(]*)+?)::?([^:.]*)$/ # Constant or class methods
       when /^([A-Z].*)::([^:.]*)$/ # Constant or class methods
         receiver = $1
+        #message = Regexp.quote($4)
         message = Regexp.quote($2)
         dprint "const or cls 2 [recv: \'%s\', msg: \'%s\']" % [ receiver, message ]
         load_buffer_class( receiver )
@@ -673,10 +674,11 @@ class VimRubyCompletion
         methods = global_variables.grep(Regexp.new(Regexp.quote($1)))
 
       # modified by Yoshimasa Niwa <niw@niw.at>
-      #when /^((\.?[^.]+)+?)\.([^.]*)$/ # variable 
+      #when /^((\.?[^.]+)+?)\.([^.]*)$/ # variable
       when /^([^."].*)\.([^.]*)$/ # variable
         dprint "variable"
         receiver = $1
+        #message = Regexp.quote($3)
         message = Regexp.quote($2)
         load_buffer_class( receiver )
 
