@@ -19,9 +19,13 @@ set lines=65
 set cmdheight=2
 " 画面を黒地に白にする
 colorscheme twilight
-" ツールバーなし、メニューバーなし
+" ツールバーなし、メニューバーなし、スクロールバーなし
 set guioptions-=T
 set guioptions-=m
+set guioptions-=l
+set guioptions-=L
+set guioptions-=r
+set guioptions-=R
 " 背景透明
 if(exists('&transparency'))
   set transparency=5
