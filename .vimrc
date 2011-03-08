@@ -612,6 +612,11 @@ if has('mac') && has('gui_running') && has('kaoriya')
   let $RUBY_DLL = "/usr/lib/libruby.dylib"
 endif
 
+" Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
+if has('kaoriya')
+  let g:plugin_dicwin_disable = 1
+endif
+
 "}}}
 
 "{{{ Runtime Paths
