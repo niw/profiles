@@ -97,7 +97,7 @@ init_aliases() {
 	alias svnst="svn st | grep -v '^[X?]'"
 
 	# grep related
-	if which ack 2>&1 >/dev/null; then
+	if type 'ack' >/dev/null 2>&1; then
 		alias gr="ack"
 	else
 		if grep --help 2>&1|grep -e '--exclude-dir' 2>&1 >/dev/null; then
