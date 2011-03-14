@@ -287,7 +287,7 @@ class RamdiskCommand < Command
   def mount
     ramdisk = Ramdisk.new config[:size], config[:volume_name]
     begin
-      ramdisk.create!
+      ramdisk.create!.enable_ownership!
     rescue Ramdisk::AlreadyExistsError
     end
 
