@@ -4,8 +4,9 @@ let g:unite_source_file_mru_filename_format = ""
 nnoremap [unite] <Nop>
 nmap f [unite]
 
-nnoremap <silent> [unite]j :<C-u>Unite -buffer-name=files -start-insert buffer file_mru bookmark file<CR>
-nnoremap <silent> [unite]k :<C-u>UniteWithBufferDir -buffer-name=files -start-insert buffer file_mru bookmark file<CR>
+nnoremap <silent> [unite]f :<C-u>Unite -buffer-name=files -start-insert buffer file_mru bookmark file<CR>
+nnoremap <silent> [unite]j :<C-u>UniteWithBufferDir -buffer-name=files -start-insert buffer file_mru bookmark file<CR>
+nnoremap <silent> [unite]l :<C-u>Unite -buffer-name=files file_mru<CR>
 
 function! s:unite_settings()
   nmap <buffer> <ESC> <Plug>(unite_exit)
