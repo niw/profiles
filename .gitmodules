@@ -37,3 +37,6 @@
 [submodule ".vim/bundle/unite-outline"]
 	path = .vim/bundle/unite-outline
 	url = https://github.com/h1mesuke/unite-outline.git
+[submodule ".vim/bundle/neco-look"]
+	path = .vim/bundle/neco-look
+	url = https://github.com/ujihisa/neco-look.git
