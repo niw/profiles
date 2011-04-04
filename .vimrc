@@ -617,6 +617,12 @@ if has('kaoriya')
   let g:plugin_dicwin_disable = 1
 endif
 
+" If terminal supports 256 colors, set colorschema.
+if $TERM =~? '256'
+  colorscheme molokai
+  "colorscheme twilight
+endif
+
 "}}}
 
 "{{{ Runtime Paths
