@@ -115,6 +115,7 @@ init_aliases() {
 	alias dm="git diff master"
 	alias s="git status"
 	alias a="git add"
+	alias grf="git remote -v|awk '{print \$1}'|sort|uniq|xargs -n 1 git fetch"
 
 	alias now="date +%Y%m%d%H%M%S"
 	alias wget="wget -U Mozilla --no-check-certificate"
