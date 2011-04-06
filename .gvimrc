@@ -1,4 +1,8 @@
-" フォントの設定
+" .gvimrc
+" http://github.com/niw/profiles
+
+" Font settings {{{
+
 if has('win32')
   set guifont=MeiryoKe_Console:h9:cSHIFTJIS
   "set guifont=MS_Gothic:h9:cSHIFTJIS
@@ -11,26 +15,37 @@ elseif has('mac')
 else
   set guifont=Monospace\ 8
 endif
-" ウインドウの幅
+
+" }}}
+
+" Window settings {{{
+
+" Window width
 set columns=120
-" ウインドウの高さ
+" Window height
 set lines=65
-" コマンドラインの高さ(GUI使用時)
+" Command line height
 set cmdheight=2
-" ツールバーなし、メニューバーなし、スクロールバーなし
+" No toolbar, No menubar, No scrollbars
 set guioptions-=T
 set guioptions-=m
 set guioptions-=l
 set guioptions-=L
 set guioptions-=r
 set guioptions-=R
-" 背景透明
+" Transparency if we can use.
 if(exists('&transparency'))
   set transparency=5
 endif
-" MacVim用
+
+" }}}
+
+" Platform Dependents {{{
+
 if has("gui_macvim")
   set fuoptions=maxvert,maxhorz
 endif
 
-" vim:ts=2:sw=2:expandtab
+" }}}
+
+" vim:set tabstop=2 shiftwidth=2 expandtab foldmethod=marker nowrap:

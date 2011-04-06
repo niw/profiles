@@ -676,4 +676,4 @@ set secure
 
 "}}}
 
-" vim:tabstop=2:shiftwidth=2:expandtab:foldmethod=marker:nowrap:
+" vim:set tabstop=2 shiftwidth=2 expandtab foldmethod=marker nowrap:
