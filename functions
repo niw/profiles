@@ -122,14 +122,14 @@ init_aliases() {
 	alias fn="find . -not -ipath '*/tmp/*' -not -ipath '*/.*/*' -name "
 
 	# awk
-	alias a1="awk '{print \$1}'"
-	alias a2="awk '{print \$2}'"
-	alias a3="awk '{print \$3}'"
-	alias a4="awk '{print \$4}'"
-	alias a5="awk '{print \$5}'"
+	for i in 1 2 3 4 5 6 7 8 9; do
+		alias a$i="awk '{print \$$i}'"
+	done
 
 	# Terminal.app related
-	alias t="term -t"
+	if type 'term' > /dev/null 2>&1; then
+		alias t="term -t"
+	fi
 
 	# if we have vim, vi is vim
 	if type 'vim' > /dev/null 2>&1; then
