@@ -617,8 +617,11 @@ if has('kaoriya')
   let g:plugin_dicwin_disable = 1
 endif
 
-" If terminal supports 256 colors, set colorschema.
-if $TERM =~? '256'
+" Do not use useless example.
+let g:no_gvimrc_example = 1
+
+" If terminal supports 256 colors or GUI, set colorscheme.
+if $TERM =~? '256' || has('gui_running')
   colorscheme molokai
   "colorscheme twilight
 endif

@@ -17,8 +17,6 @@ set columns=120
 set lines=65
 " コマンドラインの高さ(GUI使用時)
 set cmdheight=2
-" 画面を黒地に白にする
-colorscheme twilight
 " ツールバーなし、メニューバーなし、スクロールバーなし
 set guioptions-=T
 set guioptions-=m
