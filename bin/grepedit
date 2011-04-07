@@ -102,7 +102,7 @@ regions_set.each do |filename, regions|
     # and put changed lines.
     lines[region[0]] = after[filename].shift
   end
-  open(filename, "w"){|file| file.write lines.to_s}
+  open(filename, "w"){|file| file.write lines.join.to_s}
 end
 
 tmp.close!
