@@ -5,8 +5,8 @@ nnoremap [unite] <Nop>
 nmap f [unite]
 
 nnoremap <silent> [unite]f :<C-u>Unite -buffer-name=files -start-insert buffer file_mru file bookmark<CR>
-nnoremap <silent> [unite]j :<C-u>UniteWithBufferDir -buffer-name=files -start-insert buffer file_mru file bookmark<CR>
-nnoremap <silent> [unite]k :<C-u>Unite -buffer-name=files -start-insert file file_rec<CR>
+nnoremap <silent> [unite]j :<C-u>Unite -buffer-name=files -start-insert file file_rec<CR>
+nnoremap <silent> [unite]k :<C-u>UniteWithBufferDir -buffer-name=files -start-insert buffer file_mru file bookmark<CR>
 nnoremap <silent> [unite]l :<C-u>Unite -buffer-name=files file_mru<CR>
 
 function! s:unite_settings()
