@@ -98,6 +98,11 @@ if !has('gui_running') && &encoding != 'cp932' && &term == 'win32'
   set termencoding=cp932
 endif
 
+" I don't want to see Japanese menu on MacVim
+if has("gui_macvim")
+  set langmenu=none
+endif
+
 "}}}
 
 "{{{ Global Settings
