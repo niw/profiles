@@ -159,7 +159,7 @@ set ttyfast
 set wildmode=longest,list,full
 set completeopt=menuone
 set fileformats=unix,dos,mac
-syntax on
+syntax enable
 filetype plugin on
 
 "}}}
