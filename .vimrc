@@ -9,6 +9,8 @@ if !exists('s:loaded_vimrc')
   set nocompatible
 endif
 
+" We have now 64 bit Windows.
+let s:has_win = has('win32') || has('win64')
 "}}}
 
 "{{{ Japanese Support
@@ -603,7 +605,7 @@ if !has('gui_running') && has('xterm_clipboard')
 endif
 
 " On Windows, if $PATH doesn't includes $VIM, it can not find out the exe file
-if has('win32') && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
+if s:has_win && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
   let $PATH = $VIM . ';' . $PATH
 endif
 
@@ -637,8 +639,8 @@ endif
 
 set runtimepath&
 
-" Add ~/.vim to &runtimepath for win32
-if has('win32')
+" Add ~/.vim to &runtimepath for Windows
+if s:has_win
   set runtimepath+=$HOME/.vim
 endif
 
