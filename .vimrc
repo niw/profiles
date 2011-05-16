@@ -513,8 +513,6 @@ function! s:GrepPrg()
   return g:grepprg
 endfunction
 
-command! Hoge echo <SID>GrepPrg()
-
 command! -nargs=+ Grep call <SID>Grep(<SID>GrepPrg(), <f-args>)
 "command! -nargs=+ Ack call <SID>Grep('ack', <f-args>)
 
