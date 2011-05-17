@@ -427,11 +427,11 @@ nnoremap <silent> [Space]; :<C-u>shell<CR>
 
 " Operation for the words under the cursor or the visual region
 function! s:CommandWithVisualRegionString(cmd) "{{{
-	let reg = getreg('a')
-	let regtype = getregtype('a')
-	silent normal! gv"ay
-	let selected = @a
-	call setreg('a', reg, regtype)
+  let reg = getreg('a')
+  let regtype = getregtype('a')
+  silent normal! gv"ay
+  let selected = @a
+  call setreg('a', reg, regtype)
   execute a:cmd . ' ' . selected
 endfunction "}}}
 
