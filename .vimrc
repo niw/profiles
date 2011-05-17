@@ -11,6 +11,12 @@ endif
 
 " We have now 64 bit Windows.
 let s:has_win = has('win32') || has('win64')
+
+" Reset all autocmd defined in this file.
+augroup MyAutoCommands
+  autocmd!
+augroup END
+
 "}}}
 
 "{{{ Japanese Support
@@ -380,8 +386,7 @@ nnoremap <Space>k K
 " {{{ Auto Commands
 
 " File Types
-augroup MyFileTypeCommands
-  autocmd!
+augroup MyAutoCommands
   autocmd FileType ruby,eruby,haml setlocal tabstop=2 shiftwidth=2 expandtab nowrap
   autocmd FileType vim setlocal tabstop=2 shiftwidth=2 expandtab nowrap
   autocmd FileType php setlocal tabstop=2 shiftwidth=2 expandtab nowrap
@@ -401,8 +406,7 @@ augroup MyFileTypeCommands
 augroup END
 
 " Editing Binary File
-augroup MyBinaryCommands
-  autocmd!
+augroup MyAutoCommands
   autocmd BufReadPre *.bin let &bin=1
   autocmd BufReadPost *.bin if &bin | silent %!xxd -g 1
   autocmd BufReadPost *.bin setlocal ft=xxd | endif
@@ -412,9 +416,7 @@ augroup MyBinaryCommands
   autocmd BufWritePost *.bin setlocal nomod | endif
 augroup END
 
-augroup MyMiscCommands
-  autocmd!
-
+augroup MyAutoCommands
   " Highlight Cursour Line
   "autocmd WinEnter,BufEnter * setlocal cursorline
   "autocmd WinLeave,BufLeave * setlocal nocursorline
@@ -448,11 +450,10 @@ function! s:RestoreBinaryForNoeol()
   endif
 endfunction
 
-augroup PreserveNoeol
-  autocmd!
+augroup MyAutoCommands
   autocmd BufWritePre  * :call <SID>SetBinaryForNoeol()
   autocmd BufWritePost * :call <SID>RestoreBinaryForNoeol()
-aug END
+augroup END
 
 "}}}
 
@@ -584,7 +585,7 @@ function! s:RestoreTabpageCD()
   execute 'cd' fnameescape(expand(t:cwd))
 endfunction
 
-augroup TabpageCD
+augroup MyAutoCommands
   autocmd TabLeave * call <SID>StoreTabpageCD()
   autocmd TabEnter * call <SID>RestoreTabpageCD()
 augroup END
@@ -668,7 +669,7 @@ filetype on
 "{{{ Plugins
 
 " Git Plugin (Standard Plugin)
-autocmd FileType gitcommit DiffGitCached
+autocmd MyAutoCommands FileType gitcommit DiffGitCached
 
 "}}}
 
