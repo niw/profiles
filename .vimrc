@@ -152,8 +152,9 @@ set statusline=%3n\ %<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']['.&ft
 set nobackup
 set noswapfile
 
-" More
-set hid
+" Hide buffer when it is abandoned.
+set hidden
+
 set history=50
 set ttyfast
 set wildmode=longest,list,full
@@ -368,7 +369,7 @@ nnoremap <silent> <space>w :<C-u>cclose<CR>
 
 " Easy to quit.
 nnoremap <silent> qq :<C-u>quit<CR>
-nnoremap <silent> qw :<C-u>Bw<CR>
+nnoremap <silent> qd :<C-u>Bdelete<CR>
 
 " Avoid run K mistakenly with C-k, remap K to <space>k
 nnoremap K <Nop>
@@ -519,8 +520,8 @@ command! -nargs=+ Grep call <SID>Grep(<SID>GrepPrg(), <f-args>)
 " Change file name editing
 command! -nargs=1 -complete=file Rename file <args>|call delete(expand('#'))
 
-" Preserve window splits when wiping the buffer
-function! s:WipeBuffer(bang)
+" Preserve window splits when deleting the buffer
+function! s:DeleteBuffer(bang)
   if &mod && a:bang != '!'
     return
   endif
@@ -548,10 +549,10 @@ function! s:WipeBuffer(bang)
   endwhile
 
   execute win_num "wincmd w"
-  execute "silent bwipeout" . a:bang buffer_num
+  execute "silent bdelete" . a:bang buffer_num
 endfunction
 
-command! -bang Bw call <SID>WipeBuffer("<bang>")
+command! -bang Bdelete call <SID>DeleteBuffer("<bang>")
 
 " Vars, require vim-prettyprint
 " See http://d.hatena.ne.jp/thinca/20100711/1278849707
