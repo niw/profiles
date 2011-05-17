@@ -397,6 +397,7 @@ augroup MyFileTypeCommands
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
   autocmd BufNewFile,BufRead *.json setlocal filetype=json
   autocmd BufNewFile,BufRead *.pp setlocal filetype=puppet
+  autocmd BufNewFile,BufRead *.mm setlocal filetype=cpp
 augroup END
 
 " Editing Binary File
