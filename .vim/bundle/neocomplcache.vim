@@ -11,12 +11,12 @@ let g:neocomplcache_enable_underbar_completion = 1
 let g:neocomplcache_lock_buffer_name_pattern = 'fuzzyfinder'
 
 " Enable omni completion on ruby (default is off.)
-if !exists('g:neocomplcache_omni_patterns')
-  let g:neocomplcache_omni_patterns = {}
-endif
-if has('ruby')
-  let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\h\w*\|\h\w*::'
-endif
+"if !exists('g:neocomplcache_omni_patterns')
+"  let g:neocomplcache_omni_patterns = {}
+"endif
+"if has('ruby')
+"  let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\h\w*\|\h\w*::'
+"endif
 
 " Key Mappgins.
 imap <C-k> <Plug>(neocomplcache_snippets_expand)
