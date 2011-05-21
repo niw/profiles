@@ -109,6 +109,7 @@ set ignorecase
 set smartcase
 set incsearch
 set hlsearch
+nohlsearch
 set wrapscan
 
 " Tab and spaces
@@ -696,15 +697,20 @@ endif
 
 "{{{ Runtime Paths
 
-set runtimepath&
+" Add runtime paths (Using pathogen.vim)
+if !exists('s:loaded_vimrc')
+  set runtimepath&
 
-" Add ~/.vim to &runtimepath for Windows
-if s:has_win
-  set runtimepath+=$HOME/.vim
+  " Add ~/.vim to &runtimepath for Windows
+  if s:has_win
+    set runtimepath+=$HOME/.vim
+  endif
+
+  call pathogen#runtime_append_all_bundles()
+  call pathogen#helptags()
 endif
 
-" Add runtime paths (Using pathogen.vim)
-function! s:SourceRuntimeBundleScripts()
+function! s:SourceRuntimeBundleScripts() "{{{
   for dir in pathogen#split(&runtimepath)
     for vimfile in [dir . '.vim', dir . '/.vimrc']
       if filereadable(vimfile)
@@ -712,11 +718,9 @@ function! s:SourceRuntimeBundleScripts()
       endif
     endfor
   endfor
-endfunction
+endfunction "}}}
 
-call pathogen#runtime_append_all_bundles()
 call s:SourceRuntimeBundleScripts()
-call pathogen#helptags()
 
 " Re-enable filetype plugin for ftdetect directory of each runtimepath
 filetype off
