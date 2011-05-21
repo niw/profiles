@@ -1,9 +1,16 @@
 " .gvimrc
 " http://github.com/niw/profiles
 
+"{{{ Initialize
+
+" We have now 64 bit Windows.
+let s:has_win = has('win32') || has('win64')
+
+"}}}
+
 " Font settings {{{
 
-if has('win32')
+if s:has_win
   set guifont=MeiryoKe_Console:h9:cSHIFTJIS
   "set guifont=MS_Gothic:h9:cSHIFTJIS
   if has('printer')
