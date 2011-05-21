@@ -47,9 +47,11 @@ function! MakeScalaFile()
     
     call append(".", "// vim: set ts=4 sw=4 et:")
     call append(".", "")
-    
 endfunction
 
-au BufNewFile *.scala call MakeScalaFile()
+augroup Scala
+    autocmd!
+    au BufNewFile *.scala call MakeScalaFile()
+augroup END
 
 " vim: set ts=4 sw=4 et:
