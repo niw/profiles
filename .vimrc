@@ -354,6 +354,12 @@ nnoremap [Window]s <C-w>szz
 
 nnoremap [Window]q :<C-u>quit<CR>
 nnoremap [Window]d :<C-u>Bdelete<CR>
+
+nnoremap [Window]= <C-w>=
+nnoremap [Window], <C-w><
+nnoremap [Window]. <C-w>>
+nnoremap [Window]] <C-w>+
+nnoremap [Window][ <C-w>-
 "}}}
 
 " Tab manipulations
