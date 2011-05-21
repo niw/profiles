@@ -435,8 +435,12 @@ nnoremap <silent> [Space].  :<C-u>edit $MYVIMRC<CR>
 nnoremap <silent> [Space]s. :<C-u>source $MYVIMRC<CR>
 
 " Run shell
+if has("gui")
+  nnoremap <silent> [Space]; :<C-u>VimShell<CR>
+else
+  nnoremap <silent> [Space]; :<C-u>shell<CR>
+end
 nnoremap <silent> [Space]: :<C-u>shell<CR>
-nnoremap <silent> [Space]; :<C-u>shell<CR>
 
 " Operation for the words under the cursor or the visual region
 function! s:CommandWithVisualRegionString(cmd) "{{{
