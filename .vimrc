@@ -23,8 +23,14 @@ augroup END
 function! s:SetEncoding() "{{{
   " As default, we're using UTF-8, of course.
   set encoding=utf-8
-  set termencoding= " using &encoding
 
+  " Done by here, if it's MacVim which can't change &termencoding.
+  if has('gui_macvim')
+    return
+  endif
+
+  " Using &encoding as default.
+  set termencoding=
   " If LANG shows EUC or Shift-JIS, use it for termencoding.
   if $LANG =~# 'eucJP'
     set termencoding=euc-jp
