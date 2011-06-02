@@ -40,3 +40,6 @@
 [submodule ".vim/bundle/neco-look"]
 	path = .vim/bundle/neco-look
 	url = https://github.com/ujihisa/neco-look.git
+[submodule ".vim/bundle/vim-quickrun"]
+	path = .vim/bundle/vim-quickrun
+	url = https://github.com/thinca/vim-quickrun.git
