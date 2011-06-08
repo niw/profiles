@@ -200,6 +200,7 @@ augroup MyAutoCommands
   autocmd FileType vim setlocal tabstop=2 shiftwidth=2 expandtab nowrap
   autocmd FileType actionscript setlocal fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
   autocmd FileType php setlocal tabstop=2 shiftwidth=2 expandtab nowrap
+  autocmd FileType thrift setlocal tabstop=2 shiftwidth=2 expandtab nowrap
 
   " File Types
   autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript tabstop=2 shiftwidth=2 expandtab nowrap
@@ -213,6 +214,7 @@ augroup MyAutoCommands
   autocmd BufNewFile,BufRead *.json setlocal filetype=json
   autocmd BufNewFile,BufRead *.pp setlocal filetype=puppet
   autocmd BufNewFile,BufRead *.mm setlocal filetype=cpp
+  autocmd BufNewFile,BufRead *.thrift setlocal filetype=thrift
 
   " Support grepedit comamnd. See ~/.profiles/bin/grepedit
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
