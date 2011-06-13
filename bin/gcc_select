@@ -1,0 +1,113 @@
+#!/bin/sh
+
+GCC_COMMANDS="/usr/bin/cc /usr/bin/c++ /usr/bin/gcc /usr/bin/g++"
+
+usage() {
+	echo "Usage: $0 [command]"
+	echo "  l, llvm-gcc-4.2  Use llvm-gcc-4.2."
+	echo "  g, gcc-4.2       Use gcc-4.2."
+	echo "  -s, --status     Show current command status."
+	echo "  -r, --revert     Revert the original condition."
+	echo "  -h, --help       Show usage."
+}
+
+show_links() {
+	for i in $GCC_COMMANDS; do
+		link=`readlink "$i"`
+		if [ -z "$link" ]; then
+			echo "$i\t: not symlink."
+		else
+			echo "$i\t: $link"
+		fi
+	done
+}
+
+ensure_sudo() {
+	if [ ! `whoami` == "root" ]; then
+		echo "Sorry, please run this command as root."
+		exit 1
+	fi
+}
+
+BACKUP_SUFFIX="gcc_select_backup"
+
+backup() {
+	for i in $GCC_COMMANDS; do
+		backup="$i.$BACKUP_SUFFIX"
+		if [ ! -e "$backup" ]; then
+			echo "Backup $i to $backup"
+			mv "$i" "$backup"
+		fi
+	done
+}
+
+restore() {
+	for i in $GCC_COMMANDS; do
+		backup="$i.$BACKUP_SUFFIX"
+		if [ -e "$backup" ]; then
+			echo "Restore $backup to $i"
+			rm -f "$i"
+			mv "$backup" "$i"
+		fi
+	done
+}
+
+enable_gcc_42() {
+	backup
+	cd /usr/bin
+	echo "Symlink gcc-4.2 to cc"
+	rm -f cc  && ln -s gcc-4.2 cc
+	echo "Symlink g++-4.2 to c++"
+	rm -f c++ && ln -s g++-4.2 c++
+	echo "Symlink gcc-4.2 to gcc"
+	rm -f gcc && ln -s gcc-4.2 gcc
+	echo "Symlink g++-4.2 to g++"
+	rm -f g++ && ln -s g++-4.2 g++
+}
+
+enable_llvm_gcc_42() {
+	backup
+	cd /usr/bin
+	echo "Symlink llvm-gcc-4.2 to cc"
+	rm -f cc  && ln -s llvm-gcc-4.2 cc
+	echo "Symlink llvm-g++-4.2 to c++"
+	rm -f c++ && ln -s llvm-g++-4.2 c++
+	echo "Symlink llvm-gcc-4.2 to gcc"
+	rm -f gcc && ln -s llvm-gcc-4.2 gcc
+	echo "Symlink llvm-g++-4.2 to g++"
+	rm -f g++ && ln -s llvm-g++-4.2 g++
+}
+
+if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" ]; then
+	usage
+	exit 0
+fi
+
+if [ "$1" = "-s" -o "$1" = "--status" ]; then
+	show_links
+	exit 0
+fi
+
+if [ "$1" = "-r" -o "$1" = "--revert" ]; then
+	ensure_sudo
+	show_links
+	echo "Reverting..."
+	restore
+	show_links
+	exit 0
+fi
+
+if [ "$1" = "g" -o "$1" = "gcc-4.2" ]; then
+	ensure_sudo
+	enable_gcc_42
+	exit 0
+fi
+
+if [ "$1" = "l" -o "$1" = "llvm-gcc-4.2" ]; then
+	ensure_sudo
+	enable_llvm_gcc_42
+	exit 0
+fi
+
+echo "Huh?"
+exit 1
