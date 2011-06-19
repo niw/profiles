@@ -7,5 +7,5 @@ gem: --no-ri --no-rdoc
 :verbose: true
 :sources: 
 - http://gemcutter.org
-- http://gems.rubyforge.org/
+- http://gems.rubyforge.org
 - http://gems.github.com
