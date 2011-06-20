@@ -316,13 +316,8 @@ init_additionl_configration "*.zsh"
 
 ## Post Configurations {{{
 
-# Load rvm if it exists
-# rvm requires 4.3.5
-autoload -Uz is-at-least
-if is-at-least 4.3.5; then
-	if init_rvm; then
-		RPROMPT="${RPROMPT} %{$fg[red]%}\${RUBY_VERSION}%{$reset_color%}"
-	fi
+if init_rubies; then
+	RPROMPT="${RPROMPT} %{$fg[red]%}\${RUBIES_RUBY_NAME}%{$reset_color%}"
 fi
 
 # Load Perl local::lib

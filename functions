@@ -160,6 +160,16 @@ init_rvm() {
 	return 1
 }
 
+init_rubies() {
+	if [ -s "$HOME/.rubies/src/rubies.sh" ]; then
+		source "$HOME/.rubies/src/rubies.sh"
+		rubies default
+		enable_rubies_cd_hook
+		return 0
+	fi
+	return 1
+}
+
 init_locallib() {
 	if [ -s "/Users/niw/.perl5/lib/perl5/local/lib.pm" ]; then
 		eval $(perl -I$HOME/.perl5/lib/perl5 -Mlocal::lib=$HOME/.perl5)

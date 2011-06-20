@@ -78,9 +78,8 @@ init_additionl_configration "*.bash"
 
 ## Post Configurations {{{
 
-# Load rvm if it exists
-if init_rvm; then
-	RPROMPT="$RPROMPT \$RUBY_VERSION"
+if init_rubies; then
+	RPROMPT="$RPROMPT \$RUBIES_RUBY_NAME"
 fi
 
 # Load Perl local::lib
