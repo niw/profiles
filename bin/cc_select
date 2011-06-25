@@ -30,7 +30,7 @@ ensure_sudo() {
 	fi
 }
 
-BACKUP_SUFFIX="gcc_select_backup"
+BACKUP_SUFFIX="cc_select_backup"
 
 backup() {
 	for i in $GCC_COMMANDS; do
