@@ -348,9 +348,7 @@ noremap <silent> [Buffer]n :<C-u>call <SID>OpenNextNormalBuffer(1)<CR>
 
 " Window manipulations
 nmap s [Window]
-xmap s [Window]
 nnoremap [Window] <Nop>
-xnoremap [Window] <Nop>
 "{{{
 nnoremap [Window]j <C-W>j
 nnoremap [Window]k <C-W>k
@@ -373,9 +371,7 @@ nnoremap [Window][ <C-w>-
 
 " Tab manipulations
 nmap t [Tab]
-xmap t [Tab]
 nnoremap [Tab] <Nop>
-xnoremap [Tab] <Nop>
 "{{{
 function! s:MapTabNextWithCount()
   let tab_count = 1

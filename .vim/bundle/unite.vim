@@ -2,9 +2,7 @@ let g:unite_source_file_mru_limit = 200
 let g:unite_source_file_mru_filename_format = ""
 
 nmap f [Unite]
-xmap f [Unite]
 nnoremap [Unite] <Nop>
-xnoremap [Unite] <Nop>
 nnoremap <silent> [Unite]f :<C-u>Unite -buffer-name=files -start-insert buffer_tab file_mru file<CR>
 nnoremap <silent> [Unite]j :<C-u>Unite -buffer-name=files -start-insert file_rec file<CR>
 nnoremap <silent> [Unite]k :<C-u>UniteWithBufferDir -buffer-name=files -start-insert file_rec file<CR>
