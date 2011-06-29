@@ -212,7 +212,7 @@ augroup MyAutoCommands
   autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
   autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
   autocmd BufNewFile,BufRead *.module setlocal filetype=php
-  autocmd BufNewFile,BufRead *.mustache set syntax=mustache
+  autocmd BufNewFile,BufRead *.mustache setlocal syntax=mustache
   autocmd BufNewFile,BufRead *.json setlocal filetype=json
   autocmd BufNewFile,BufRead *.pp setlocal filetype=puppet
   autocmd BufNewFile,BufRead *.mm setlocal filetype=cpp
@@ -746,4 +746,4 @@ set secure
 
 "}}}
 
-" vim:set tabstop=2 shiftwidth=2 textwidth=0 expandtab foldmethod=marker nowrap:
+" vim: tabstop=2 shiftwidth=2 textwidth=0 expandtab foldmethod=marker nowrap
