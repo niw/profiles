@@ -7,9 +7,6 @@
 [submodule ".vim/bundle/vim-objj"]
 	path = .vim/bundle/vim-objj
 	url = https://github.com/nanki/vim-objj.git
-[submodule ".vim/bundle/git-vim"]
-	path = .vim/bundle/git-vim
-	url = https://github.com/motemen/git-vim.git
 [submodule ".vim/bundle/vim-surround"]
 	path = .vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround.git
