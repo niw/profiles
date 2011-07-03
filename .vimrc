@@ -153,6 +153,8 @@ let &statusline .= '%<%f '    " Filename
 let &statusline .= '%m%r%h%w' " Modified flag, Readonly flag, Preview flag
 let &statusline .= '%{"[" . (&fileencoding != "" ? &fileencoding : &encoding) . "][" . &fileformat . "][" . &filetype . "]"}'
 let &statusline .= '%='       " Spaces
+let &statusline .= '%{fugitive#statusline()} ' " Git repository status, require vim-fugitive plugin.
+                                               " FIXME make sure we can use vim-fugitive or not.
 let &statusline .= '%l,%c%V'  " Line number, Column number, Virtual column number
 let &statusline .= '%4P'      " Percentage through file of displayed window.
 
@@ -744,4 +746,4 @@ set secure
 
 "}}}
 
-" vim:set tabstop=2 shiftwidth=2 expandtab foldmethod=marker nowrap:
+" vim:set tabstop=2 shiftwidth=2 textwidth=0 expandtab foldmethod=marker nowrap:
