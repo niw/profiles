@@ -163,7 +163,6 @@ init_rvm() {
 init_rubies() {
 	if [ -s "$HOME/.rubies/src/rubies.sh" ]; then
 		source "$HOME/.rubies/src/rubies.sh"
-		rubies default
 		enable_rubies_cd_hook
 		return 0
 	fi
