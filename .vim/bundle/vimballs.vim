@@ -1,1 +1,1 @@
-let g:vimball_home = $HOME . "/.vim/runtimes/vimballs"
+let g:vimball_home = $HOME . "/.vim/bundle/vimballs"
