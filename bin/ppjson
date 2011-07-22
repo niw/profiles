@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+module JsonParserLoader
+  extend self
+
+  def parser
+    @parser ||= try_with_rubygems_and_bundler do
+      require_json_parser
+    end
+  end
+
+  private
+
+  def require_json_parser
+    begin
+      require 'yajl'
+      Yajl::Parser
+    rescue LoadError
+      require 'json'
+      JSON
+    end
+  end
+
+  def try_with_rubygems_and_bundler
+    begin
+      yield
+    rescue LoadError
+      require "rubygems"
+      begin
+        require "bundler"
+        Bundler.setup
+      rescue LoadError
+      end
+      yield
+    end
+  end
+end
+
+require 'pp'
+
+object = JsonParserLoader.parser.parse(STDIN.read)
+
+while selector = ARGV.shift
+  case object
+  when Hash
+    object = object[selector]
+  when Array
+    object = object[selector.to_i]
+  end
+end
+
+pp object
