@@ -18,15 +18,20 @@ if has('ruby')
 endif
 
 " Auto select, <Tab> to point completion, <CR> to select then close popup.
-let g:neocomplcache_enable_auto_select = 1
-inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<S-Tab>"
-inoremap <expr> <CR> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+"let g:neocomplcache_enable_auto_select = 1
+"inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
+"inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<S-Tab>"
+"inoremap <expr> <CR> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
 
 " No auto select, <Tab> to select complete. <CR> works <CR> and close popup.
-"inoremap <expr> <CR> neocomplcache#smart_close_popup() . "\<CR>"
 "inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 "inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"inoremap <expr> <CR> neocomplcache#smart_close_popup() . "\<CR>"
+
+" No auto select, <Tab> to select complete. <CR> close popup.
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <CR> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
 
 " Key Mappings
 imap <C-k> <Plug>(neocomplcache_snippets_expand)
