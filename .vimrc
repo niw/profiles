@@ -434,9 +434,22 @@ noremap <silent> [Space], :<C-u>make<CR>
 nnoremap <silent> [Space].  :<C-u>edit $MYVIMRC<CR>
 nnoremap <silent> [Space]s. :<C-u>source $MYVIMRC<CR>
 
+" Open shell on console or GUI application.
+function! s:OpenShell() "{{{
+  if has('gui_macvim')
+    " Open Terminal.app, then active it.
+"    let l:script = "tell application \"Terminal\"" . "\n"
+"               \ . "activate" . "\n"
+"               \ . "end tell"
+"    call system("env -i osascript", l:script)
+    call system("env -i open -b com.apple.Terminal")
+  else
+    shell
+  end
+endfunction "}}}
+
 " Run shell
-nnoremap <silent> [Space]; :<C-u>shell<CR>
-nnoremap <silent> [Space]: :<C-u>shell<CR>
+nnoremap <silent> [Space]; :<C-u>call <SID>OpenShell()<CR>
 
 " Operation for the words under the cursor or the visual region
 function! s:CommandWithVisualRegionString(cmd) "{{{
