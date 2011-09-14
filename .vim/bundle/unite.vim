@@ -7,6 +7,7 @@ nnoremap <silent> [Unite]f :<C-u>Unite -buffer-name=files -start-insert buffer_t
 nnoremap <silent> [Unite]j :<C-u>Unite -buffer-name=files -start-insert file_rec file<CR>
 nnoremap <silent> [Unite]k :<C-u>UniteWithBufferDir -buffer-name=files -start-insert file_rec file<CR>
 nnoremap <silent> [Unite]l :<C-u>Unite -buffer-name=files file_mru<CR>
+nnoremap <silent> [Unite]p :<C-u>Unite poslist<CR>
 
 function! s:unite_settings()
   nmap <buffer> <ESC> <Plug>(unite_exit)
