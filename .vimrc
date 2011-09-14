@@ -113,9 +113,12 @@ nohlsearch
 set wrapscan
 
 " Tab and spaces
-set tabstop=4
-set shiftwidth=4
-set noexpandtab
+"set tabstop=4
+"set shiftwidth=4
+"set noexpandtab
+set tabstop=2
+set shiftwidth=2
+set expandtab
 
 set autoindent
 set smartindent
