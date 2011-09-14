@@ -406,9 +406,17 @@ nnoremap g* g*zz
 nnoremap g# g#zz
 
 " Run EX commands
-nnoremap ; :
+nnoremap ; q:i
 nnoremap : q:i
-autocmd MyAutoCommands CmdwinEnter * nnoremap <buffer> <ESC> :<C-u>quit<CR>
+"{{{
+"autocmd MyAutoCommands CmdwinEnter * nnoremap <buffer> <ESC> :<C-u>quit<CR>
+
+augroup MyAutoCommands
+  autocmd CmdwinEnter * nnoremap <buffer> <ESC><ESC> :<C-u>quit<CR>
+  autocmd CmdwinEnter * nnoremap <buffer> : <Nop>
+  autocmd CmdwinEnter * nnoremap <buffer> ; <Nop>
+augroup END
+"}}}
 
 " Disable highlight
 noremap <silent> gh :<C-u>nohlsearch<CR>
