@@ -46,3 +46,6 @@
 [submodule ".vim/bundle/vim-poslist"]
 	path = .vim/bundle/vim-poslist
 	url = https://github.com/thinca/vim-poslist.git
+[submodule ".vim/bundle/vimfiler"]
+	path = .vim/bundle/vimfiler
+	url = https://github.com/Shougo/vimfiler.git
