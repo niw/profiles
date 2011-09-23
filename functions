@@ -131,9 +131,10 @@ init_aliases() {
 		alias t="term -t"
 	fi
 
-	# if we have vim, vi is vim
+	# if we have vim, vi is vim also shotcut v is vim.
 	if type 'vim' > /dev/null 2>&1; then
 		alias vi='vim'
+		alias v='vim'
 	fi
 }
 
