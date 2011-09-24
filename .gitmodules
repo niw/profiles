@@ -49,3 +49,6 @@
 [submodule ".vim/bundle/vimfiler"]
 	path = .vim/bundle/vimfiler
 	url = https://github.com/Shougo/vimfiler.git
+[submodule ".vim/bundle/open-browser.vim"]
+	path = .vim/bundle/open-browser.vim
+	url = https://github.com/tyru/open-browser.vim.git
