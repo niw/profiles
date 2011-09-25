@@ -4,7 +4,7 @@ endif
 let g:loaded_rsense = 1
 
 if !exists('g:rsenseHome')
-    let g:rsenseHome = expand("~/src/rsense")
+    let g:rsenseHome = expand($RSENSE_HOME)
 endif
 
 if !exists('g:rsenseUseOmniFunc')
@@ -29,7 +29,7 @@ function! s:rsenseCommand(args)
     for i in range(0, len(a:args) - 1)
         let a:args[i] = shellescape(a:args[i])
     endfor
-    return s:system(printf('ruby %s %s %s',
+    return s:system(printf('/usr/bin/ruby %s %s %s',
                            \ shellescape(s:rsenseProgram()),
                            \ join(a:args, ' '),
                            \ shellescape('--detect-project=' . bufname('%'))))
