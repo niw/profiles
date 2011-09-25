@@ -8,7 +8,7 @@ if !exists('g:rsenseHome')
 endif
 
 if !exists('g:rsenseUseOmniFunc')
-    let g:rsenseUseOmniFunc = 0
+    let g:rsenseUseOmniFunc = 1
 endif
 
 " Check vimproc.
