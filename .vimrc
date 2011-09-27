@@ -158,6 +158,9 @@ set previewheight=40
 set nolist
 set listchars=tab:>-,extends:<,trail:-,eol:<
 
+" Highlight a pari of < and >.
+set matchpairs+=<:>
+
 " Status line.
 let &statusline = ''
 let &statusline .= '%3n '     " Buffer number
