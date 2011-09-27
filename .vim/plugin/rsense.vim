@@ -173,4 +173,6 @@ function! SetupRSense()
     endif
 endfunction
 
-autocmd FileType ruby call SetupRSense()
+if filereadable(s:rsenseProgram())
+    autocmd FileType ruby call SetupRSense()
+endif
