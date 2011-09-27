@@ -412,13 +412,13 @@ noremap k gk
 noremap gj j
 noremap gk k
 
-" Centering search result
-nnoremap n nzz
-nnoremap N Nzz
-nnoremap * *zz
-nnoremap # #zz
-nnoremap g* g*zz
-nnoremap g# g#zz
+" Centering search result and open fold.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap * *zzzv
+nnoremap # #zzzv
+nnoremap g* g*zzzv
+nnoremap g# g#zzzv
 
 " Run EX commands
 nnoremap ; q:i
