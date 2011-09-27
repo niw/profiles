@@ -88,8 +88,17 @@ function! s:SetFileEncodings() "{{{
   let &fileencodings = value
 endfunction "}}}
 
+" Make sure the file is not including any Japanese in ISO-2022-JP, use encoding for fileencoding.
+" https://github.com/Shougo/shougo-s-github/blob/master/vim/.vimrc
+function! s:SetFileEncoding() "{{{
+  if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
+    let &fileencoding = &encoding
+  endif
+endfunction "}}}
+
 call s:SetEncoding()
 call s:SetFileEncodings()
+autocmd MyAutoCommands BufReadPost * call s:SetFileEncoding()
 
 " Address the issue for using □ or ●.
 " NOTE We also need to apply some patch for Mac OS X Terminal.app
