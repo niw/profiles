@@ -13,9 +13,7 @@ let g:neocomplcache_lock_buffer_name_pattern = 'fuzzyfinder'
 if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
 endif
-if has('ruby')
-  let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\h\w*\|\h\w*::'
-endif
+let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 
 " Auto select, <Tab> to point completion, <CR> to select then close popup.
 "let g:neocomplcache_enable_auto_select = 1
