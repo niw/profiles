@@ -98,10 +98,10 @@ endfunction "}}}
 
 call s:SetEncoding()
 call s:SetFileEncodings()
-autocmd MyAutoCommands BufReadPost * call s:SetFileEncoding()
+autocmd MyAutoCommands BufReadPost * call <SID>SetFileEncoding()
 
 " Address the issue for using □ or ●.
-" NOTE We also need to apply some patch for Mac OS X Terminal.app
+" NOTE We also need to apply a patch for Mac OS X Terminal.app
 set ambiwidth=double
 
 " Settings for Input Methods
@@ -109,59 +109,91 @@ if has('keymap')
   set iminsert=0 imsearch=0
 endif
 
+" Multibyte format, See :help fo-table
+set formatoptions&
+set formatoptions+=mM
+"set formatoptions=tcroqnlM1
+
+" Fileformat. Default is Unix.
+set fileformat=unix
+set fileformats=unix,dos,mac
+
 "}}}
 
 "{{{ Global Settings
 
 " Search
+
+" Ignore the case of normal letters
 set ignorecase
+" If the search pattern contains uppter case characters, override the 'ignorecase' option.
 set smartcase
+" Use incremental search.
 set incsearch
+" Do not highlight search result.
 set hlsearch
 nohlsearch
+" Searches wrap around the end of the file.
 set wrapscan
 
 " Tab and spaces
-"set tabstop=4
-"set shiftwidth=4
-"set noexpandtab
-set tabstop=2
-set shiftwidth=2
-set expandtab
 
+" Number of spaces that a <Tab> in the file counts for.
+set tabstop=2
+" Number of spaces to use for each step of indent.
+set shiftwidth=2
+" Expand tab to spaces.
+set expandtab
+" Smart autoindenting.
 set autoindent
 set smartindent
+" Round indent to multiple of 'shiftwidth'.
+set shiftround
+" Enable modeline.
+set modeline
+" Disable auto wrap.
+autocmd MyAutoCommands FileType * set textwidth=0
 
 " Cursor and Backspace
+
+" Allow backspacing over autoindent, line brakes and the start of insert.
 set backspace=indent,eol,start
+" Allow h, l, <Left> and <Right> to move to the previous/next line.
 set whichwrap&
 set whichwrap+=<,>,[,],h,l
 
-" Multibyte format. See :help fo-table
-"set formatoptions=tcroqnlM1
-set formatoptions&
-set formatoptions+=mM
-
 " Displays
-set showmatch
-set wildmenu
-set number
-set ruler
-set wrap
-set laststatus=2
-set showcmd
-set title
-set showmode
-set cmdheight=2
-set previewheight=40
 
+" When a bracket is inserted, briefly jump to the matching one.
+set showmatch
+" Command-line completion operates in an enhanced mode.
+set wildmenu
+" Show line number.
+set number
+" Show the line and column number of the cursor position.
+set ruler
+" Lines longer than the width of the window will wrap.
+set wrap
+" Show status line always.
+set laststatus=2
+" Show command in the last line of the screen.
+set showcmd
+" Set title of the window to the value of 'titlesrting'.
+set title
+" If in Insert, Replace or Visual mode put a message on the last line.
+set showmode
+" Number of screen lines to use for the command-line.
+set cmdheight=2
+" Default height for a preview window.
+set previewheight=40
+" Hide tab, wrap, trailing spaces and eol.
 set nolist
 set listchars=tab:>-,extends:<,trail:-,eol:<
-
 " Highlight a pari of < and >.
 set matchpairs+=<:>
 
-" Status line.
+" Status line
+
 let &statusline = ''
 let &statusline .= '%3n '     " Buffer number
 let &statusline .= '%<%f '    " Filename
@@ -173,6 +205,13 @@ let &statusline .= '%{fugitive#statusline()} ' " Git repository status, require 
 let &statusline .= '%l,%c%V'  " Line number, Column number, Virtual column number
 let &statusline .= '%4P'      " Percentage through file of displayed window.
 
+" Completion
+
+" Complete longest common string, list all matches and complete the next full match.
+set wildmode=longest,list,full
+" Use the popup menu even if it has only one match.
+set completeopt=menuone
+
 " I don't want to use backup files.
 set nobackup
 set noswapfile
@@ -180,21 +219,17 @@ set noswapfile
 " Hide buffer when it is abandoned.
 set hidden
 
-" Fileformat. Default is Unix.
-set fileformat=unix
-set fileformats=unix,dos,mac
-
+" Expand a history of ':' commands to 100.
 set history=100
+
+" Indicates a fast terminal connection.
 set ttyfast
-set wildmode=longest,list,full
-set completeopt=menuone
 
 " Highlight Cursour Line
 "autocmd MyAutoCommands WinEnter,BufEnter * setlocal cursorline
 "autocmd MyAutoCommands WinLeave,BufLeave * setlocal nocursorline
 
-" Change current directory by switching the buffers
-" :help cmdline-special
+" Change current directory by switching the buffers, See :help cmdline-special.
 "autocmd MyAutoCommands BufRead,BufEnter * execute ":lcd " . expand("%:p:h:gs? ?\\\\ ?")
 
 " Open QuickFix after vimgrep
@@ -447,8 +482,6 @@ onoremap <silent> gm :<C-u>normal gc<CR>
 " Grep
 nnoremap <silent> gr :<C-u>Grep<Space><C-r><C-w><CR>
 xnoremap <silent> gr :<C-u>call <SID>CommandWithVisualRegionString('Grep')<CR>
-"nnoremap <silent> ga :<C-u>Aak<Space><C-r><C-w><CR>
-"xnoremap <silent> ga :<C-u>call <SID>CommandWithVisualRegionString('Ack')<CR>
 
 " Make
 noremap <silent> [Space], :<C-u>make<CR>
