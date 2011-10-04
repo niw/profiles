@@ -42,10 +42,10 @@ set guioptions-=r
 set guioptions-=R
 " Transparency if we can use.
 if(exists('&transparency'))
-  set transparency=10
+  set transparency=5
   augroup MyAutoCommands
-    autocmd FocusGained * set transparency=10
-    autocmd FocusLost * set transparency=50
+    autocmd FocusGained * set transparency=5
+    autocmd FocusLost * set transparency=30
   augroup END
 endif
 
