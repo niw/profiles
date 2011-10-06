@@ -235,6 +235,21 @@ set ttyfast
 " Open QuickFix after vimgrep
 "autocmd MyAutoCommands QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
 
+" Restore cursor positon
+"{{{
+function! s:RestoreCursorPosition()
+  " Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim).
+  " Also don't do it when the mark is in the first line, that is the default
+  " position when opening a file.
+  if line("'\"") > 1 && line("'\"") <= line("$")
+    execute "normal! g`\""
+  endif
+endfunction
+
+autocmd MyAutoCommands BufReadPost * call <SID>RestoreCursorPosition()
+"}}}
+
 "}}}
 
 "{{{ Syntax and File Types
