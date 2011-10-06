@@ -725,8 +725,8 @@ function! s:RestoreBinaryForNoeol()
 endfunction
 
 augroup MyAutoCommands
-  autocmd BufWritePre  * :call <SID>SetBinaryForNoeol()
-  autocmd BufWritePost * :call <SID>RestoreBinaryForNoeol()
+  autocmd BufWritePre  * call <SID>SetBinaryForNoeol()
+  autocmd BufWritePost * call <SID>RestoreBinaryForNoeol()
 augroup END
 "}}}
 
@@ -774,6 +774,7 @@ if has('kaoriya')
 endif
 
 " Do not use useless example.
+let g:no_vimrc_example = 1
 let g:no_gvimrc_example = 1
 
 " If terminal supports 256 colors or GUI, set colorscheme.
