@@ -110,6 +110,7 @@ if has('keymap')
 endif
 
 " Multibyte format, See :help fo-table
+set formatexpr&
 set formatoptions&
 set formatoptions+=mM
 "set formatoptions=tcroqnlM1
@@ -257,6 +258,9 @@ autocmd MyAutoCommands BufReadPost * call <SID>RestoreCursorPosition()
 " Enable syntax color.
 syntax enable
 filetype plugin on
+
+" Enable indent.
+filetype indent on
 
 augroup MyAutoCommands
   " Disable automatically insert comment.
