@@ -153,7 +153,7 @@ set shiftround
 " Enable modeline.
 set modeline
 " Disable auto wrap.
-autocmd MyAutoCommands FileType * set textwidth=0
+autocmd MyAutoCommands FileType * setlocal textwidth=0
 
 " Cursor and Backspace
 
