@@ -20,7 +20,7 @@ begin
   require 'wirb'
   Wirb.start
 rescue LoadError
-  STDERR.puts 'Fail to load wrib gem.'
+  STDERR.puts 'Fail to load wirb gem.'
 end
 
 # vim:ft=ruby
