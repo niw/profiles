@@ -251,6 +251,10 @@ endfunction
 autocmd MyAutoCommands BufReadPost * call <SID>RestoreCursorPosition()
 "}}}
 
+" Auto reload, check file when switch the window.
+set autoread
+autocmd MyAutoCommands WinEnter * checktime
+
 "}}}
 
 "{{{ Syntax and File Types
