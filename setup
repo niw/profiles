@@ -1,19 +1,24 @@
 #!/bin/sh
+CURRENT_DIR=$(cd $(dirname "$0"); pwd)
 
-list=".*"
-uname=`uname`
-
-if [ "$1" = '--replace' -o "$1" = '-r' ]; then
+if [ "$1" = 'replace' ]; then
 	replace=1
 fi
 
-if [ "$1" = '--uninstall' -o "$1" = '-u' ]; then
+if [ "$1" = 'uninstall' ]; then
 	uninstall=1
 fi
 
-for i in ${list}
+if [ "$1" = '--help' -o "$1" = '-h' ]; then
+  echo "Usage: $0 [-h] {replace, uninstall}"
+  echo "       replace    Force to replace existing dot files."
+  echo "       uninstall  Remove all dot files installed."
+  exit 0
+fi
+
+for i in "${CURRENT_DIR}"/.*
 do
-	if [ ! -e ${i} ]; then
+	if [ ! -e "${i}" ]; then
 		continue
 	fi
 
@@ -31,16 +36,16 @@ do
 	fi
 
 	if [ -e "${HOME}/${f}" -o -h "${HOME}/${f}" ]; then
-		echo "Already exist the dotfile ${f}."
+		echo "${f} already exists."
 		if [ "$replace" -o "$uninstall" ]; then
-			echo "Remove ${f}"
+			echo "remove ${f}."
 			rm -rf "${HOME}/${f}"
 		else
 			continue
 		fi
 	fi
 	if [ ! "$uninstall" ]; then
-		echo "Create symlink ${f} to ${HOME}..."
-		ln -s "`pwd`/${i}" "${HOME}/${f}"
+		echo "create symlink ${f} to ${HOME}."
+		ln -s "${i}" "${HOME}/${f}"
 	fi
 done
