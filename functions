@@ -120,6 +120,7 @@ init_aliases() {
 	alias now="date +%Y%m%d%H%M%S"
 	alias wget="wget -U Mozilla --no-check-certificate"
 	alias fn="find . -not -ipath '*/tmp/*' -not -ipath '*/.*/*' -name "
+	alias rand="ruby -ropenssl -e 'print OpenSSL::Digest::SHA1.hexdigest(rand().to_s)'"
 
 	# awk
 	for i in 1 2 3 4 5 6 7 8 9; do
