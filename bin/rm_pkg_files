@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+class Command
+  def run!
+    parse_options!
+
+    paths = %x{pkgutil --files #{pkgid}}.lines.map do |line|
+      File.expand_path(line.chomp, root_path)
+    end.sort.reverse
+
+    removed = []
+    paths.each do |path|
+      next unless File.exists?(path)
+
+      case File.ftype(path)
+      when "file", "link"
+        if dry_run?
+          removed << path
+        else
+          File.unlink(path)
+        end
+        puts "Removed #{path}"
+      when "directory"
+        if Dir.entries(path).reject do |entry|
+          "." == entry || ".." == entry || removed.include?(File.join(path, entry))
+        end.empty?
+          if dry_run?
+            removed << path
+          else
+            Dir.rmdir(path)
+          end
+          puts "Removed #{path}"
+        end
+      end
+    end
+  end
+
+  private
+
+  def parse_options!
+    OptionParser.new do |parser|
+      parser.banner = "Usage: #{$0} [options] PKGID"
+      parser.on "-n", "--dry-run", "Do nor remove files really." do |value|
+        @dry_run = value
+      end
+      parser.on "-r", "--root=PATH", "Path to the root of the package." do |value|
+        @root_path = value
+      end
+    end.parse!
+    @pkgid = ARGV.shift or raise "Missing PKGID."
+  end
+
+  def pkgid
+    @pkgid
+  end
+
+  def dry_run?
+    !!@dry_run
+  end
+
+  def root_path
+    @root_path || "/"
+  end
+end
+
+Command.new.run!
