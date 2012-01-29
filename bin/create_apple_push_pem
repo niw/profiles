@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" ]; then
+  echo "Usage: $0 private_key.p12 certificate.{p12, der}"
+  echo "You can export the private key (and certificate) in PKCS12 format from Keychain.app."
+  exit 0
+fi
+
+# Create private key in PEM format from PKCS12 format without password.
+openssl pkcs12 -in "$1" -nocerts -nodes -out _key.pem
+
+# Create certificate in PEM format from PKCS12 format or DER format.
+if [ "${2##*.}" = "p12" ]; then
+  openssl pkcs12 -in "$2" -clcerts -nokeys -out _cert.pem
+else
+  openssl x509 -inform der -in "$2" -out _cert.pem
+fi
+
+# Concat them
+cat _cert.pem _key.pem > apple_push.pem
+# Remove remporary pem files.
+rm _cert.pem _key.pem
