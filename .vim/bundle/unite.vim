@@ -1,5 +1,6 @@
 let g:unite_source_file_mru_limit = 200
 let g:unite_source_file_mru_filename_format = ""
+let g:unite_source_file_mru_time_format = ""
 
 function! s:UniteSettings()
   nmap <buffer> <ESC> <Plug>(unite_exit)
@@ -17,10 +18,11 @@ augroup END
 nmap f [Unite]
 nnoremap [Unite] <Nop>
 
-nnoremap <silent> [Unite]f :<C-u>Unite -buffer-name=files -start-insert buffer_tab file_mru file file_rec<CR>
-nnoremap <silent> [Unite]j :<C-u>Unite -buffer-name=files -start-insert file file_rec<CR>
-nnoremap <silent> [Unite]k :<C-u>UniteWithBufferDir -buffer-name=files -start-insert file file_rec<CR>
-nnoremap <silent> [Unite]l :<C-u>Unite -buffer-name=files file_mru<CR>
+let s:file_rec_source = executable('ls') && unite#util#has_vimproc() ? "file_rec/async" : "file_rec"
+
+execute printf('nnoremap <silent> [Unite]f :<C-u>Unite -buffer-name=files -start-insert buffer_tab file_mru file %s<CR>', s:file_rec_source)
+execute printf('nnoremap <silent> [Unite]k :<C-u>UniteWithBufferDir -buffer-name=files -start-insert file %s<CR>', s:file_rec_source)
+nnoremap <silent> [Unite]l :<C-u>Unite -start-insert -buffer-name=files file_mru<CR>
 nnoremap <silent> [Unite]p :<C-u>Unite poslist<CR>
 
 function! s:ExecuteCommandOnCR(command)
