@@ -4,7 +4,9 @@ begin
   end
 
   require 'irb/completion'
-  ARGV.concat ['--readline', '--prompt-mode', 'simple']
+  unless 'macirb' == File.basename($0)
+    ARGV.concat ['--readline', '--prompt-mode', 'simple']
+  end
 
   require 'pp'
 
@@ -21,6 +23,8 @@ begin
   Wirb.start
 rescue LoadError
   STDERR.puts 'Fail to load wirb gem.'
+rescue Object => e
+  STDERR.puts "Fail to start wirb gem. #{e.inspect}"
 end
 
 # vim:ft=ruby
