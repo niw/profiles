@@ -8,8 +8,7 @@ let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_enable_underbar_completion = 1
 
 " Disable neocomplcache on special cases.
-let g:neocomplcache_lock_buffer_name_pattern = 'fuzzyfinder'
-let g:neocomplcache_disable_auto_select_buffer_name_pattern = '\[Command Line\]'
+let g:neocomplcache_lock_buffer_name_pattern = '\[Command Line\]'
 
 " Enable omni completion on ruby (default is off.)
 if !exists('g:neocomplcache_omni_patterns')
