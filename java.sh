@@ -1,3 +1,3 @@
-if [ -e /System/Library/Frameworks/JavaVM.framework/Home ]; then
-	export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Home
+if [ -x /usr/libexec/java_home ]; then
+  export JAVA_HOME=`/usr/libexec/java_home`
 fi
