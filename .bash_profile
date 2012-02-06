@@ -1,8 +1,4 @@
-profiles=~/.profiles
-source "$profiles/functions"
-
-init_basic_environment_variables
-
+# Source user .bashrc
 if [ -f ~/.bashrc ]; then
 	source ~/.bashrc
 fi

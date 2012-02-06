@@ -17,16 +17,19 @@ get_prompt_color_indexes() {
 	result=($user $host $shlvl)
 }
 
-init_basic_environment_variables() {
-	# editor
-	export EDITOR=vim
-	# language
-	export LANG=ja_JP.UTF-8
-	# profile bin path
-	export PATH="$PATH:$profiles/bin"
+init_editor() {
+	for i in vim vi; do
+		if which "$i" 2>&1 1>/dev/null; then
+			export EDITOR="$i"
+			break
+		fi
+	done
 }
 
 init_paths() {
+	# profile bin path
+	export PATH="$PATH:$profiles/bin"
+
 	if [ -x /usr/libexec/path_helper ]; then
 		# path_helper needs MANPATH env to assign values.
 		export MANPATH=$MANPATH
@@ -112,10 +115,10 @@ init_aliases() {
 	# git related
 	alias d="git diff"
 	alias dc="git diff --cached"
-	alias dm="git diff master"
 	alias s="git status"
 	alias a="git add"
 	alias grf="git remote -v|awk '{print \$1}'|sort|uniq|xargs -n 1 git fetch"
+	alias gpoh="git push origin HEAD"
 
 	alias now="date +%Y%m%d%H%M%S"
 	alias wget="wget -U Mozilla --no-check-certificate"

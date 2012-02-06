@@ -11,6 +11,9 @@ fi
 # Add PATH and MAN_PATH
 init_paths
 
+# Initialize EDITOR
+init_editor
+
 # }}}
 
 ## Aliases {{{
