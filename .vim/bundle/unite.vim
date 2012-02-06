@@ -1,3 +1,8 @@
+" Stop configuration when we can't use unite.
+if v:version < 702 || $SUDO_USER != ''
+  finish
+endif
+
 let g:unite_source_file_mru_limit = 200
 let g:unite_source_file_mru_filename_format = ""
 let g:unite_source_file_mru_time_format = ""

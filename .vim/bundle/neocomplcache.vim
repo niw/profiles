@@ -1,8 +1,9 @@
-" Disable if vim version is less than 7.0.
-if v:version > 700
-  let g:neocomplcache_enable_at_startup = 1
+" Stop configuration when we can't use neocomplecache.
+if v:version < 702 || $SUDO_USER != ''
+  finish
 endif
 
+let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_enable_underbar_completion = 1
 
