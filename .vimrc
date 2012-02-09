@@ -187,9 +187,6 @@ set showmode
 set cmdheight=2
 " Default height for a preview window.
 set previewheight=40
-" Hide tab, wrap, trailing spaces and eol.
-set nolist
-set listchars=tab:>-,extends:<,trail:-,eol:<
 " Highlight a pari of < and >.
 set matchpairs+=<:>
 
@@ -223,6 +220,18 @@ set history=100
 
 " Indicates a fast terminal connection.
 set ttyfast
+
+" Indicate tab, wrap, trailing spaces and eol or not.
+set list
+"set nolist
+set listchars=tab:»\ ,extends:»,precedes:«,trail:\ 
+augroup MyAutoCommands
+  "autocmd ColorScheme * highlight SpecialKey ctermbg=red guibg=#F92672
+  autocmd ColorScheme * highlight TrailingWhitespaces ctermbg=red guibg=#F92672
+  "autocmd InsertEnter * match TrailingWhitespaces //
+  "autocmd InsertLeave * match TrailingWhitespaces /\v\s+$/
+  autocmd VimEnter,WinEnter * match TrailingWhitespaces /\v\s+$/
+augroup END
 
 " Highlight Cursour Line
 "autocmd MyAutoCommands WinEnter,BufEnter * setlocal cursorline
