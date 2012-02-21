@@ -23,18 +23,14 @@ let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 "inoremap <expr> <CR> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
 
 " No auto select, <Tab> to select complete. <CR> works <CR> and close popup.
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <CR> neocomplcache#smart_close_popup() . "\<CR>"
-
-" No auto select, <Tab> to select complete. <CR> close popup.
 "inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 "inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-"inoremap <expr> <CR> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+"inoremap <expr> <CR> neocomplcache#smart_close_popup() . "\<CR>"
 
-" Key Mappings
-imap <C-k> <Plug>(neocomplcache_snippets_expand)
-smap <C-k> <Plug>(neocomplcache_snippets_expand)
+" No auto select, <Tab> to select complete. <CR> close popup.
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <CR> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
 
 inoremap <expr> <C-g> neocomplcache#undo_completion()
 inoremap <expr> <C-l> neocomplcache#complete_common_string()
