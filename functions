@@ -1,5 +1,5 @@
 get_hash_id() {
-	result=$($1|sum|awk '{print $1}')
+	result=$($1|sum|cut -d' ' -f1)
 }
 
 get_color_index() {
@@ -117,7 +117,7 @@ init_aliases() {
 	alias dc="git diff --cached"
 	alias s="git status"
 	alias a="git add"
-	alias grf="git remote -v|awk '{print \$1}'|sort|uniq|xargs -n 1 git fetch"
+	alias grf="git remote -v|cut -f1|sort|uniq|xargs -n 1 git fetch"
 	alias gpoh="git push origin HEAD"
 
 	alias now="date +%Y%m%d%H%M%S"
