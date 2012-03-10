@@ -10,11 +10,20 @@ let g:neocomplcache_enable_underbar_completion = 1
 " Disable neocomplcache on special cases.
 let g:neocomplcache_lock_buffer_name_pattern = '\[Command Line\]'
 
+" Enable keyword completion on ruby (default is off.)
+if !exists('g:neocomplcache_keyword_patterns')
+  let g:neocomplcache_keyword_patterns = {}
+endif
+let g:neocomplcache_keyword_patterns.ruby =
+   \ '\h\w*\|:\h\w*\|^=\%(b\%[egin]\|e\%[nd]\)\|\%(@@\|[:$@]\)\h\w*\|\h\w*\%(::\w*\)*[!?]\?'
+  "\ '^=\%(b\%[egin]\|e\%[nd]\)\|\%(@@\|[:$@]\)\h\w*\|\h\w*\%(::\w*\)*[!?]\?')
+
 " Enable omni completion on ruby (default is off.)
 if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
 endif
-let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+let g:neocomplcache_omni_patterns.ruby =
+  \ '[^. *\t]\.\w*\|:\h\w*\|\h\w*::'
 
 " Auto select, <Tab> to point completion, <CR> to select then close popup.
 "let g:neocomplcache_enable_auto_select = 1
