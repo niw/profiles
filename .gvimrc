@@ -18,7 +18,7 @@ if s:has_win
   endif
 elseif has('mac')
   "set guifont=Monaco:h10
-  set guifont=Menlo:h12
+  set guifont=Menlo:h14
 else
   set guifont=Monospace\ 8
 endif
