@@ -226,8 +226,8 @@ set list
 "set nolist
 set listchars=tab:»\ ,extends:»,precedes:«,trail:\ 
 augroup MyAutoCommands
-  "autocmd ColorScheme * highlight SpecialKey ctermbg=red guibg=#F92672
-  autocmd ColorScheme * highlight TrailingWhitespaces ctermbg=red guibg=#F92672
+  "autocmd VimEnter,ColorScheme * highlight SpecialKey ctermbg=red guibg=#F92672
+  autocmd VimEnter,ColorScheme * highlight TrailingWhitespaces ctermbg=red guibg=#F92672
   "autocmd InsertEnter * match TrailingWhitespaces //
   "autocmd InsertLeave * match TrailingWhitespaces /\v\s+$/
   autocmd VimEnter,WinEnter * match TrailingWhitespaces /\v\s+$/
