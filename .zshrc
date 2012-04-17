@@ -3,13 +3,13 @@ source "${profiles}/functions"
 
 ## Pre Configurations {{{
 
-# Avoid 'no matches found' error
+# Avoid 'no matches found' error.
 setopt nullglob
 
-# Add PATH and MAN_PATH
+# Add PATH and MAN_PATH.
 init_paths
 
-# Initialize EDITOR
+# Initialize EDITOR.
 init_editor
 
 ## }}}
@@ -18,7 +18,7 @@ init_editor
 
 init_aliases
 
-# pipe aliasa
+# Aliases using pipes, works only on Zsh.
 alias -g V="| vi -v -"
 alias -g G="| grep"
 alias -g T="| tail"
@@ -28,27 +28,25 @@ alias -g L="| less -r"
 ## }}}
 
 ## Zsh Basic Configurations {{{
-## based on http://devel.aquahill.net/zsh/zshoptions
 
-# initialize hook functions array
+# Initialize hook functions array.
 typeset -ga preexec_functions
 typeset -ga precmd_functions
 
-# viキーバインド
+# Use vi key bindings.
 #bindkey -v
 
-# emacsキーバインド
+# Use emacs key bindings.
 bindkey -e
 
-# 色を使う
+# Use colors.
 autoload -Uz colors
 colors
 
-# プロンプトに色付けする
+# Expand parameters in the prompt.
 setopt prompt_subst
 
-# プロンプトにユーザー名、ホスト名、カレントディレクトリを表示
-# ルートの場合は名前を色づけ
+# Prompt strings.
 get_prompt() {
 	local color_table
 	color_table=(red green yellow blue magenta cyan white)
@@ -58,99 +56,99 @@ get_prompt() {
 	local host_color=${color_table[${result[2]}]}
 	local shlvl_color=${color_table[${result[3]}]}
 
-	# NOTE preserve backward compatibility, here we're not using %F and  %f
-	# see RPROMPT for vcs_info
+	# NOTE To preserve backward compatibility, here we're not using %F and %f.
+	# See RPROMPT for vcs_info.
 	result="%{$fg[yellow]%}%T%{$reset_color%} %{$fg[${user_color}]%}%n%{$reset_color%}@%{$fg[${host_color}]%}%m%{$reset_color%}:%{$fg[${shlvl_color}]%}%2~%{$reset_color%} %(!.#.$) "
 }
 get_prompt
 PROMPT=$result
 
-# プロンプトにカレントディレクトリを指定
+# Show current directory on right prompt.
 RPROMPT="%{$fg[blue]%}%~%{$reset_color%}"
 
-# 指定したコマンド名がなく、ディレクトリ名と一致した場合 cd する
+# Change directory if the command doesn't exist.
 setopt auto_cd
 
-# サスペンド中のプロセスと同じコマンド名を実行した場合はリジュームする
+# Resume the command if the command is suspended.
 setopt auto_resume
 
-# ビープ音を鳴らさないようにする
+# No beep.
 setopt no_beep
 
-# {a-c} を a b c に展開する機能を使えるようにする
+# Enable expansion from {a-c} to a b c.
 setopt brace_ccl
 
-# コマンドのスペルチェックをする
+# Enable spell check.
 setopt correct
 
-# =command を command のパス名に展開する
+# Expand =command to the path of the command.
 setopt equals
 
-# ファイル名で #, ~, ^ の 3 文字を正規表現として扱う
+# Use #, ~ and ^ as regular expression.
 setopt extended_glob
 
-# Ctrl+S/Ctrl+Q によるフロー制御を使わないようにする
+# No follow control by C-s and C-q.
 setopt no_flow_control
 
-# シェルが終了しても裏ジョブに HUP シグナルを送らないようにする
+# Don't send SIGHUP to background jobs when shell exits.
 setopt no_hup
 
-# Ctrl+D では終了しないようになる（exit, logout などを使う）
+# Disable C-d to exit shell.
 #setopt ignore_eof
 
-# 内部コマンド jobs の出力をデフォルトで jobs -l にする
+# Show long list for jobs command.
 setopt long_list_jobs
 
-# コマンドラインの引数で --prefix=/usr などの = 以降でも補完できる
+# Enable completion after = like --prefix=/usr...
 setopt magic_equal_subst
 
-# ファイル名の展開でディレクトリにマッチした場合末尾に / を付加する
+# Append / if complete directory.
 setopt mark_dirs
 
-# 補完候補が複数ある時、一覧表示 (auto_list) しない
+# Don't show the list for completions.
 #setopt no_auto_menu
 
-# *で全候補を表示しない
+# Don't show completions when using *.
 setopt glob_complete
 
-# 複数のリダイレクトやパイプなど、必要に応じて tee や cat の機能が使われる
+# Perform implicit tees or cats when multiple redirections are attempted.
 setopt multios
 
-# ファイル名の展開で、辞書順ではなく数値的にソートされるようになる
+# Use numeric sort instead of alphabetic sort.
 setopt numeric_glob_sort
 
-# 8 ビット目を通すようになり、日本語のファイル名などを見れるようになる
+# Enable file names using 8 bits, important to rendering Japanese file names.
 setopt print_eightbit
 
-# 戻り値が 0 以外の場合終了コードを表示する
+# Show exit code if exits non 0.
 #setopt print_exit_value
 
-# ディレクトリスタックに同じディレクトリを追加しないようになる
+# Don't push multiple copies of the same directory onto the directory stack.
 setopt pushd_ignore_dups
 
-# デフォルトの複数行コマンドライン編集ではなく、１行編集モードになる
+# Use single-line command line editing instead of multi-line.
 #setopt single_line_zle
 
-# コマンドラインがどのように展開され実行されたかを表示するようになる
+# Print commands and their arguments as they are executed.
 #setopt xtrace
 
-# 文字列末尾に改行コードが無い場合でも表示する
+# Show CR if the prompt doesn't end with CR.
 unsetopt promptcr
 
-#コピペの時rpromptを非表示する
+# Remove any right prompt from display when accepting a command line.
 setopt transient_rprompt
 
-# cd -[tab] でpushd
+# Pushd by cd -[tab]
 setopt auto_pushd
 
-# 終了時に警告を出さないようにする
+# Don't report the status of background and suspended jobs.
 setopt no_check_jobs
 
-# 先方予測機能
+# Enable predict completion
 #autoload -Uz predict-on
 #predict-on
 
-# C-wでディレクトリごとに消せるようにする
+# Remove directory word by C-w.
 autoload -Uz select-word-style
 select-word-style bash
 
@@ -176,21 +174,21 @@ fi
 
 ## Zsh Completion System {{{
 
-# コマンドラインオプションを補完
+# Use zsh completion system.
 autoload -Uz compinit
 compinit
 
-# 補完中の候補にも色をつける
+# Colors completions.
 zstyle ':completion:*' list-colors ''
 
-# add colors to processes for kill completion
+# Colors processes for kill completion.
 zstyle ':completion:*:*:kill:*:processes' command 'ps -axco pid,user,command'
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([%0-9]#)*=0=01;31'
 
-# ignore case
+# Ignore case.
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-# formatting and messages
+# Formatting and messages.
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*:descriptions' format $'%{\e[0;31m%}%d%{\e[0m%}'
 zstyle ':completion:*:messages' format $'%{\e[0;31m%}%d%{\e[0m%}'
@@ -198,10 +196,13 @@ zstyle ':completion:*:warnings' format $'%{\e[0;31m%}No matches for: %d%{\e[0m%}
 zstyle ':completion:*:corrections' format $'%{\e[0;31m%}%d (errors: %e)%{\e[0m%}'
 zstyle ':completion:*' group-name ''
 
-# 補完リストの中を選択可能にする
+# Make the completion menu selectable.
 zstyle ':completion:*:default' menu select=1
 
-# hostname completion
+# Fuzzy match.
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
+
+# Hostname completion
 local knownhosts
 if [ -f $HOME/.ssh/known_hosts ]; then
 	knownhosts=( ${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*} ) 
@@ -212,43 +213,37 @@ fi
 
 ## Zsh History {{{
 
-# 履歴をファイルに保存する
+# Save history on the file.
 HISTFILE="${HOME}"/.zsh-history
 
-# メモリ内の履歴の数
+# Max history in the memory.
 HISTSIZE=100000
 
-# 保存される履歴の数
+# Max history.
 SAVEHIST=1000000
 
-# zsh の開始・終了時刻をヒストリファイルに書き込む
-#setopt extended_history
-
-# 複数の zsh を同時に使う時など history ファイルに上書きせず追加する
-setopt append_history
-
-# コマンドラインの先頭がスペースで始まる場合ヒストリに追加しない
+# Remove command lines from the history list when the first character on the line is a space.
 setopt hist_ignore_space
 
-# ヒストリを呼び出してから実行する間に一旦編集できる状態になる
-setopt hist_verify
-
-# history (fc -l) コマンドをヒストリリストから取り除く。
+# Remove the history (fc -l) command from the history list when invoked.
 setopt hist_no_store
 
-# シェルのプロセスごとに履歴を共有
+# Read new commands from the history and your typed commands to be appended to the history file.
 setopt share_history
 
-# 履歴ファイルに時刻を記録
+# Append the history list to the history file for mutiple Zsh sessions.
+setopt append_history
+
+# Save each command's beginning timestamp.
 setopt extended_history
 
-# 直前と同じコマンドラインはヒストリに追加しない
+# Don't add duplicates.
 setopt hist_ignore_dups
 
-# 履歴を直接実行
-unsetopt HISTVERIFY
+# Don't execute the line directly from the history.
+setopt hist_verify
 
-# 履歴検索
+# Seach history.
 autoload -Uz history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
@@ -258,17 +253,17 @@ zle -N history-beginning-search-forward-end history-search-end
 ## Zsh Keybinds {{{
 ## based on http://github.com/kana/config/
 
-# to delete characters beyond the starting point of the current insertion.
+# To delete characters beyond the starting point of the current insertion.
 bindkey -M viins '\C-h' backward-delete-char
 bindkey -M viins '\C-w' backward-kill-word
 bindkey -M viins '\C-u' backward-kill-line
 
-# undo/redo more than once.
+# Undo/redo more than once.
 bindkey -M vicmd 'u' undo
 bindkey -M vicmd '\C-r' redo
 
-# history
-# see also 'autoload history-search-end'
+# History
+# See also 'autoload history-search-end'.
 bindkey -M vicmd '/' history-incremental-search-backward
 bindkey -M vicmd '?' history-incremental-search-forward
 bindkey -M viins '^p' history-beginning-search-backward-end
@@ -277,7 +272,7 @@ bindkey -M viins '^n' history-beginning-search-forward-end
 bindkey -M emacs '^p' history-beginning-search-backward-end
 bindkey -M emacs '^n' history-beginning-search-forward-end
 
-# transpose
+# Transpose
 bindkey -M vicmd '\C-t' transpose-words
 bindkey -M viins '\C-t' transpose-words
 
@@ -323,10 +318,10 @@ if init_rubies; then
 	RPROMPT="${RPROMPT} %{$fg[red]%}\${RUBIES_RUBY_NAME}%{$reset_color%}"
 fi
 
-# Load Perl local::lib
+# Load Perl local::lib.
 init_locallib
 
-# Cleanup PATH, MANPATH
+# Cleanup PATH, MANPATH.
 clean_paths
 
 # }}}
