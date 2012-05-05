@@ -92,6 +92,7 @@ get_path_cleaned() {
 init_aliases() {
 	# colors ls
 	local arch=`uname`
+	export LSCOLORS=gxfxcxdxbxegedabagacad
 	if [ "$arch" = "Darwin" -o "$arch" = "FreeBSD" ]; then
 		alias ls='ls -hG'
 	else
