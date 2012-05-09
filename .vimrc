@@ -439,6 +439,11 @@ nnoremap [Window]k <C-W>k
 nnoremap [Window]h <C-W>h
 nnoremap [Window]l <C-W>l
 
+nnoremap [Window]J <C-W>J
+nnoremap [Window]K <C-W>K
+nnoremap [Window]H <C-W>H
+nnoremap [Window]L <C-W>L
+
 nnoremap [Window]v <C-w>v
 " Centering cursor after splitting window
 nnoremap [Window]s <C-w>szz
