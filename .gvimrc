@@ -48,6 +48,8 @@ if(exists('&transparency'))
     autocmd FocusLost * set transparency=30
   augroup END
 endif
+" Use visualbell, stop beeping.
+set visualbell t_vb=
 
 " }}}
 
