@@ -1,1 +1,1 @@
-nnoremap <silent> [Unite]o :<C-u>Unite -start-insert outline<CR>
+nnoremap <silent> [Unite]o :<C-u>Unite -start-insert -vertical outline<CR>

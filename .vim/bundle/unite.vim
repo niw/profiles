@@ -7,6 +7,9 @@ let g:unite_source_file_mru_limit = 200
 let g:unite_source_file_mru_filename_format = ""
 let g:unite_source_file_mru_time_format = ""
 
+" Narrow vertial window, default width is 90.
+let g:unite_winwidth = 40
+
 function! s:UniteSettings()
   nmap <buffer> <ESC> <Plug>(unite_exit)
   imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
