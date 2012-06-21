@@ -3,12 +3,9 @@
 	email = niw@niw.at
 [alias]
 	ci = commit
-	cia = commit -a
 	co = checkout
 	st = status
-	sta = status -a
 	br = branch
-	bra = branch -a
 	sm = submodule
 	gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
 	d = diff -w
@@ -19,3 +16,5 @@
 [gui]
 	fontui = -family \"ヒラギノ角ゴ Pro W3\" -size 12 -weight normal -slant roman -underline 0 -overstrike 0
 	fontdiff = -family Osaka−等幅 -size 12 -weight normal -slant roman -underline 0 -overstrike 0
+[mergetool]
+	keepBackup = true
