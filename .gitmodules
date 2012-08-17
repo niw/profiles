@@ -52,3 +52,6 @@
 [submodule ".vim/bundle/open-browser.vim"]
 	path = .vim/bundle/open-browser.vim
 	url = https://github.com/tyru/open-browser.vim.git
+[submodule ".vim/bundle/mustache.vim"]
+	path = .vim/bundle/mustache.vim
+	url = https://github.com/juvenn/mustache.vim.git
