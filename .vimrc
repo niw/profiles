@@ -279,15 +279,10 @@ augroup MyAutoCommands
   autocmd FileType * setlocal formatoptions-=ro | setlocal formatoptions+=mM
 
   " File type settings
-  autocmd FileType ruby,eruby,haml setlocal tabstop=2 shiftwidth=2 expandtab nowrap
-  autocmd FileType vim setlocal tabstop=2 shiftwidth=2 expandtab nowrap
   autocmd FileType actionscript setlocal fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
-  autocmd FileType php setlocal tabstop=2 shiftwidth=2 expandtab nowrap
-  autocmd FileType thrift setlocal tabstop=2 shiftwidth=2 expandtab nowrap
-  autocmd FileType c,cpp,objc setlocal tabstop=4 shiftwidth=4 expandtab nowrap
 
   " Mapping file types
-  autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript tabstop=2 shiftwidth=2 expandtab nowrap
+  autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript
   autocmd BufNewFile,BufRead *.rl setlocal filetype=ragel
   autocmd BufNewFile,BufRead *.srt setlocal filetype=srt
   autocmd BufNewFile,BufRead nginx.* setlocal filetype=nginx
