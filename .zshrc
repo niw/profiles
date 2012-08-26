@@ -17,6 +17,7 @@ init_editor
 ## Aliases {{{
 
 init_aliases
+init_ls_colors
 
 # Aliases using pipes, works only on Zsh.
 alias -g V="| vi -v -"
