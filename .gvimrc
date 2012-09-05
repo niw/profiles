@@ -42,10 +42,10 @@ set guioptions-=r
 set guioptions-=R
 " Transparency if we can use.
 if(exists('&transparency'))
-  set transparency=5
+  set transparency=3
   augroup MyAutoCommands
-    autocmd FocusGained * set transparency=5
-    autocmd FocusLost * set transparency=30
+    autocmd FocusGained * set transparency=3
+    autocmd FocusLost * set transparency=8
   augroup END
 endif
 " Use visualbell, stop beeping.
