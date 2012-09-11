@@ -89,13 +89,124 @@ get_path_cleaned() {
 		| sed -e 's/^://')
 }
 
+init_ls_colors() {
+#
+#	FreeBSD / Darwin colors:
+#
+#	a	 black
+#	b	 red
+#	c	 green
+#	d	 brown
+#	e	 blue
+#	f	 magenta
+#	g	 cyan
+#	h	 light grey
+#	A	 bold black, usually shows up as dark grey
+#	B	 bold red
+#	C	 bold green
+#	D	 bold brown, usually shows up as yellow
+#	E	 bold blue
+#	F	 bold magenta
+#	G	 bold cyan
+#	H	 bold light grey; looks like bright white
+#	x	 default foreground or background
+#
+#	Linux colors:
+#
+#	Effects
+#		00	Defaultcolour
+#		01	Bold
+#		04	Underlined
+#		05	Flashingtext
+#		07	Reversetd
+#		08	Concealed
+#	Colours
+#		31	Red
+#		32	Green
+#		33	Orange
+#		34	Blue
+#		35	Purple
+#		36	Cyan
+#		37	Grey
+#	Backgrounds
+#		40	Blackbackground
+#		41	Redbackground
+#		42	Greenbackground
+#		43	Orangebackground
+#		44	Bluebackground
+#		45	Purplebackground
+#		46	Cyanbackground
+#		47	Greybackground
+#	Extracolours
+#		90	Darkgrey
+#		91	Lightred
+#		92	Lightgreen
+#		93	Yellow
+#		94	Lightblue
+#		95	Lightpurple
+#		96	Turquoise
+#		97	White
+#	Background
+#		100	Darkgrey background
+#		101	Lightred background
+#		102	Lightgreen background
+#		103	Yellowbackground
+#		104	Lightblue background
+#		105	Lightpurple background
+#		106	Turquoisebackground
+
+#	build color schemes for each OS
+		COLORS_BSD=''
+		COLORS_LINUX=''
+#	directory: cyan fg, default bg
+		COLORS_BSD+=gx
+		COLORS_LINUX+=di=36:
+#	symbolic link: magenta fg, default bg
+		COLORS_BSD+=fx
+		COLORS_LINUX+=ln=35:
+#	socket: green fg, default bg
+		COLORS_BSD+=cx
+		COLORS_LINUX+=so=32:
+#	pipe: brown fg, default bg
+		COLORS_BSD+=dx
+		COLORS_LINUX+=pi=91:
+#	executable: red fg, default bg
+		COLORS_BSD+=bx
+		COLORS_LINUX+=ex=31:
+#	block special: blue fg, cyan bg
+		COLORS_BSD+=eg
+		COLORS_LINUX+="bd=34;46:"
+#	character special: blue fg, brown bg
+		COLORS_BSD+=ed
+		COLORS_LINUX+="cd=34;101:"
+#	executable with setuid bit set: black fg, red bg
+		COLORS_BSD+=ab
+		COLORS_LINUX+="su=30;41:"
+#	executable with setgid bit set: black fg, cyan bg
+		COLORS_BSD+=ag
+		COLORS_LINUX+="sg=30;46:"
+#	directory writable to others, with sticky bit: black fg, green bg
+		COLORS_BSD+=ac
+		COLORS_LINUX+="tw=30;42:"
+#	directory writable to others, without sticky bit: black fg, brown bg
+		COLORS_BSD+=ad
+		COLORS_LINUX+="ow=30;101:"
+
+	local arch=`uname`
+	if [ "$arch" = "Darwin" -o "$arch" = "FreeBSD" ]; then
+		export LSCOLORS=${COLORS_BSD}
+	elif [ "$arch" = "Linux" ]; then
+		export LS_COLORS=${COLORS_LINUX}
+	fi
+}
+
 init_aliases() {
-	# colors ls
+
 	local arch=`uname`
 	if [ "$arch" = "Darwin" -o "$arch" = "FreeBSD" ]; then
 		alias ls='ls -hG'
-	else
-		alias ls='ls -p -h --show-control-chars --color=auto'
+	elif [ "$arch" = "Linux" ]; then
+		alias ls='LANG=C LC_COLLATE=C LC_ALL=C ls -h --show-control-chars --color=auto'
 	fi
 
 	# ls
