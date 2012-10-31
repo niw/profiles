@@ -58,3 +58,6 @@
 [submodule ".vim/bundle/vim-powerline"]
 	path = .vim/bundle/vim-powerline
 	url = https://github.com/Lokaltog/vim-powerline.git
+[submodule ".vim/bundle/treetop.vim"]
+	path = .vim/bundle/treetop.vim
+	url = https://github.com/nanki/treetop.vim.git
