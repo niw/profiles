@@ -19,24 +19,15 @@
 [submodule ".vim/bundle/vim-markdown"]
 	path = .vim/bundle/vim-markdown
 	url = https://github.com/hallison/vim-markdown.git
-[submodule ".vim/bundle/neocomplcache"]
-	path = .vim/bundle/neocomplcache
-	url = https://github.com/Shougo/neocomplcache.git
 [submodule ".vim/bundle/unite"]
 	path = .vim/bundle/unite
 	url = https://github.com/Shougo/unite.vim.git
 [submodule ".vim/bundle/vimproc"]
 	path = .vim/bundle/vimproc
 	url = https://github.com/Shougo/vimproc.git
-[submodule ".vim/bundle/vimshell"]
-	path = .vim/bundle/vimshell
-	url = https://github.com/Shougo/vimshell.git
 [submodule ".vim/bundle/unite-outline"]
 	path = .vim/bundle/unite-outline
 	url = https://github.com/h1mesuke/unite-outline.git
-[submodule ".vim/bundle/neco-look"]
-	path = .vim/bundle/neco-look
-	url = https://github.com/ujihisa/neco-look.git
 [submodule ".vim/bundle/vim-quickrun"]
 	path = .vim/bundle/vim-quickrun
 	url = https://github.com/thinca/vim-quickrun.git
@@ -46,18 +37,12 @@
 [submodule ".vim/bundle/vim-poslist"]
 	path = .vim/bundle/vim-poslist
 	url = https://github.com/thinca/vim-poslist.git
-[submodule ".vim/bundle/vimfiler"]
-	path = .vim/bundle/vimfiler
-	url = https://github.com/Shougo/vimfiler.git
 [submodule ".vim/bundle/open-browser.vim"]
 	path = .vim/bundle/open-browser.vim
 	url = https://github.com/tyru/open-browser.vim.git
 [submodule ".vim/bundle/mustache.vim"]
 	path = .vim/bundle/mustache.vim
 	url = https://github.com/juvenn/mustache.vim.git
-[submodule ".vim/bundle/vim-powerline"]
-	path = .vim/bundle/vim-powerline
-	url = https://github.com/Lokaltog/vim-powerline.git
 [submodule ".vim/bundle/treetop.vim"]
 	path = .vim/bundle/treetop.vim
 	url = https://github.com/nanki/treetop.vim.git
