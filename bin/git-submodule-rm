@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 submodule-path"
+  exit
+fi
+SUBMODULE_PATH="$1"
+
+if [ ! -d ".git" ]; then
+  echo "You need to run this command from the toplevel of the working tree."
+  exit 1
+fi
+
+# Remove [submodule ...] section from local .git/config
+git config --local --remove-section "submodule.${SUBMODULE_PATH}"
+
+# Remove submodule from .gitmodule
+git config --file=.gitmodules --remove-section "submodule.${SUBMODULE_PATH}"
+git add .gitmodules
+
+# Remove submodule path
+git rm -r "${SUBMODULE_PATH}"
