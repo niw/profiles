@@ -262,6 +262,11 @@ autocmd MyAutoCommands BufReadPost * call <SID>RestoreCursorPosition()
 set autoread
 autocmd MyAutoCommands WinEnter * checktime
 
+" Always enable spell check if using GUI.
+if has('gui_macvim')
+  autocmd MyAutoCommands BufNewFile,BufRead * setlocal spell
+endif
+
 "}}}
 
 "{{{ Syntax and File Types
@@ -519,8 +524,8 @@ xnoremap <silent> gr :<C-u>call <SID>CommandWithVisualRegionString('Grep')<CR>
 noremap <silent> [Space], :<C-u>make<CR>
 
 " Quick edit and reload .vimrc
-nnoremap <silent> [Space].  :<C-u>edit $MYVIMRC<CR>
-nnoremap <silent> [Space]s. :<C-u>source $MYVIMRC<CR>
+nnoremap <silent> [Space].e :<C-u>edit $MYVIMRC<CR>
+nnoremap <silent> [Space].s :<C-u>source $MYVIMRC<CR>
 
 " Open shell on console or GUI application.
 function! s:OpenShell() "{{{
@@ -573,6 +578,19 @@ endfunction
 nnoremap <silent> qq :call <SID>OpenQuickFix()<CR>
 nnoremap <silent> qw :<C-u>cclose<CR>
 "}}}
+
+" Spell check
+" {{{
+function! s:SpellCheckCompletion()
+  if &spell
+    call feedkeys("ea\<C-x>s", "n")
+  endif
+endfunction
+
+nnoremap <silent> gs :<C-u>setlocal spell!<CR>
+nnoremap <silent> [Space]s :<C-u>call <SID>SpellCheckCompletion()<CR>
+" }}}
+
 
 "}}}
 
