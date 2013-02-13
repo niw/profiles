@@ -57,8 +57,8 @@ function! s:SetFileEncodings() "{{{
   let enc_jis = 'iso-2022-jp'
 
   " Check availability of iconv library.
-  " Try converting the cahrs defined in EUC JIS X 0213 to CP932
-  " to make sure iconv supprts JIS X 0213 or not.
+  " Try converting the chars defined in EUC JIS X 0213 to CP932
+  " to make sure iconv supports JIS X 0213 or not.
   if iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
     let enc_eucjp = 'euc-jisx0213,euc-jp'
     let enc_jis = 'iso-2022-jp-3'
@@ -127,7 +127,7 @@ set fileformats=unix,dos,mac
 
 " Ignore the case of normal letters
 set ignorecase
-" If the search pattern contains uppter case characters, override the 'ignorecase' option.
+" If the search pattern contains upper case characters, override the 'ignorecase' option.
 set smartcase
 " Use incremental search.
 set incsearch
@@ -145,7 +145,7 @@ set tabstop=2
 set shiftwidth=2
 " Expand tab to spaces.
 set expandtab
-" Smart autoindenting.
+" Smart autoindent.
 set autoindent
 set smartindent
 " Round indent to multiple of 'shiftwidth'.
@@ -205,7 +205,7 @@ let &statusline .= '%4P'      " Percentage through file of displayed window.
 
 " Complete longest common string, list all matches and complete the next full match.
 set wildmode=longest,list,full
-" Use the popup menu even if it has only one match.
+" Use the pop up menu even if it has only one match.
 set completeopt=menuone
 
 " I don't want to use backup files.
@@ -233,7 +233,7 @@ augroup MyAutoCommands
   autocmd VimEnter,WinEnter * match TrailingWhitespaces /\v\s+$/
 augroup END
 
-" Highlight Cursour Line
+" Highlight Cursor Line
 "autocmd MyAutoCommands WinEnter,BufEnter * setlocal cursorline
 "autocmd MyAutoCommands WinLeave,BufLeave * setlocal nocursorline
 
@@ -243,7 +243,7 @@ augroup END
 " Open QuickFix after vimgrep
 "autocmd MyAutoCommands QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
 
-" Restore cursor positon
+" Restore cursor position
 "{{{
 function! s:RestoreCursorPosition()
   " Don't do it when the position is invalid or when inside an event handler
@@ -300,7 +300,7 @@ augroup MyAutoCommands
   autocmd BufNewFile,BufRead *.mm setlocal filetype=cpp
   autocmd BufNewFile,BufRead *.thrift setlocal filetype=thrift
 
-  " Support grepedit comamnd. See ~/.profiles/bin/grepedit
+  " Support grepedit command. See ~/.profiles/bin/grepedit
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
 
   " Editing binary file.
@@ -803,9 +803,9 @@ if has('gui_macvim') && has('kaoriya')
   let $RUBY_DLL = "/usr/lib/libruby.dylib"
 endif
 
-" Disable unusuals if vim is working with kaoriya patch.
+" Disable features coming with Kaoriya patch.
 if has('kaoriya')
-  " Disable dicwin.vim plugin provied by kaoriya patch which is using <C-k>
+  " Disable dicwin.vim plugin provided by Kaoriya patch which is using <C-k>
   let g:plugin_dicwin_disable = 1
 
   " Do not use useless example.
