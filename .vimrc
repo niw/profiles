@@ -299,6 +299,7 @@ augroup MyAutoCommands
   autocmd BufNewFile,BufRead *.pp setlocal filetype=puppet
   autocmd BufNewFile,BufRead *.mm setlocal filetype=cpp
   autocmd BufNewFile,BufRead *.thrift setlocal filetype=thrift
+  autocmd BufNewFile,BufRead *.pig setlocal filetype=pig
 
   " Support grepedit command. See ~/.profiles/bin/grepedit
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
