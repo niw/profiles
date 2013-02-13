@@ -506,10 +506,10 @@ augroup END
 "}}}
 
 " Disable highlight
-noremap <silent> gh :<C-u>nohlsearch<CR>
+nnoremap <silent> gh :<C-u>nohlsearch<CR>
 
 " Reset syntax highlight
-noremap <silent> gj :<C-u>syntax sync clear<CR>
+nnoremap <silent> gj :<C-u>syntax sync clear<CR>
 
 " Select the last modified texts
 nnoremap <silent> gm `[v`]
