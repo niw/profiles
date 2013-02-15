@@ -330,24 +330,34 @@ noremap <Leader> <Nop>
 noremap <LocalLeader> <Nop>
 "}}}
 
-" Reserve q for prefix key then assign Q for original actions.
+" Reserved Prefixes
+" {{{
+" Reserve <Space>, s, t, T, q, K.
+" See additional comments for q and K.
+noremap <Space> <Nop>
+noremap s <Nop>
+noremap t <Nop>
+noremap T <Nop>
+noremap q <Nop>
+noremap K <Nop>
+map <Space> [Space]
+map s [s]
+map t [t]
+map T [T]
+map q [q]
+map K [K]
+
+" q is reserved for prefix key, assign Q for the original action.
 " Q is for Ex-mode which we don't need to use.
-nnoremap q <Nop>
 nnoremap Q q
 
-" Avoid run K mistakenly with C-k, remap K to qK
-nnoremap K <Nop>
+" K is reserved for prefix to avoid run K mistakenly with C-k,
+" assign qK for the original action.
 nnoremap qK K
-
-" Smart <Space> mapping
-nmap <Space> [Space]
-xmap <Space> [Space]
-nnoremap [Space] <Nop>
-xnoremap [Space] <Nop>
+" }}}
 
 " Buffer manipulations
 nmap [Space] [Buffer]
-xmap [Space] [Buffer]
 "{{{
 function! s:NextNormalBuffer(loop) "{{{
   let buffer_num = bufnr('%')
@@ -432,8 +442,7 @@ noremap <silent> [Buffer]n :<C-u>call <SID>OpenNextNormalBuffer(1)<CR>
 "}}}
 
 " Window manipulations
-nmap s [Window]
-nnoremap [Window] <Nop>
+nmap [s] [Window]
 "{{{
 nnoremap [Window]j <C-W>j
 nnoremap [Window]k <C-W>k
@@ -460,8 +469,7 @@ nnoremap [Window][ <C-w>-
 "}}}
 
 " Tab manipulations
-nmap t [Tab]
-nnoremap [Tab] <Nop>
+nmap [t] [Tab]
 "{{{
 function! s:MapTabNextWithCount()
   let tab_count = 1
@@ -536,8 +544,9 @@ xnoremap <silent> gr :<C-u>call <SID>CommandWithVisualRegionString('Grep')<CR>
 noremap <silent> [Space], :<C-u>make<CR>
 
 " Quick edit and reload .vimrc
-nnoremap <silent> [Space].e :<C-u>edit $MYVIMRC<CR>
-nnoremap <silent> [Space].s :<C-u>source $MYVIMRC<CR>
+map [Space]. [Vimrc]
+nnoremap <silent> [Vimrc]e :<C-u>edit $MYVIMRC<CR>
+nnoremap <silent> [Vimrc]s :<C-u>source $MYVIMRC<CR>
 
 " Open shell on console or GUI application.
 function! s:OpenShell() "{{{
