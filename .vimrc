@@ -517,8 +517,19 @@ nnoremap <silent> gm `[v`]
 vnoremap <silent> gm :<C-u>normal gc<CR>
 onoremap <silent> gm :<C-u>normal gc<CR>
 
+" Operation for the words under the cursor or the visual region
+" FIXME use neosnip code, See Skype chat.
+function! s:CommandWithVisualRegionString(cmd) "{{{
+  let reg = getreg('a')
+  let regtype = getregtype('a')
+  silent normal! gv"ay
+  let selected = @a
+  call setreg('a', reg, regtype)
+  execute a:cmd . ' ' . selected
+endfunction "}}}
+
 " Grep
-nnoremap <silent> gr :<C-u>Grep<Space><C-r><C-w><CR>
+nnoremap <silent> gr :<C-u>Grep <C-r><C-w><CR>
 xnoremap <silent> gr :<C-u>call <SID>CommandWithVisualRegionString('Grep')<CR>
 
 " Make
@@ -545,19 +556,8 @@ endfunction "}}}
 " Run shell
 nnoremap <silent> [Space]; :<C-u>call <SID>OpenShell()<CR>
 
-" Operation for the words under the cursor or the visual region
-function! s:CommandWithVisualRegionString(cmd) "{{{
-  let reg = getreg('a')
-  let regtype = getregtype('a')
-  silent normal! gv"ay
-  let selected = @a
-  call setreg('a', reg, regtype)
-  execute a:cmd . ' ' . selected
-endfunction "}}}
-
 " Lookup help
-nnoremap <silent> [Space]h :<C-u>help<Space><C-r><C-w><CR>
-xnoremap <silent> [Space]h :<C-u>call <SID>CommandWithVisualRegionString('help')<CR>
+nnoremap <silent> [Space]h :<C-u>help <C-r><C-w><CR>
 
 " QuickFix
 "{{{
@@ -591,7 +591,6 @@ endfunction
 nnoremap <silent> gs :<C-u>setlocal spell!<CR>
 nnoremap <silent> [Space]s :<C-u>call <SID>SpellCheckCompletion()<CR>
 " }}}
-
 
 "}}}
 
