@@ -602,6 +602,9 @@ nnoremap <silent> gs :<C-u>setlocal spell!<CR>
 nnoremap <silent> [Space]s :<C-u>call <SID>SpellCheckCompletion()<CR>
 " }}}
 
+" Wrap
+nnoremap <silent> [Space]w :<C-u>setlocal wrap!<CR>
+
 "}}}
 
 "{{{ Commands
