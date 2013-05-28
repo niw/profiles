@@ -335,16 +335,17 @@ noremap <LocalLeader> <Nop>
 " {{{
 " Reserve <Space>, s, t, T, q, K.
 " See additional comments for q and K.
+" Allow t and T in visual, operator-pending mode to give a motion.
 noremap <Space> <Nop>
 noremap s <Nop>
-noremap t <Nop>
-noremap T <Nop>
+nnoremap t <Nop>
+nnoremap T <Nop>
 noremap q <Nop>
 noremap K <Nop>
 map <Space> [Space]
 map s [s]
-map t [t]
-map T [T]
+nmap t [t]
+nmap T [T]
 map q [q]
 map K [K]
 
