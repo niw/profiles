@@ -1,5 +1,7 @@
 if exists('g:loaded_rsense')
   finish
+elseif v:version < 700
+  finish
 endif
 let g:loaded_rsense = 1
 

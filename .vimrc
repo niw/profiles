@@ -7,18 +7,24 @@
 " NOTE this must be in a single line. See :help no-eval-feature.
 if !1 | finish | endif
 
+" Most of this .vimrc may work even on vim 6.x though,
+" we disable everything to avoid unexpected behavior for now.
+if v:version < 700
+  finish
+endif
+
 if !exists('s:loaded_vimrc')
   " Don't reset twice on reloading, 'compatible' has many side effects.
   set nocompatible
 endif
 
-" We have now 64 bit Windows.
-let s:has_win = has('win32') || has('win64')
-
 " Reset all autocmd defined in this file.
 augroup MyAutoCommands
   autocmd!
 augroup END
+
+" We have now 64 bit Windows.
+let s:has_win = has('win32') || has('win64')
 
 "}}}
 
