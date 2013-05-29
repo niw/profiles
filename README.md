@@ -1,7 +1,7 @@
 Profiles
 ========
 
-This repository includes configration files, scripts and tiny commands for our daily life, especially for myself.
+This repository includes configuration files, scripts and tiny commands for our daily life, especially for myself.
 
 License
 =======
@@ -12,7 +12,7 @@ This repository also contains some third party scripts, files and commands so th
 Install
 =======
 
-Following next step to use this configration files.
+Following the next steps to use this configuration files.
 
     % git clone git://github.com/niw/profiles.git ~/.profiles
     % cd ~/.profiles
@@ -23,6 +23,6 @@ Following next step to use this configration files.
 Uninstall
 =========
 
-Using setup command, you can remove all symlinks to the configuration files located in ~/.
+Using setup command, you can remove all symlinks to the configuration files.
 
-    % ~/.profiles/setup --uninstall
+    % ~/.profiles/setup -r
