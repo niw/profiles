@@ -489,6 +489,15 @@ nnoremap <silent> [Tab]p :<C-u>tabprev<CR>
 call s:MapTabNextWithCount()
 "}}}
 
+" Highlight
+"nmap [s] [Highlight] " [s] is so far shared with Window manipulations.
+"{{{
+" Disable search highlight
+nnoremap <silent> [s]c :<C-u>nohlsearch<CR>
+" Reset syntax highlight
+nnoremap <silent> [s]r :<C-u>syntax sync clear<CR>
+"}}}
+
 " Move cursor by display line
 noremap j gj
 noremap k gk
@@ -515,12 +524,6 @@ augroup MyAutoCommands
   autocmd CmdwinEnter * nnoremap <buffer> ; <Nop>
 augroup END
 "}}}
-
-" Disable highlight
-nnoremap <silent> gh :<C-u>nohlsearch<CR>
-
-" Reset syntax highlight
-nnoremap <silent> gj :<C-u>syntax sync clear<CR>
 
 " Select the last modified texts
 nnoremap <silent> gm `[v`]
