@@ -3,6 +3,10 @@
 
 "{{{ Initialize
 
+" There are vim doesn't have eval feature like vim-tiny on Debian.
+" NOTE this must be in a single line. See :help no-eval-feature.
+if !1 | finish | endif
+
 if !exists('s:loaded_vimrc')
   " Don't reset twice on reloading, 'compatible' has many side effects.
   set nocompatible
