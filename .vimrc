@@ -530,20 +530,24 @@ nnoremap <silent> gm `[v`]
 vnoremap <silent> gm :<C-u>normal gc<CR>
 onoremap <silent> gm :<C-u>normal gc<CR>
 
-" Operation for the words under the cursor or the visual region
-" FIXME use neosnip code, See Skype chat.
-function! s:CommandWithVisualRegionString(cmd) "{{{
-  let reg = getreg('a')
+" Get texts in the previous visual area.
+function! s:GetSelectedText() "{{{
+  let reg = @a
   let regtype = getregtype('a')
-  silent normal! gv"ay
-  let selected = @a
-  call setreg('a', reg, regtype)
-  execute a:cmd . ' ' . selected
+  let pos = getpos('.')
+
+  try
+    silent normal! gv"ay
+    return @a
+  finally
+    call setreg('a', reg, regtype)
+    call setpos('.', pos)
+  endtry
 endfunction "}}}
 
 " Grep
 nnoremap <silent> gr :<C-u>Grep <C-r><C-w><CR>
-xnoremap <silent> gr :<C-u>call <SID>CommandWithVisualRegionString('Grep')<CR>
+xnoremap <silent> gr :<C-u>call <SID>Grep(<SID>GetSelectedText())<CR>
 
 " Make
 noremap <silent> [Space], :<C-u>make<CR>
@@ -637,16 +641,13 @@ function! s:FlattenList(list) "{{{
   return flatten
 endfunction "}}}
 
-function! s:Grep(grepprg, keyword, ...) "{{{
+function! s:Grep(keyword, ...) "{{{
   let args = ['grep!', shellescape(a:keyword)]
   for arg in s:FlattenList(a:000)
     call add(args, shellescape(arg, 1))
   endfor
 
-  let grepprg = &grepprg
-  let &grepprg = a:grepprg
   execute join(args, ' ')
-  let &grepprg = grepprg
 
   call s:OpenQuickFixWithSyntex(a:keyword)
 endfunction "}}}
@@ -663,7 +664,9 @@ function! s:GrepPrg() "{{{
     let g:grepprg = &grepprg
   endif
 
-  if s:HasCommand('ack')
+  if s:HasCommand('ag')
+    let g:grepprg = 'ag'
+  elseif s:HasCommand('ack')
     let g:grepprg = 'ack'
   elseif s:HasCommand('grep')
     let opts = "-r -E -n --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*'"
@@ -676,8 +679,10 @@ function! s:GrepPrg() "{{{
   return g:grepprg
 endfunction "}}}
 
-command! -nargs=+ Grep call <SID>Grep(<SID>GrepPrg(), <f-args>)
-command! -nargs=+ Ack call <SID>Grep('ack', <f-args>)
+" Remember default grepprg.
+let &grepprg = <SID>GrepPrg()
+
+command! -nargs=+ Grep call <SID>Grep(<f-args>)
 "}}}
 
 " Change file name editing
