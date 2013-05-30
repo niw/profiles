@@ -568,7 +568,8 @@ nnoremap <silent> [Vimrc]e :<C-u>edit $MYVIMRC<CR>
 nnoremap <silent> [Vimrc]s :<C-u>source $MYVIMRC<CR>
 
 " Open shell on console or GUI application.
-function! s:OpenShell() "{{{
+"{{{
+function! s:OpenShell()
   if has('gui_macvim')
     " Open Terminal.app, then active it.
 "    let l:script = "tell application \"Terminal\"" . "\n"
@@ -579,37 +580,38 @@ function! s:OpenShell() "{{{
   else
     shell
   end
-endfunction "}}}
+endfunction
 
-" Run shell
 nnoremap <silent> [Space]; :<C-u>call <SID>OpenShell()<CR>
+"}}}
 
 " Lookup help
 nnoremap <silent> [Space]h :<C-u>help <C-r><C-w><CR>
 
-" QuickFix
-"{{{
-function! s:OpenQuickFixWithSyntex(syntax)
+" Wrap
+nnoremap <silent> [Space]w :<C-u>setlocal wrap!<CR>
+
+function! s:OpenQuickFixWithSyntex(syntax) "{{{
   let g:last_quick_fix_syntax = a:syntax
   execute "copen"
   execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
   call feedkeys("\<C-w>J", "n")
-endfunction
+endfunction "}}}
 
-function! s:OpenQuickFix()
+function! s:OpenQuickFix() "{{{
   if exists('g:last_quick_fix_syntax')
     call s:OpenQuickFixWithSyntex(g:last_quick_fix_syntax)
   else
     execute "copen"
   endif
-endfunction
+endfunction "}}}
 
+" QuickFix
 nnoremap <silent> qq :call <SID>OpenQuickFix()<CR>
 nnoremap <silent> qw :<C-u>cclose<CR>
-"}}}
 
 " Spell check
-" {{{
+"{{{
 function! s:SpellCheckCompletion()
   if &spell
     call feedkeys("ea\<C-x>s", "n")
@@ -618,10 +620,7 @@ endfunction
 
 nnoremap <silent> gs :<C-u>setlocal spell!<CR>
 nnoremap <silent> [Space]s :<C-u>call <SID>SpellCheckCompletion()<CR>
-" }}}
-
-" Wrap
-nnoremap <silent> [Space]w :<C-u>setlocal wrap!<CR>
+"}}}
 
 "}}}
 
