@@ -593,7 +593,7 @@ nnoremap <silent> [Space]w :<C-u>setlocal wrap!<CR>
 
 function! s:OpenQuickFixWithSyntex(syntax) "{{{
   let g:last_quick_fix_syntax = a:syntax
-  execute "copen"
+  copen
   execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
   call feedkeys("\<C-w>J", "n")
 endfunction "}}}
@@ -602,7 +602,7 @@ function! s:OpenQuickFix() "{{{
   if exists('g:last_quick_fix_syntax')
     call s:OpenQuickFixWithSyntex(g:last_quick_fix_syntax)
   else
-    execute "copen"
+    copen
   endif
 endfunction "}}}
 
