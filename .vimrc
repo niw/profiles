@@ -556,7 +556,7 @@ function! s:GetSelectedText() "{{{
 endfunction "}}}
 
 " Grep
-nnoremap <silent> gr :<C-u>Grep <C-r><C-w><CR>
+nnoremap <silent> gr :<C-u>call <SID>Grep(expand('<cword>'))<CR>
 xnoremap <silent> gr :<C-u>call <SID>Grep(<SID>GetSelectedText())<CR>
 
 " Make
@@ -651,6 +651,10 @@ function! s:FlattenList(list) "{{{
 endfunction "}}}
 
 function! s:Grep(keyword, ...) "{{{
+  if a:keyword == ""
+    return
+  endif
+
   let args = ['grep!', shellescape(a:keyword)]
   for arg in s:FlattenList(a:000)
     call add(args, shellescape(arg, 1))
