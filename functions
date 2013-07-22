@@ -1,197 +1,197 @@
 get_hash_id() {
-	result=$($1|sum|cut -d' ' -f1)
+  result=$($1|sum|cut -d' ' -f1)
 }
 
 get_color_index() {
-	# There are 7 colors and black then use them cyclic.
-	result=$(($1 % 7 + 1))
+  # There are 7 colors and black then use them cyclic.
+  result=$(($1 % 7 + 1))
 }
 
 get_prompt_color_indexes() {
-	get_hash_id "whoami"; get_color_index $result
-	local user=$result
-	get_hash_id "hostname"; get_color_index $result
-	local host=$result
-	get_color_index $(($SHLVL + 2))
-	local shlvl=$result
-	result=($user $host $shlvl)
+  get_hash_id "whoami"; get_color_index $result
+  local user=$result
+  get_hash_id "hostname"; get_color_index $result
+  local host=$result
+  get_color_index $(($SHLVL + 2))
+  local shlvl=$result
+  result=($user $host $shlvl)
 }
 
 init_editor() {
-	for i in vim vi; do
-		if which "$i" 2>&1 1>/dev/null; then
-			export EDITOR="$i"
-			break
-		fi
-	done
+  for i in vim vi; do
+    if which "$i" 2>&1 1>/dev/null; then
+      export EDITOR="$i"
+      break
+    fi
+  done
 }
 
 init_paths() {
-	# profile bin path
-	export PATH="$PATH:$profiles/bin"
+  # profile bin path
+  export PATH="$PATH:$profiles/bin"
 
-	if [ -x /usr/libexec/path_helper ]; then
-		# path_helper needs MANPATH env to assign values.
-		export MANPATH=$MANPATH
-		eval `/usr/libexec/path_helper -s`
-	fi
+  if [ -x /usr/libexec/path_helper ]; then
+    # path_helper needs MANPATH env to assign values.
+    export MANPATH=$MANPATH
+    eval `/usr/libexec/path_helper -s`
+  fi
 
-	# /opt/local/bin, /usr/local/bin
-	for i in /usr/local /opt/local; do
-		local bin_path="$i/bin"
-		if [ -d "$bin_path" ]; then
-			PATH=$bin_path:$PATH
-		fi
-		local sbin_path="$i/sbin"
-		if [ -d "$sbin_path" ]; then
-			PATH=$sbin_path:$PATH
-		fi
-		local man_path="$i/share/man"
-		if [ -d "$man_path" ]; then
-			MANPATH=$man_path:$MANPATH
-		fi
-	done
+  # /opt/local/bin, /usr/local/bin
+  for i in /usr/local /opt/local; do
+    local bin_path="$i/bin"
+    if [ -d "$bin_path" ]; then
+      PATH=$bin_path:$PATH
+    fi
+    local sbin_path="$i/sbin"
+    if [ -d "$sbin_path" ]; then
+      PATH=$sbin_path:$PATH
+    fi
+    local man_path="$i/share/man"
+    if [ -d "$man_path" ]; then
+      MANPATH=$man_path:$MANPATH
+    fi
+  done
 
-	# /opt/(symlink)/bin, /usr/local/(symlink)/bin
-	for i in /usr/local/* /opt/*; do
-		if [ -L "$i" ]; then
-			local bin_path="$i/bin"
-			if [ -d "$bin_path" ]; then
-				PATH=$bin_path:$PATH
-			fi
-			local sbin_path="$i/sbin"
-			if [ -d "$sbin_path" ]; then
-				PATH=$sbin_path:$PATH
-			fi
-			local man_path="$i/share/man"
-			if [ -d "$man_path" ]; then
-				MANPATH=$man_path:$MANPATH
-			fi
-		fi
-	done
+  # /opt/(symlink)/bin, /usr/local/(symlink)/bin
+  for i in /usr/local/* /opt/*; do
+    if [ -L "$i" ]; then
+      local bin_path="$i/bin"
+      if [ -d "$bin_path" ]; then
+        PATH=$bin_path:$PATH
+      fi
+      local sbin_path="$i/sbin"
+      if [ -d "$sbin_path" ]; then
+        PATH=$sbin_path:$PATH
+      fi
+      local man_path="$i/share/man"
+      if [ -d "$man_path" ]; then
+        MANPATH=$man_path:$MANPATH
+      fi
+    fi
+  done
 
-	clean_paths
+  clean_paths
 }
 
 clean_paths() {
-	for i in PATH MANPATH; do
-		get_path_cleaned $i
-		eval "export $i=$result"
-	done
+  for i in PATH MANPATH; do
+    get_path_cleaned $i
+    eval "export $i=$result"
+  done
 }
 
 get_path_cleaned() {
-	result=$(eval "echo -n \$$1" \
-		| tr -s ':' '\n' \
-		| awk '!($0 in a){a[$0]; print}' \
-		| tr -s '\n' ':' \
-		| sed -e 's/:$//' \
-		| sed -e 's/^://')
+  result=$(eval "echo -n \$$1" \
+    | tr -s ':' '\n' \
+    | awk '!($0 in a){a[$0]; print}' \
+    | tr -s '\n' ':' \
+    | sed -e 's/:$//' \
+    | sed -e 's/^://')
 }
 
 init_aliases() {
-	# colors ls
-	local arch=`uname`
-	if [ "$arch" = "Darwin" -o "$arch" = "FreeBSD" ]; then
-		alias ls='ls -hG'
-	else
-		alias ls='ls -p -h --show-control-chars --color=auto'
-	fi
+  # colors ls
+  local arch=`uname`
+  if [ "$arch" = "Darwin" -o "$arch" = "FreeBSD" ]; then
+    alias ls='ls -hG'
+  else
+    alias ls='ls -p -h --show-control-chars --color=auto'
+  fi
 
-	# ls
-	alias ls-al="ls -al"
-	alias ll="ls -al"
+  # ls
+  alias ls-al="ls -al"
+  alias ll="ls -al"
 
-	# subversion related
-	alias svndiff="svn diff -x --ignore-all-space -x --ignore-eol-style | vi -v -"
-	alias svndiffd="svn diff -x --ignore-all-space -x --ignore-eol-style -r \"{\`date -v-1d +%Y%m%d\`}\" | vi -v -"
-	alias svnst="svn st | grep -v '^[X?]'"
+  # subversion related
+  alias svndiff="svn diff -x --ignore-all-space -x --ignore-eol-style | vi -v -"
+  alias svndiffd="svn diff -x --ignore-all-space -x --ignore-eol-style -r \"{\`date -v-1d +%Y%m%d\`}\" | vi -v -"
+  alias svnst="svn st | grep -v '^[X?]'"
 
-	# grep related
-	if type 'ag' >/dev/null 2>&1; then
-		alias gr="ag"
-	elif type 'ack' >/dev/null 2>&1; then
-		alias gr="ack"
-	elif type 'grep' >/dev/null 2>&1; then
-		if grep --help 2>&1|grep -e '--exclude-dir' 2>&1 >/dev/null; then
-			alias gr="grep -r -E -n --color=always --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='**/tmp' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
-		else
-			alias gr="grep -r -E -n --color=always --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' . -e "
-		fi
-	fi
+  # grep related
+  if type 'ag' >/dev/null 2>&1; then
+    alias gr="ag"
+  elif type 'ack' >/dev/null 2>&1; then
+    alias gr="ack"
+  elif type 'grep' >/dev/null 2>&1; then
+    if grep --help 2>&1|grep -e '--exclude-dir' 2>&1 >/dev/null; then
+      alias gr="grep -r -E -n --color=always --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' --exclude-dir='**/tmp' --exclude-dir='CVS' --exclude-dir='.svn' --exclude-dir='.git' . -e "
+    else
+      alias gr="grep -r -E -n --color=always --exclude='*.svn*' --exclude='*.log*' --exclude='*tmp*' . -e "
+    fi
+  fi
 
-	alias ge="grepedit"
+  alias ge="grepedit"
 
-	# git related
-	alias d="git diff"
-	alias dc="git diff --cached"
-	alias s="git status"
-	alias a="git add"
-	alias grf="git remote -v|cut -f1|sort|uniq|xargs -n 1 git fetch"
-	alias gb="git symbolic-ref HEAD|cut -d'/' -f3"
-	alias gpoh="git push origin HEAD"
-	alias gpodh="git push origin :\$(git symbolic-ref HEAD|cut -d"/" -f3)"
+  # git related
+  alias d="git diff"
+  alias dc="git diff --cached"
+  alias s="git status"
+  alias a="git add"
+  alias grf="git remote -v|cut -f1|sort|uniq|xargs -n 1 git fetch"
+  alias gb="git symbolic-ref HEAD|cut -d'/' -f3"
+  alias gpoh="git push origin HEAD"
+  alias gpodh="git push origin :\$(git symbolic-ref HEAD|cut -d"/" -f3)"
 
-	alias now="date +%Y%m%d%H%M%S"
-	alias wget="wget -U Mozilla --no-check-certificate"
-	alias fn="find . -not -ipath '*/tmp/*' -not -ipath '*/.*/*' -name "
-	alias rand="ruby -ropenssl -e 'print OpenSSL::Digest::SHA1.hexdigest(rand().to_s)'"
+  alias now="date +%Y%m%d%H%M%S"
+  alias wget="wget -U Mozilla --no-check-certificate"
+  alias fn="find . -not -ipath '*/tmp/*' -not -ipath '*/.*/*' -name "
+  alias rand="ruby -ropenssl -e 'print OpenSSL::Digest::SHA1.hexdigest(rand().to_s)'"
 
-	# awk
-	for i in 1 2 3 4 5 6 7 8 9; do
-		alias a$i="awk '{print \$$i}'"
-	done
+  # awk
+  for i in 1 2 3 4 5 6 7 8 9; do
+    alias a$i="awk '{print \$$i}'"
+  done
 
-	# Terminal.app related
-	if type 'term' > /dev/null 2>&1; then
-		alias t="term -t"
-	fi
+  # Terminal.app related
+  if type 'term' > /dev/null 2>&1; then
+    alias t="term -t"
+  fi
 
-	# if we have vim, vi is vim also shotcut v is vim.
-	if type 'vim' > /dev/null 2>&1; then
-		alias vi='vim'
-		alias v='vim'
-	fi
+  # if we have vim, vi is vim also shotcut v is vim.
+  if type 'vim' > /dev/null 2>&1; then
+    alias vi='vim'
+    alias v='vim'
+  fi
 }
 
 init_additionl_configration() {
-	for i in "$profiles" "$profiles/local"; do
-		# Additional initialize scripts
-		for f in "$i"/$1 "$i"/*.sh; do
-			if [ -f "$f" ]; then
-				source "$f"
-			fi
-		done
-	done
+  for i in "$profiles" "$profiles/local"; do
+    # Additional initialize scripts
+    for f in "$i"/$1 "$i"/*.sh; do
+      if [ -f "$f" ]; then
+        source "$f"
+      fi
+    done
+  done
 }
 
 init_rvm() {
-	if [ -s "$HOME/.rvm/scripts/rvm" ]; then
-		source "$HOME/.rvm/scripts/rvm"
-		rvm default 1>/dev/null 2>&1
-		if [ -f ".rvmrc" ]; then
-			source ".rvmrc"
-		fi
-		return 0
-	fi
-	return 1
+  if [ -s "$HOME/.rvm/scripts/rvm" ]; then
+    source "$HOME/.rvm/scripts/rvm"
+    rvm default 1>/dev/null 2>&1
+    if [ -f ".rvmrc" ]; then
+      source ".rvmrc"
+    fi
+    return 0
+  fi
+  return 1
 }
 
 init_rubies() {
-	if [ -s "$HOME/.rubies/src/rubies.sh" ]; then
-		source "$HOME/.rubies/src/rubies.sh"
-		enable_rubies_cd_hook
-		return 0
-	fi
-	return 1
+  if [ -s "$HOME/.rubies/src/rubies.sh" ]; then
+    source "$HOME/.rubies/src/rubies.sh"
+    enable_rubies_cd_hook
+    return 0
+  fi
+  return 1
 }
 
 init_locallib() {
-	if [ -s "$HOME/.perl5/lib/perl5/local/lib.pm" ]; then
-		eval $(perl -I$HOME/.perl5/lib/perl5 -Mlocal::lib=$HOME/.perl5)
-		return 0
-	fi
-	return 1
+  if [ -s "$HOME/.perl5/lib/perl5/local/lib.pm" ]; then
+    eval $(perl -I$HOME/.perl5/lib/perl5 -Mlocal::lib=$HOME/.perl5)
+    return 0
+  fi
+  return 1
 }
 
-# vim:ts=4:sw=4:noexpandtab:foldmethod=marker:nowrap:ft=sh:
+# vim:ts=2:sw=2:expandtab:foldmethod=marker:nowrap:ft=sh:

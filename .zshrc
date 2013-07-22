@@ -48,17 +48,17 @@ setopt prompt_subst
 
 # Prompt strings.
 get_prompt() {
-	local color_table
-	color_table=(red green yellow blue magenta cyan white)
+  local color_table
+  color_table=(red green yellow blue magenta cyan white)
 
-	get_prompt_color_indexes
-	local user_color=${color_table[${result[1]}]}
-	local host_color=${color_table[${result[2]}]}
-	local shlvl_color=${color_table[${result[3]}]}
+  get_prompt_color_indexes
+  local user_color=${color_table[${result[1]}]}
+  local host_color=${color_table[${result[2]}]}
+  local shlvl_color=${color_table[${result[3]}]}
 
-	# NOTE To preserve backward compatibility, here we're not using %F and %f.
-	# See RPROMPT for vcs_info.
-	result="%{$fg[yellow]%}%T%{$reset_color%} %{$fg[${user_color}]%}%n%{$reset_color%}@%{$fg[${host_color}]%}%m%{$reset_color%}:%{$fg[${shlvl_color}]%}%2~%{$reset_color%} %(!.#.$) "
+  # NOTE To preserve backward compatibility, here we're not using %F and %f.
+  # See RPROMPT for vcs_info.
+  result="%{$fg[yellow]%}%T%{$reset_color%} %{$fg[${user_color}]%}%n%{$reset_color%}@%{$fg[${host_color}]%}%m%{$reset_color%}:%{$fg[${shlvl_color}]%}%2~%{$reset_color%} %(!.#.$) "
 }
 get_prompt
 PROMPT=$result
@@ -157,17 +157,17 @@ select-word-style bash
 ## Zsh VCS Info and RPROMPT {{{
 
 if autoload +X vcs_info 2> /dev/null; then
-	autoload -Uz vcs_info
-	zstyle ':vcs_info:*' enable git cvs svn # hg - slow, it scans all parent directories.
-	zstyle ':vcs_info:*' formats '%s %b'
-	zstyle ':vcs_info:*' actionformats '%s %b (%a)'
-	precmd_vcs_info() {
-		psvar[1]=""
-		LANG=en_US.UTF-8 vcs_info
-		[[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
-	}
-	precmd_functions+=precmd_vcs_info
-	RPROMPT="${RPROMPT}%1(V. %F{green}%1v%f.)"
+  autoload -Uz vcs_info
+  zstyle ':vcs_info:*' enable git cvs svn # hg - slow, it scans all parent directories.
+  zstyle ':vcs_info:*' formats '%s %b'
+  zstyle ':vcs_info:*' actionformats '%s %b (%a)'
+  precmd_vcs_info() {
+    psvar[1]=""
+    LANG=en_US.UTF-8 vcs_info
+    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+  }
+  precmd_functions+=precmd_vcs_info
+  RPROMPT="${RPROMPT}%1(V. %F{green}%1v%f.)"
 fi
 
 # }}}
@@ -205,8 +205,8 @@ zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
 # Hostname completion
 local knownhosts
 if [ -f $HOME/.ssh/known_hosts ]; then
-	knownhosts=( ${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*} ) 
-	zstyle ':completion:*:(ssh|scp|sftp):*' hosts $knownhosts
+  knownhosts=( ${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*} )
+  zstyle ':completion:*:(ssh|scp|sftp):*' hosts $knownhosts
 fi
 
 ## }}}
@@ -282,25 +282,25 @@ bindkey -M viins '\C-t' transpose-words
 
 case "${TERM}" in
 screen*|ansi*)
-	preexec_term_title() {
-		print -n "\ek$1\e\\"
-	}
-	preexec_functions+=preexec_term_title
-	precmd_term_title() {
-		print -n "\ek$(whoami)@$(hostname -s):$(basename "${PWD}")\e\\"
-	}
-	precmd_functions+=precmd_term_title
-	;;
+  preexec_term_title() {
+    print -n "\ek$1\e\\"
+  }
+  preexec_functions+=preexec_term_title
+  precmd_term_title() {
+    print -n "\ek$(whoami)@$(hostname -s):$(basename "${PWD}")\e\\"
+  }
+  precmd_functions+=precmd_term_title
+  ;;
 xterm*)
-	preexec_term_title() {
-		print -n "\e]0;$1\a"
-	}
-	preexec_functions+=preexec_term_title
-	precmd_term_title() {
-		print -n "\e]0;$(basename "${PWD}")\a"
-	}
-	precmd_functions+=precmd_term_title
-	;;
+  preexec_term_title() {
+    print -n "\e]0;$1\a"
+  }
+  preexec_functions+=preexec_term_title
+  precmd_term_title() {
+    print -n "\e]0;$(basename "${PWD}")\a"
+  }
+  precmd_functions+=precmd_term_title
+  ;;
 esac
 
 # }}}
@@ -315,7 +315,7 @@ init_additionl_configration "*.zsh"
 ## Post Configurations {{{
 
 if init_rubies; then
-	RPROMPT="${RPROMPT} %{$fg[red]%}\${RUBIES_RUBY_NAME}%{$reset_color%}"
+  RPROMPT="${RPROMPT} %{$fg[red]%}\${RUBIES_RUBY_NAME}%{$reset_color%}"
 fi
 
 # Load Perl local::lib.
@@ -326,4 +326,4 @@ clean_paths
 
 # }}}
 
-# vim:ts=4:sw=4:noexpandtab:foldmethod=marker:nowrap:
+# vim:ts=2:sw=2:expandtab:foldmethod=marker:nowrap:
