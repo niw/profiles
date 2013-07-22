@@ -155,9 +155,11 @@ init_aliases() {
 }
 
 init_additionl_configration() {
+  local files
   for i in "$profiles" "$profiles/local"; do
     # Additional initialize scripts
-    for f in "$i"/$1 "$i"/*.sh; do
+    eval "files=(\"$i\"/{$1,*.sh})"
+    for f in $files; do
       if [ -f "$f" ]; then
         source "$f"
       fi
