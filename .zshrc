@@ -318,6 +318,10 @@ if init_rubies; then
   RPROMPT="${RPROMPT} %{$fg[red]%}\${RUBIES_RUBY_NAME}%{$reset_color%}"
 fi
 
+if init_java; then
+  RPROMPT="${RPROMPT} %{$fg[red]%}\${JVM_JAVA_VERSION}%{$reset_color%}"
+fi
+
 # Load Perl local::lib.
 init_locallib
 
