@@ -3,6 +3,9 @@ source "${profiles}/functions"
 
 ## Pre Configurations {{{
 
+# Allow patterns which match no files
+shopt -s nullglob
+
 # Source global definitions
 if [ -f /etc/bashrc ]; then
   . /etc/bashrc
