@@ -666,7 +666,7 @@ function! s:Grep(keyword, ...) "{{{
 endfunction "}}}
 
 function! s:HasCommand(cmd) "{{{
-  execute system('which ' . a:cmd . ' 2>&1 >/dev/null')
+  execute system('type ' . a:cmd . ' >/dev/null 2>&1')
   return !v:shell_error
 endfunction "}}}
 
