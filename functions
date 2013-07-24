@@ -95,7 +95,9 @@ init_aliases() {
   if [ "$arch" = "Darwin" -o "$arch" = "FreeBSD" ]; then
     alias ls='ls -hG'
   else
-    alias ls='ls -p -h --show-control-chars --color=auto'
+    # NOTE Without LC_COLLATE="C", ls may sort files by LC_ALL or LANG, which is not
+    # listing dot files first.
+    alias ls='LC_COLLATE="C" ls -p -h --show-control-chars --color=auto'
   fi
 
   # ls
