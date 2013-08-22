@@ -201,6 +201,8 @@ init_locallib() {
 init_java() {
   export JAVA_TOOLS_OPTS="-Dfile.encoding=UTF8"
 
+  alias javad="java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=y"
+
   if [ -x /usr/libexec/java_home ]; then
     # Handful function to switch JVM, default to 1.6.
     jvm(){
