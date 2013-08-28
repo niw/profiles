@@ -896,8 +896,20 @@ filetype on
 
 "{{{ Plugins
 
-" Git Plugin (Standard Plugin)
-autocmd MyAutoCommands FileType gitcommit DiffGitCached
+" Git Plugin
+" Show `git diff --cached` when editing COMMIT_EDITMSG.
+"{{{
+function! s:PreviewGitDiffCached()
+  " Open `git diff --cached` in a preview window.
+  DiffGitCached
+  resize 20
+  " Back to original window, which is editing COMMIT_EDITMGS.
+  wincmd p
+  goto 1
+endfunction
+
+autocmd MyAutoCommands FileType gitcommit call <SID>PreviewGitDiffCached()
+"}}}
 
 "}}}
 
