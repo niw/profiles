@@ -609,8 +609,12 @@ nnoremap <silent> [Space]w :<C-u>setlocal wrap!<CR>
 function! s:OpenQuickFixWithSyntex(syntax) "{{{
   let g:last_quick_fix_syntax = a:syntax
   copen
+  " NOTE: quickfix window is using syntax match for highlight the selected file.
+  " matchadd() always overrules syntax highlighs, it results unexpected highlighting.
+  " To avoid this, using syntax match to highlight the keyword here.
+  " See help :matchadd
   execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
-  call feedkeys("\<C-w>J", "n")
+  wincmd J
 endfunction "}}}
 
 function! s:OpenQuickFix() "{{{
