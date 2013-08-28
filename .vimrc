@@ -514,14 +514,46 @@ nnoremap <silent> [Tab]p :<C-u>tabprev<CR>
 call s:MapTabNextWithCount()
 "}}}
 
-" Highlight
-"nmap [s] [Highlight] " [s] is so far shared with Window manipulations.
-"{{{
-" Disable search highlight
-nnoremap <silent> [s]c :<C-u>nohlsearch<CR>
+function! s:SetSearchKeyword(keyword) "{{{
+  if a:keyword == ""
+    nohlsearch
+    return
+  endif
+  " After \V, all magic characters must be escaped by \.
+  " We escape all \ by escape(), then no magic characters can work.
+  " See :help /magic
+  let pattern = '\V' . escape(a:keyword, '\')
+  let @/ = pattern
+  " NOTE: Somehow, just using `silent set hlsearch` is not working without any prior search action.
+  " It's hacky though, feedkeys() works without search action.
+  call feedkeys(":silent set hlsearch\<CR>", "n")
+endfunction "}}}
+
+function! s:GetSelectedText() "{{{
+  let reg = @a
+  let regtype = getregtype('a')
+  let pos = getpos('.')
+
+  try
+    silent normal! gv"ay
+    return @a
+  finally
+    call setreg('a', reg, regtype)
+    call setpos('.', pos)
+  endtry
+endfunction "}}}
+
 " Reset syntax highlight
-nnoremap <silent> [s]r :<C-u>syntax sync clear<CR>
-"}}}
+nnoremap <silent> [Space]s :<C-u>syntax sync clear<CR>
+
+" Disable search highlight
+nnoremap <silent> [Space]n :nohlsearch<CR>
+
+" Highlight the word under the cursor
+nnoremap <silent> [Space]<Space> :<C-u>call <SID>SetSearchKeyword(expand('<cword>'))<CR>
+
+" Search by visual region
+vnoremap <silent> [Space]<Space> :<C-u>call <SID>SetSearchKeyword(<SID>GetSelectedText())<CR>
 
 " Move cursor by display line
 noremap j gj
@@ -554,21 +586,6 @@ augroup END
 nnoremap <silent> gm `[v`]
 vnoremap <silent> gm :<C-u>normal gc<CR>
 onoremap <silent> gm :<C-u>normal gc<CR>
-
-" Get texts in the previous visual area.
-function! s:GetSelectedText() "{{{
-  let reg = @a
-  let regtype = getregtype('a')
-  let pos = getpos('.')
-
-  try
-    silent normal! gv"ay
-    return @a
-  finally
-    call setreg('a', reg, regtype)
-    call setpos('.', pos)
-  endtry
-endfunction "}}}
 
 " Grep
 nnoremap <silent> gr :<C-u>call <SID>Grep(expand('<cword>'))<CR>
