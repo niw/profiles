@@ -235,13 +235,27 @@ set ttyfast
 set list
 "set nolist
 set listchars=tab:»\ ,extends:»,precedes:«,trail:\ 
+
+" Highlight Trailing Whitespaces
+"{{{
+function! s:HighlightTrailingWhitespaces()
+  let w:trailing_whitespaces_match = matchadd('TrailingWhitespaces', '\v\s+$')
+endfunction
+
+function! s:ClearTrailingWhitespacesHighlights()
+  if exists('w:trailing_whitespaces_match')
+    call matchdelete(w:trailing_whitespaces_match)
+  endif
+endfunction
+
 augroup MyAutoCommands
   "autocmd VimEnter,ColorScheme * highlight SpecialKey ctermbg=red guibg=#F92672
   autocmd VimEnter,ColorScheme * highlight TrailingWhitespaces ctermbg=red guibg=#F92672
-  "autocmd InsertEnter * match TrailingWhitespaces //
-  "autocmd InsertLeave * match TrailingWhitespaces /\v\s+$/
-  autocmd VimEnter,WinEnter * match TrailingWhitespaces /\v\s+$/
+  "autocmd VimEnter,WinEnter * call <SID>HighlightTrailingWhitespaces()
+  autocmd InsertEnter * call <SID>ClearTrailingWhitespacesHighlights()
+  autocmd InsertLeave * call <SID>HighlightTrailingWhitespaces()
 augroup END
+"}}}
 
 " Highlight Cursor Line
 "autocmd MyAutoCommands WinEnter,BufEnter * setlocal cursorline
