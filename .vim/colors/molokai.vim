@@ -32,7 +32,7 @@ hi Number          guifg=#AE81FF
 hi String          guifg=#E6DB74
 hi Conditional     guifg=#F92672               gui=bold
 hi Constant        guifg=#AE81FF               gui=bold
-hi Cursor          guifg=#000000 guibg=#F8F8F0
+hi Cursor          guifg=#000000 guibg=#F8F8F2
 hi Debug           guifg=#CFCFC2               gui=bold
 hi Define          guifg=#66D9EF
 hi Delimiter       guifg=#CFCFC2
