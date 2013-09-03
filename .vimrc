@@ -239,12 +239,15 @@ set listchars=tab:»\ ,extends:»,precedes:«,trail:\
 " Highlight Trailing Whitespaces
 "{{{
 function! s:HighlightTrailingWhitespaces()
-  let w:trailing_whitespaces_match = matchadd('TrailingWhitespaces', '\v\s+$')
+  if getbufvar(bufnr('%'), '&buftype') == ""
+    let w:trailing_whitespaces_match = matchadd('TrailingWhitespaces', '\v\s+$')
+  endif
 endfunction
 
 function! s:ClearTrailingWhitespacesHighlights()
   if exists('w:trailing_whitespaces_match')
     call matchdelete(w:trailing_whitespaces_match)
+    unlet w:trailing_whitespaces_match
   endif
 endfunction
 
