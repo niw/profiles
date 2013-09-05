@@ -315,20 +315,20 @@ augroup MyAutoCommands
 
   " Mapping file types
   autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript
-  autocmd BufNewFile,BufRead *.rl setlocal filetype=ragel
-  autocmd BufNewFile,BufRead *.srt setlocal filetype=srt
-  autocmd BufNewFile,BufRead nginx.* setlocal filetype=nginx
-  autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
-  autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
+  autocmd BufNewFile,BufRead *.gradle setlocal filetype=groovy
+  autocmd BufNewFile,BufRead *.json setlocal filetype=json
+  autocmd BufNewFile,BufRead *.mm setlocal filetype=cpp
   autocmd BufNewFile,BufRead *.module setlocal filetype=php
   autocmd BufNewFile,BufRead *.mustache setlocal syntax=mustache
-  autocmd BufNewFile,BufRead *.json setlocal filetype=json
-  autocmd BufNewFile,BufRead *.pp setlocal filetype=puppet
-  autocmd BufNewFile,BufRead *.mm setlocal filetype=cpp
-  autocmd BufNewFile,BufRead *.thrift setlocal filetype=thrift
   autocmd BufNewFile,BufRead *.pig setlocal filetype=pig
   autocmd BufNewFile,BufRead *.pom setlocal filetype=xml
-  autocmd BufNewFile,BufRead *.gradle setlocal filetype=groovy
+  autocmd BufNewFile,BufRead *.pp setlocal filetype=puppet
+  autocmd BufNewFile,BufRead *.rl setlocal filetype=ragel
+  autocmd BufNewFile,BufRead *.srt setlocal filetype=srt
+  autocmd BufNewFile,BufRead *.thrift setlocal filetype=thrift
+  autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
+  autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
+  autocmd BufNewFile,BufRead nginx.* setlocal filetype=nginx
 
   " Support grepedit command. See ~/.profiles/bin/grepedit
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
