@@ -547,7 +547,7 @@ function! s:GetSelectedText() "{{{
 endfunction "}}}
 
 " Reset syntax highlight
-nnoremap <silent> [Space]s :<C-u>syntax sync clear<CR>
+nnoremap <silent> [Space]r :<C-u>syntax sync clear<CR>
 
 " Disable search highlight
 nnoremap <silent> [Space]n :nohlsearch<CR>
