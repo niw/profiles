@@ -327,6 +327,7 @@ augroup MyAutoCommands
   autocmd BufNewFile,BufRead *.srt setlocal filetype=srt
   autocmd BufNewFile,BufRead *.thrift setlocal filetype=thrift
   autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
+  autocmd BufNewFile,BufRead BUILD setlocal filetype=pants
   autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
   autocmd BufNewFile,BufRead nginx.* setlocal filetype=nginx
 
