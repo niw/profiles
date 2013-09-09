@@ -55,3 +55,6 @@
 [submodule ".vim/bundle/iptables"]
 	path = .vim/bundle/iptables
 	url = https://github.com/vim-scripts/iptables.git
+[submodule ".vim/bundle/vim-pants"]
+	path = .vim/bundle/vim-pants
+	url = https://github.com/niw/vim-pants.git
