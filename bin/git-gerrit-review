@@ -15,18 +15,42 @@ if [ "x${BRANCH_NAME}" = "x" ]; then
 fi
 
 REVIEW_BRANCH_NAME="_review_for_${BRANCH_NAME}"
+REBASE_BRANCH_NAME="_rebased_${BRANCH_NAME}"
 
-MERGE_BASE="$(git merge-base master HEAD 2>/dev/null)"
-if [ "x${MERGE_BASE}" = "x" ]; then
-  echo "${COLOR_RED}Fail to find merge-base.${COLOR_RESET}"
+REVIEW_BASE="${REVIEW_BASE:-$(git merge-base master HEAD 2>/dev/null)}"
+if [ "x${REVIEW_BASE}" = "x" ]; then
+  echo "${COLOR_RED}Fail to find base commit for review.${COLOR_RESET}"
   exit 1
+fi
+
+MERGE_BASE="_review_for_${REVIEW_BASE}"
+if ! git_branch_exists "${MERGE_BASE}"; then
+  MERGE_BASE="${REVIEW_BASE}"
 fi
 
 echo "${COLOR_BLUE}Current branch:${COLOR_RESET} ${BRANCH_NAME}"
 echo "${COLOR_BLUE} Review branch:${COLOR_RESET} ${REVIEW_BRANCH_NAME}"
+echo "${COLOR_BLUE}   Review base:${COLOR_RESET} $(git show -s --oneline "${REVIEW_BASE}")"
 echo "${COLOR_BLUE}    Merge base:${COLOR_RESET} $(git show -s --oneline "${MERGE_BASE}")"
 if git_branch_exists "${REVIEW_BRANCH_NAME}"; then
   echo "${COLOR_BLUE}Commit message:${COLOR_RESET} $(git show -s "${REVIEW_BRANCH_NAME}")"
+fi
+
+if [ "${MERGE_BASE}" != "${REVIEW_BASE}" ]; then
+  echo ""
+  echo "${COLOR_BLUE}Rebase commits from ${REVIEW_BASE} to ${BRANCH_NAME}...${COLOR_RESET}"
+
+  if ! git checkout -b "${REBASE_BRANCH_NAME}" "${BRANCH_NAME}"; then
+    echo "${COLOR_RED}Fail to prepare ${REBASE_BRANCH_NAME}.${COLOR_RESET}"
+    exit 1
+  fi
+
+  if ! git rebase --onto "${MERGE_BASE}" "${REVIEW_BASE}" "${REBASE_BRANCH_NAME}"; then
+    echo "${COLOR_RED}Fail to rebase ${BRANCH_NAME}.${COLOR_RESET}"
+    exit 1
+  fi
+
+  BRANCH_NAME="${REBASE_BRANCH_NAME}"
 fi
 
 echo ""
@@ -52,6 +76,7 @@ else
 fi
 
 git branch -D "${ORIGINAL_REVIEW_BRANCH_NAME}"
+git branch -D "${REBASE_BRANCH_NAME}"
 
 echo ""
 echo "${COLOR_BLUE}Ready for git push gerrit HEAD:refs/for/master${COLOR_RESET}"
