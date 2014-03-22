@@ -36,9 +36,11 @@ fi
 REVIEW_BRANCH_NAME="_review_for_${BRANCH_NAME}"
 REBASE_BRANCH_NAME="_rebased_${BRANCH_NAME}"
 
+MASTER_BRANCH_NAME="${MASTER_BRANCH_NAME:-"master"}"
+
 # Resolve the original commit for the review.
 # Default to the merge-base between master and review branch.
-REVIEW_BASE="${REVIEW_BASE:-$(git merge-base master HEAD 2>/dev/null)}"
+REVIEW_BASE="${REVIEW_BASE:-$(git merge-base ${MASTER_BRANCH_NAME} HEAD 2>/dev/null)}"
 if [ "x${REVIEW_BASE}" = "x" ]; then
   echo "${COLOR_RED}Fail to find base commit for review.${COLOR_RESET}"
   exit 1
@@ -112,4 +114,4 @@ done
 
 # Done!
 echo ""
-echo "${COLOR_BLUE}Ready for git push gerrit HEAD:refs/for/master${COLOR_RESET}"
+echo "${COLOR_BLUE}Ready for git push gerrit HEAD:refs/for/${MASTER_BRANCH_NAME}${COLOR_RESET}"
