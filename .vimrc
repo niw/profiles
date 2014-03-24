@@ -927,10 +927,6 @@ endfunction "}}}
 
 call s:SourceRuntimeBundleScripts()
 
-" Re-enable filetype plugin for ftdetect directory of each runtimepath
-filetype off
-filetype on
-
 "}}}
 
 "{{{ Plugins
@@ -950,9 +946,29 @@ endfunction
 autocmd MyAutoCommands FileType gitcommit call <SID>PreviewGitDiffCached()
 "}}}
 
+" Go Plugin
+" golang provides vim plugin in $GOROOT/misc/vim, if we have that path, add it to runtimepath.
+" {{{
+function! s:UseGoPlugin()
+  " Use pathogen to manage runtimepath.
+  if !empty($GOROOT)
+    let sep = pathogen#separator()
+    let before = pathogen#glob_directories($GOROOT . sep . "misc" . sep . "vim")
+    let after = pathogen#glob_directories($GOROOT . sep . "misc" . sep . "vim" . sep . "after")
+    let &runtimepath = pathogen#join(before, &runtimepath, after)
+  endif
+endfunction
+
+call s:UseGoPlugin()
+" }}}
+
 "}}}
 
 "{{{ Finalize
+
+" Re-enable filetype plugin for ftdetect directory of each runtimepath
+filetype off
+filetype on
 
 if !exists('s:loaded_vimrc')
   let s:loaded_vimrc = 1
