@@ -19,6 +19,11 @@
 [mergetool]
   keepBackup = true
 
+# NOTE Use `git config --system credential.helper osxkeychain` to set credential helper
+# for system wide, not --global, since credential storage is per system.
+#[credential]
+#  helper = osxkeychain
+
 # tig Configurations
 # See man tigrc(5).
 [tig]
