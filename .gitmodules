@@ -37,14 +37,14 @@
 [submodule ".vim/bundle/vim-poslist"]
 	path = .vim/bundle/vim-poslist
 	url = https://github.com/thinca/vim-poslist.git
-[submodule ".vim/bundle/open-browser.vim"]
-	path = .vim/bundle/open-browser.vim
+[submodule ".vim/bundle/open-browser"]
+	path = .vim/bundle/open-browser
 	url = https://github.com/tyru/open-browser.vim.git
-[submodule ".vim/bundle/mustache.vim"]
-	path = .vim/bundle/mustache.vim
+[submodule ".vim/bundle/mustache"]
+	path = .vim/bundle/mustache
 	url = https://github.com/juvenn/mustache.vim.git
-[submodule ".vim/bundle/treetop.vim"]
-	path = .vim/bundle/treetop.vim
+[submodule ".vim/bundle/treetop"]
+	path = .vim/bundle/treetop
 	url = https://github.com/nanki/treetop.vim.git
 [submodule ".vim/bundle/vim-scala"]
 	path = .vim/bundle/vim-scala
