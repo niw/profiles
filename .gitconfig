@@ -16,6 +16,9 @@
   status = auto
   branch = auto
 
+[diff]
+  algorithm = histogram
+
 [mergetool]
   keepBackup = true
 
