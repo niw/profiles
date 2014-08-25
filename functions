@@ -178,32 +178,23 @@ init_rubies() {
   return 1
 }
 
-init_locallib() {
-  if [ -s "$HOME/.perl5/lib/perl5/local/lib.pm" ]; then
-    eval $(perl -I$HOME/.perl5/lib/perl5 -Mlocal::lib=$HOME/.perl5)
-    return 0
-  fi
-  return 1
-}
-
 init_java() {
   export JAVA_TOOLS_OPTS="-Dfile.encoding=UTF8"
 
   alias javad="java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
 
-  if [ -x /usr/libexec/java_home ]; then
-    # Handful function to switch JVM, default to 1.6.
-    jvm(){
-      local version=${1:-1.6}
-      case "$version" in
-      [0-9] )
-        version="1.$version"
-        ;;
-      esac
-      export JAVA_HOME=$(/usr/libexec/java_home -v "$version")
-      export JVM_JAVA_VERSION=$(java -version 2>&1|head -n1|sed -E -e 's/.*"(.*)"/\1/')
-    }
-    jvm
+  if [ -s "$HOME/.javas/src/javas.sh" ]; then
+    if source "$HOME/.javas/src/javas.sh"; then
+      enable_javas_cd_hook
+      return 0
+    fi
+  fi
+  return 1
+}
+
+init_locallib() {
+  if [ -s "$HOME/.perl5/lib/perl5/local/lib.pm" ]; then
+    eval $(perl -I$HOME/.perl5/lib/perl5 -Mlocal::lib=$HOME/.perl5)
     return 0
   fi
   return 1

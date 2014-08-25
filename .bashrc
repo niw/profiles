@@ -89,7 +89,7 @@ if init_rubies; then
 fi
 
 if init_java; then
-  RPROMPT="$RPROMPT \$JVM_JAVA_VERSION"
+  RPROMPT="$RPROMPT \$JAVAS_JAVA_VERSION"
 fi
 
 # Load Perl local::lib
