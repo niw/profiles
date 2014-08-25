@@ -312,6 +312,7 @@ augroup MyAutoCommands
 
   " File type settings
   autocmd FileType actionscript setlocal fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
+  autocmd FileType objc setlocal fileencoding=utf-8 tabstop=4 shiftwidth=4 expandtab
 
   " Mapping file types
   autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript
