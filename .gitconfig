@@ -22,6 +22,10 @@
 [mergetool]
   keepBackup = true
 
+[http]
+  # Increase HTTP post buffer to 100 MB
+  postBuffer = 104857600
+
 # NOTE Use `git config --system credential.helper osxkeychain` to set credential helper
 # for system wide, not --global, since credential storage is per system.
 #[credential]
