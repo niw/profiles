@@ -64,3 +64,6 @@
 [submodule ".vim/bundle/neomru"]
 	path = .vim/bundle/neomru
 	url = https://github.com/Shougo/neomru.vim.git
+[submodule ".vim/bundle/vim-swift"]
+	path = .vim/bundle/vim-swift
+	url = https://github.com/toyamarinyon/vim-swift.git
