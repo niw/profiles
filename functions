@@ -154,6 +154,12 @@ init_aliases() {
     alias vi='vim'
     alias v='vim'
   fi
+
+  # Xcode related
+  if type 'xcrun' > /dev/null 2>&1; then
+    alias swift='xcrun swift'
+    alias swiftc='xcrun swiftc'
+  fi
 }
 
 init_additionl_configration() {
