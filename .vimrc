@@ -199,6 +199,8 @@ set cmdheight=2
 set previewheight=40
 " Highlight a pari of < and >.
 set matchpairs+=<:>
+" Use dark background by default.
+set background=dark
 
 " Status line
 
@@ -891,7 +893,6 @@ endif
 " If terminal supports 256 colors or GUI, set colorscheme.
 if $TERM =~? '256' || has('gui_running')
   colorscheme molokai
-  "colorscheme twilight
 endif
 
 "}}}
