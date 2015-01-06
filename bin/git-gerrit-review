@@ -20,6 +20,9 @@ COLOR_RESET=$(tput sgr0)
 COLOR_RED=$(tput setaf 1)
 COLOR_BLUE=$(tput setaf 4)
 
+REVIEW_BRANCH_NAME_PREFIX="_review_for"
+REBASE_BRANCH_NAME_PREFIX="_rebased"
+
 git_branch_exists() {
   [ "x$(git branch --list "$@")" != "x" ]
 }
@@ -32,9 +35,14 @@ if [ "x${BRANCH_NAME}" = "x" ]; then
   exit 1
 fi
 
+if [ "${BRANCH_NAME#${REVIEW_BRANCH_NAME_PREFIX}_}" != "${BRANCH_NAME}" ]; then
+  echo "${COLOR_RED}Current HEAD is a review branch.${COLOR_RESET}"
+  exit 1
+fi
+
 # Branch names for temporary use.
-REVIEW_BRANCH_NAME="_review_for_${BRANCH_NAME}"
-REBASE_BRANCH_NAME="_rebased_${BRANCH_NAME}"
+REVIEW_BRANCH_NAME="${REVIEW_BRANCH_NAME_PREFIX}_${BRANCH_NAME}"
+REBASE_BRANCH_NAME="${REBASE_BRANCH_NAME_PREFIX}_${BRANCH_NAME}"
 
 MASTER_BRANCH_NAME="${MASTER_BRANCH_NAME:-"master"}"
 
