@@ -56,7 +56,7 @@ fi
 
 # If we have a review branch for the original commit, use it as the base commit
 # for creating a new review commit to create a dependency.
-MERGE_BASE="_review_for_${REVIEW_BASE}"
+MERGE_BASE="${REVIEW_BRANCH_NAME_PREFIX}_${REVIEW_BASE}"
 if ! git_branch_exists "${MERGE_BASE}"; then
   MERGE_BASE="${REVIEW_BASE}"
 fi
