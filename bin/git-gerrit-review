@@ -20,8 +20,8 @@ COLOR_RESET=$(tput sgr0)
 COLOR_RED=$(tput setaf 1)
 COLOR_BLUE=$(tput setaf 4)
 
-REVIEW_BRANCH_NAME_PREFIX="_review_for"
-REBASE_BRANCH_NAME_PREFIX="_rebased"
+REVIEW_BRANCH_NAME_PREFIX="reviews/"
+REBASE_BRANCH_NAME_PREFIX="rebases/"
 
 git_branch_exists() {
   [ "x$(git branch --list "$@")" != "x" ]
@@ -35,14 +35,14 @@ if [ "x${BRANCH_NAME}" = "x" ]; then
   exit 1
 fi
 
-if [ "${BRANCH_NAME#${REVIEW_BRANCH_NAME_PREFIX}_}" != "${BRANCH_NAME}" ]; then
+if [ "${BRANCH_NAME#${REVIEW_BRANCH_NAME_PREFIX}}" != "${BRANCH_NAME}" ]; then
   echo "${COLOR_RED}Current HEAD is a review branch.${COLOR_RESET}"
   exit 1
 fi
 
 # Branch names for temporary use.
-REVIEW_BRANCH_NAME="${REVIEW_BRANCH_NAME_PREFIX}_${BRANCH_NAME}"
-REBASE_BRANCH_NAME="${REBASE_BRANCH_NAME_PREFIX}_${BRANCH_NAME}"
+REVIEW_BRANCH_NAME="${REVIEW_BRANCH_NAME_PREFIX}${BRANCH_NAME}"
+REBASE_BRANCH_NAME="${REBASE_BRANCH_NAME_PREFIX}${BRANCH_NAME}"
 
 MASTER_BRANCH_NAME="${MASTER_BRANCH_NAME:-"master"}"
 
@@ -56,7 +56,7 @@ fi
 
 # If we have a review branch for the original commit, use it as the base commit
 # for creating a new review commit to create a dependency.
-MERGE_BASE="${REVIEW_BRANCH_NAME_PREFIX}_${REVIEW_BASE}"
+MERGE_BASE="${REVIEW_BRANCH_NAME_PREFIX}${REVIEW_BASE}"
 if ! git_branch_exists "${MERGE_BASE}"; then
   MERGE_BASE="${REVIEW_BASE}"
 fi
