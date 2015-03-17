@@ -29,7 +29,7 @@ git_branch_exists() {
 
 # Resolve the branch post to a review
 # Default to HEAD.
-BRANCH_NAME="${BRANCH_NAME:-$(git symbolic-ref HEAD 2>/dev/null|cut -d '/' -f 3)}"
+BRANCH_NAME="${BRANCH_NAME:-$(git symbolic-ref HEAD 2>/dev/null|cut -d '/' -f 3-)}"
 if [ "x${BRANCH_NAME}" = "x" ]; then
   echo "${COLOR_RED}Please give a branch name to HEAD.${COLOR_RESET}"
   exit 1
