@@ -201,9 +201,7 @@ init_java() {
 init_locallib() {
   if [ -s "$HOME/.perl5/lib/perl5/local/lib.pm" ]; then
     eval $(perl -I$HOME/.perl5/lib/perl5 -Mlocal::lib=$HOME/.perl5)
-    return 0
   fi
-  return 1
 }
 
 # vim:ts=2:sw=2:expandtab:foldmethod=marker:nowrap:ft=sh:
