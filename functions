@@ -204,4 +204,8 @@ init_locallib() {
   fi
 }
 
+init_python_interactive_mode() {
+  export PYTHONSTARTUP="$HOME/.pystartup"
+}
+
 # vim:ts=2:sw=2:expandtab:foldmethod=marker:nowrap:ft=sh:

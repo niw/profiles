@@ -95,6 +95,9 @@ fi
 # Load Perl local::lib
 init_locallib
 
+# Setup Python interactive mode.
+init_python_interactive_mode
+
 # Cleanup PATH, MANPATH
 clean_paths
 
