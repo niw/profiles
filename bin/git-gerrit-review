@@ -3,18 +3,18 @@
 # A helper script to create a gerrit review.
 
 # Overview of this command.
-# `env REVIEW_BASE=X git gerrit-review` will create M commit named _review_for_topic
-# on top of _review_for_x which has a squashed commit from A to C.
+# `env REVIEW_BASE=X git gerrit-review` will create M commit named reviews/topic
+# on top of reviews/x which has a squashed commit from A to C.
 #
-#               _review_for_x
+#               reviews/x
 #               :
-#               o---M _review_for_topic
+#               o---M reviews/topic
 #              /
 #  ---o---o---o---o---o---o master
 #             :\
-#    merge-base o---X---A---B---C topic (HEAD)
+#    MERGE_BASE o---X---A---B---C topic (HEAD)
 #                   :
-#                   REVIEW_BASE
+#                   REVIEW_BASE (x)
 
 COLOR_RESET=$(tput sgr0)
 COLOR_RED=$(tput setaf 1)
