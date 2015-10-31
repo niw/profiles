@@ -16,12 +16,11 @@ function! s:CheckTarget()
   let src_files   = ['proc.c', 'vimstack.c']
 
   for path in split(vimproc_paths, '\n')
-    let autoload_path = fnamemodify(path, ':p:h')
     let vimproc_path = fnamemodify(path, ':p:h:h')
 
-    let target_file_time = getftime(autoload_path . '/' . target_file)
+    let target_file_time = getftime(vimproc_path . '/lib/' . target_file)
     for src_file in src_files
-      if target_file_time < getftime(autoload_path . '/' . src_file)
+      if target_file_time < getftime(vimproc_path . '/src/' . src_file)
         echomsg 'Found ' . target_file . ' is obsoleted, make it again...'
         call system('cd ' . shellescape(vimproc_path) .
         \  ' && make clean' .
