@@ -1,7 +1,8 @@
 #!/bin/sh
-CURRENT_DIR=$(cd $(dirname "$0"); pwd)
 
-while getopts "ruhd:" opts; do
+CURRENT_DIR=$(cd "$(dirname "$0")"; pwd)
+
+while getopts "frhd:" opts; do
   case $opts in
     f)
       force=1
@@ -24,40 +25,40 @@ done
 
 # Assuming the directory we place the current directory
 # must be the home directory. If not, use -d option.
-if [ "x$path" = "x" ]; then
+if [ -z "$path" ]; then
   path=$(dirname "$CURRENT_DIR")
 fi
+echo "Setup profiles on $path"
 
-for i in "${CURRENT_DIR}"/.*
-do
-  if [ ! -e "${i}" ]; then
+for source in "$CURRENT_DIR"/.*; do
+  if [ ! -e "$source" ]; then
     continue
   fi
 
-  f=`basename "${i}"`
+  basename=$(basename "$source")
   ignored=0
-  for ignore in . .. .svn .git .gitignore .gitmodules .DS_Store
-  do
-    if [ "${f}" = "${ignore}" ]; then
+  for ignore in . .. .svn .git .gitignore .gitmodules .DS_Store; do
+    if [ "$basename" = "$ignore" ]; then
       ignored=1
-      continue
+      break
     fi
   done
-  if [ "${ignored}" = "1" ]; then
+  if (( $ignored )); then
     continue
   fi
 
-  if [ -e "${path}/${f}" -o -h "${path}/${f}" ]; then
-    echo "${f} already exists."
+  dest="$path/$basename"
+  if [ -e "$dest" -o -h "$dest" ]; then
+    echo "$dest already exists"
     if [ "$force" -o "$remove" ]; then
-      echo "remove ${f}."
-      rm -rf "${path}/${f}"
+      echo "Remove $dest"
+      rm -f "$dest"
     else
       continue
     fi
   fi
   if [ ! "$remove" ]; then
-    echo "create symlink ${f} to ${path}."
-    ln -s "${i}" "${path}/${f}"
+    echo "Create symlink $source to $dest"
+    ln -s "$source" "$dest"
   fi
 done
