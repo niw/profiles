@@ -144,11 +144,6 @@ init_aliases() {
     alias a$i="awk '{print \$$i}'"
   done
 
-  # Terminal.app related
-  if type 'term' > /dev/null 2>&1; then
-    alias t="term -t"
-  fi
-
   # if we have vim, vi is vim also shotcut v is vim.
   if type 'vim' > /dev/null 2>&1; then
     alias vi='vim'
