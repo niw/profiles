@@ -64,3 +64,6 @@
 [submodule ".vim/bundle/neomru"]
 	path = .vim/bundle/neomru
 	url = https://github.com/Shougo/neomru.vim.git
+[submodule ".vim/bundle/tabpagebuffer"]
+	path = .vim/bundle/tabpagebuffer
+	url = https://github.com/Shougo/tabpagebuffer.vim.git
