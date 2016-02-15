@@ -3,19 +3,21 @@ if v:version < 702 || $SUDO_USER != ''
   finish
 endif
 
-let g:unite_source_file_mru_limit = 200
-let g:unite_source_file_mru_filename_format = ""
-let g:unite_source_file_mru_time_format = ""
-
-" Narrow vertial window, default width is 90.
+" Narrow vertical window, default width is 90.
 let g:unite_winwidth = 40
 
 function! s:UniteSettings()
+  " Immediately exit Unite by <ESC> anyways.
+  imap <buffer> <ESC> <Plug>(unite_exit)
   nmap <buffer> <ESC> <Plug>(unite_exit)
+
   imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
+  " There may be another key sequences with <C-w> available in this buffer.
+  " Give <nowait> for this mapping to take precedent than the others.
+  nnoremap <buffer> <C-w> <Nop>
+  nmap <buffer><nowait> <C-w> <Plug>(unite_delete_backward_path)
+
   imap <buffer> jj <Plug>(unite_insert_leave)
-"  nmap <buffer> <Tab> <Nop>
-"  imap <buffer> <Tab> <Nop>
 endfunction
 
 augroup MyUnite
