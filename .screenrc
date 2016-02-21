@@ -1,5 +1,3 @@
-## Basics {{{
-
 altscreen on
 autodetach on
 defbce on
@@ -8,15 +6,14 @@ defencoding utf-8
 encoding utf-8 utf-8
 msgwait 2
 startup_message off
+
 # Turn on bell everywhere
 vbell off
+
 # Change control key from C-a to C-t because C-a is for line-beginning on zsh
 escape ^t^t
 
-# }}}
-
-## Status line {{{
-
+# Status line
 # %{=bu wk} change color to bold, underline, while, black
 # %{-}      reset color
 # %-w       previous windows of current window
@@ -25,7 +22,3 @@ escape ^t^t
 # %t        window title
 # %c        24H time
 hardstatus alwayslastline "%{= wk} %-w%{=b bw}%n %t%{-}%+w %= %{= wb}%y/%m/%d %c "
-
-# }}}
-
-# vim:ts=2:sw=2:expandtab:foldmethod=marker:
