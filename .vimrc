@@ -334,6 +334,8 @@ augroup MyAutoCommands
   autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
   autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
   autocmd BufNewFile,BufRead nginx.* setlocal filetype=nginx
+  autocmd BufNewFile,BufRead SConstruct setlocal filetype=python
+  autocmd BufNewFile,BufRead SConscript setlocal filetype=python
 
   " Support grepedit command. See ~/.profiles/bin/grepedit
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
