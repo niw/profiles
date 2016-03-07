@@ -4,6 +4,7 @@ startup-utils() {
 
   functions=(
     startup-utils-clean-paths
+    startup-utils-get-color
     startup-utils-set-paths
     startup-utils-source-scripts
     startup-utils-use-javas
@@ -11,11 +12,11 @@ startup-utils() {
   )
   readonly functions
 
-  if [[ -n ${ZSH_VERSION-} ]]; then
+  if [[ -n ${ZSH_VERSION:-} ]]; then
     for function in $functions; do
       autoload -Uz $function
     done
-  elif [[ -n ${BASH_VERSION-} ]]; then
+  elif [[ -n ${BASH_VERSION:-} ]]; then
     # Because it's hydrated in each stub function, must be an absolute path.
     local -r dir=$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)
     for function in "${functions[@]}"; do

@@ -1,0 +1,54 @@
+startup-utils-get-color() {
+  local -a index_shifts
+  local -a color_sequences
+  local -a color_names
+  local flag use_escape_sequence use_name use_index
+  local input index_shift index escape_sequence
+
+  read -r -d '' input
+
+  # ANSI escape sequences
+  # ---------------------
+  #
+  # `\e[NN;NN;...;NNm` set styles as NN, NN=0 to reset. NN can be next colors.
+  #
+  #                Black Red Green Yellow Blue Magenta Cyan White
+  #     Foreground    30  31    32     33   34      35   36    37
+  #     Background    40  41    42     43   44      45   46    47
+
+  color_sequences=(30 31 32 33 34 35 36 37)
+  readonly color_sequences
+  color_names=(black red green yellow blue magenta cyan white)
+  readonly color_names
+
+  while getopts 'enp' flag; do
+    case $flag in
+      e) use_escape_sequence=1 ;;
+      n) use_name=1 ;;
+      i) use_index=1 ;;
+    esac
+  done
+  readonly use_escape_sequence
+
+  # Zsh by default is using 1 start index, bash is using 0 start index.
+  # This is a trick to adjust index.
+  index_shifts=(1 0)
+  readonly index_shifts
+  index_shift=${index_shifts[1]}
+
+  # No black color for visibility.
+  index=$(($(printf "$input"|sum|cut -d' ' -f1) % 7 + 1 + $index_shift))
+  escape_sequence="\e[${color_sequences[$index]}m"
+
+  if (( $use_escape_sequence )); then
+    printf $escape_sequence
+  elif (( $use_name )); then
+    printf ${color_names[$index]}
+  elif (( $use_index )); then
+    printf $index
+  else
+    printf "${escape_sequence}${input}\e[0m"
+  fi
+}
+
+startup-utils-get-color "$@"

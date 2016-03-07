@@ -28,36 +28,26 @@ shopt -u histappend
 # =========
 
 _bashrc-set-prompt() {
-  # ANSI Colors
-  #            Black Red Green Yellow Blue Magenta Cyan White
-  # Foreground    30  31    32     33   34      35   36    37
-  # Background    40  41    42     43   44      45   46    47
-  #
-  # ANSI Escape Squences
-  # \e[nn;nn;...;nnm  set styles as nn(s), nn=0 to reset
-  # \e[nnnC           move cursor nnn right
-  # \e[nnnD           move cursor nnn left
-  #
-  # In prompt, we should surround non display characters with \[ and \]
-
-  local -a colors
-  colors=(30 31 32 33 34 35 36 37)
-  readonly colors
-
-  # FIXME: Shuffle colors depends on $HOST, $USER and $SHLV
-  local user_color=${colors[1]}
-  local host_color=${colors[2]}
-  local shlvl_color=${colors[4]}
+  local -r time_color_escape="\e[33m"
+  local -r whoami_color_escape=$(whoami|startup-utils-get-color -e)
+  local -r hostname_color_escape=$(hostname|startup-utils-get-color -e)
+  local -r shlvl_color_escape=$(printf "$SHLVL"|startup-utils-get-color -e)
 
   # lazy evaluation to content of $PROMPT
   _bashrc-get-rprompt() {
     eval "printf \"$RPROMPT\""
   }
 
-  local -r c="\\[\e[0m\\]"
-  local -r rprompt="\\[\e[\$((COLUMNS - \$(echo -n \" \\w\$(_bashrc-get-rprompt)\"|wc -c)))C\e[34m\\w\e[0m\$(_bashrc-get-rprompt)\e[\${COLUMNS}D\\]"
+  # ANSI Escape Squences
+  # \e[nn;nn;...;nnm  set styles as nn(s), nn=0 to reset
+  # \e[nnnC           move cursor nnn right
+  # \e[nnnD           move cursor nnn left
+  # In prompt, we should surround non display characters with \[ and \]
 
-  PS1="$rprompt\\[\e[33m\\]\\A$c \\[\e[${user_color}m\\]\\u$c@\\[\e[${host_color}m\\]\h$c:\\[\e[${shlvl_color}m\\]\W$c \$ "
+  local -r reset="\\[\e[0m\\]"
+  local -r rprompt="\\[\e[\$((COLUMNS - \$(printf \" \\w\$(_bashrc-get-rprompt)\"|wc -c)))C$shlvl_color_escape\\w$reset\$(_bashrc-get-rprompt)\e[\${COLUMNS}D\\]"
+
+  PS1="$rprompt\\[$time_color_escape\\]\\A$reset \\[$whoami_color_escape\\]\\u$reset@\\[$hostname_color_escape\\]\h$reset:\\[$shlvl_color_escape\\]\W$reset \$ "
 }
 _bashrc-set-prompt
 unset -f _bashrc-set-prompt

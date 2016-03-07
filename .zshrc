@@ -148,9 +148,14 @@ unsetopt BEEP
 # =========
 # See `zshparam(1)` and `zshmisc(1)`.
 
-# FIXME: Shuffle colors depends on $HOST, $USER and $SHLV
-PROMPT="%F{yellow}%T%f %F{red}%n%f@%F{green}%m%f:%F{blue}%2~%f %(!.#.$) "
-RPROMPT="%F{blue}%~%f"
+() {
+  local -r whoami_color_name=$(whoami|startup-utils-get-color -n)
+  local -r hostname_color_name=$(hostname|startup-utils-get-color -n)
+  local -r shlvl_color_name=$(printf "$SHLVL"|startup-utils-get-color -n)
+
+  PROMPT="%F{yellow}%T%f %F{$whoami_color_name}%n%f@%F{$hostname_color_name}%m%f:%F{$shlvl_color_name}%2~%f %(!.#.$) "
+  RPROMPT="%F{$shlvl_color_name}%~%f"
+}
 
 # History
 # =======
