@@ -39,9 +39,6 @@ setopt AUTO_PUSHD
 # in the line editor.
 unsetopt PROMPT_CR
 
-# Completion
-# ----------
-
 # Expansion and Globbing
 # ----------------------
 
