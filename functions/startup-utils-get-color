@@ -1,9 +1,10 @@
 startup-utils-get-color() {
-  local -a index_shifts
   local -a color_sequences
   local -a color_names
   local flag use_escape_sequence use_name use_index
+  local -a index_shifts
   local input index_shift index escape_sequence
+  local -i number
 
   read -r -d '' input
 
@@ -36,8 +37,15 @@ startup-utils-get-color() {
   readonly index_shifts
   index_shift=${index_shifts[1]}
 
+  # If input is a normal 10 base digit, use it as a number.
+  if [[ $input =~ ^[0-9]+$ && $input == $((10#$input)) ]]; then
+    number=$((10#$input))
+  else
+    number=$(printf "$input"|sum|cut -d' ' -f1)
+  fi
+
   # No black color for visibility.
-  index=$(($(printf "$input"|sum|cut -d' ' -f1) % 7 + 1 + $index_shift))
+  index=$(($number % 7 + 1 + $index_shift))
   escape_sequence="\e[${color_sequences[$index]}m"
 
   if (( $use_escape_sequence )); then
