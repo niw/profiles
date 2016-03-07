@@ -37,11 +37,13 @@ startup-utils-get-color() {
   readonly index_shifts
   index_shift=${index_shifts[1]}
 
-  # If input is a normal 10 base digit, use it as a number.
+  # If input is a decimal number, use it as a number.
+  # Use `10#` to evaluate expression starting with `0`, which can be evaluated
+  # as octal and can be fail.
   if [[ $input =~ ^[0-9]+$ && $input == $((10#$input)) ]]; then
     number=$((10#$input))
   else
-    number=$(printf "$input"|sum|cut -d' ' -f1)
+    number=$((10#$(printf "$input"|sum|cut -d' ' -f1)))
   fi
 
   # No black color for visibility.
