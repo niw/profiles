@@ -13,7 +13,7 @@ alias now="date +%Y%m%d%H%M%S"
 alias fn="find . -not -ipath '*/tmp/*' -not -ipath '*/.*/*' -name "
 alias rand="ruby -ropenssl -e 'print OpenSSL::Digest::SHA1.hexdigest(rand().to_s)'"
 
-for i in 1 2 3 4 5 6 7 8 9; do
+for i in $(seq 1 9); do
   alias a$i="awk '{print \$$i}'"
 done
 
