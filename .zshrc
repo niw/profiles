@@ -238,11 +238,11 @@ zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
   local -a files
   # Lookup `fpath` to find a readable file named `$1`.
   # See `zshexpn(1)` to understand why this works.
-  files=(${^fpath}/$1(Nr))
+  files=(${^fpath}/vcs_info(Nr))
   readonly files
   # (( expr )) returns 0 if expr is non zero, otherwise 1.
   (( ${#files} ))
-} vcs_info && {
+} && {
   autoload -Uz vcs_info
 
   # A list of backends you want to use.
