@@ -1,0 +1,11 @@
+startup-utils-use-rubies() {
+  if [[ -s "$HOME/.rubies/src/rubies.sh" ]]; then
+    if source "$HOME/.rubies/src/rubies.sh"; then
+      enable_rubies_cd_hook
+      return 0
+    fi
+  fi
+  return 1
+}
+
+startup-utils-use-rubies "$@"

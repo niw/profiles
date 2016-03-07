@@ -1,0 +1,30 @@
+startup-utils-clean-paths-clean() {
+  # Read each record from standard input separated by `:`,
+  # and print it if it's never seen with `:` if it's not first output.
+  awk -v RS=: -v ORS= '($0 && !($0 in a)){a[$0]; print s$1; s=":"}'
+}
+
+# Clean up given variable name and export it as environment variable by
+# removing duplicated or blank entries.
+# If no variable name are set, use `PATH` and `MANPATH`.
+# Consider to use `typeset -U path PATH` instead on zsh.
+startup-utils-clean-paths() {
+  local varname
+  local -a varnames
+
+  varnames=("$@")
+  if ! (( ${#varnames} )); then
+    varnames=(PATH MANPATH)
+  fi
+  readonly varnames
+
+  for varname in "${varnames[@]}"; do
+    eval "
+      if [[ -n \$$varname ]]; then
+        export $varname=\"\$(printf \"\$$varname\" | startup-utils-clean-paths-clean)\"
+      fi
+    "
+  done
+}
+
+startup-utils-clean-paths "$@"

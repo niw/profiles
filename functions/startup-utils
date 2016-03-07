@@ -1,0 +1,34 @@
+startup-utils() {
+  local function
+  local -a functions
+
+  functions=(
+    startup-utils-clean-paths
+    startup-utils-set-paths
+    startup-utils-source-scripts
+    startup-utils-use-javas
+    startup-utils-use-rubies
+  )
+  readonly functions
+
+  if [[ -n ${ZSH_VERSION-} ]]; then
+    for function in $functions; do
+      autoload -Uz $function
+    done
+  elif [[ -n ${BASH_VERSION-} ]]; then
+    # Because it's hydrated in each stub function, must be an absolute path.
+    local -r dir=$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)
+    for function in "${functions[@]}"; do
+      # Simulate how `autoload` works on bash. This is not perfect but work
+      # as expected.
+      eval "$function() {
+        source \"$dir/$function\"
+      }"
+    done
+  else
+    echo "Unknown shell, neither zsh nor bash." >&2
+    return 1
+  fi
+}
+
+startup-utils "$@"

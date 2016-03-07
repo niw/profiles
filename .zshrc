@@ -1,180 +1,195 @@
-profiles=~/.profiles
-source "${profiles}/functions"
+# Zsh by default executes this file after .zprofile when it is an interactive
+# shell.
 
-## Pre Configurations {{{
+# Pre configuration
+# =================
 
-# Avoid 'no matches found' error.
-setopt nullglob
+# Add `~/.profiles/function` to fpath for `autoload`.
+fpath=(~/.profiles/functions $fpath)
 
-# Add PATH and MAN_PATH.
-init_paths
+# Remove duplications from `PATH` and `MANPATH`.
+typeset -U path PATH
+typeset -U manpath MANPATH
 
-# Initialize EDITOR.
-init_editor
+# Load all shared `startup-utils` functions.
+autoload -Uz startup-utils
+startup-utils
 
-## }}}
+startup-utils-set-paths
 
-## Aliases {{{
+# Options
+# =======
+# Option name can be `lowercase` and `under_scored`. In this file, following
+# next style.
+# * Use `UPPERCASE_UNDER_SCORED`, that format is used in zsh manual.
+# * Don't use `setopt NO_OPTION_NAME` instead, use `unsetopt OPTION_NAME`.
+# See `zshoptions(1)`.
 
-init_aliases
+# Changing Directories
+# --------------------
 
-# Aliases using pipes, works only on Zsh.
-alias -g V="| vi -v -"
-alias -g G="| grep"
-alias -g T="| tail"
-alias -g H="| head"
-alias -g L="| less -r"
+# If a command is issued that can't be executed as a normal command, and the
+# command is the name of a directory, perform the cd command to that directory.
+setopt AUTO_CD
 
-## }}}
+# Make cd push the old directory onto the directory stack.
+setopt AUTO_PUSHD
 
-## Zsh Basic Configurations {{{
+# Don't print a carriage return just before printing a prompt
+# in the line editor.
+unsetopt PROMPT_CR
 
-# Initialize hook functions array.
-typeset -ga preexec_functions
-typeset -ga precmd_functions
+# Completion
+# ----------
 
-# Use vi key bindings.
-#bindkey -v
+# Expansion and Globbing
+# ----------------------
+
+# Perform = filename expansion.
+# For example, `=command` to the path of the command.
+setopt EQUALS
+
+# When the current word has a glob pattern, do not insert all the words
+# resulting from the expansion but generate matches as for completion and cycle
+# through them like MENU_COMPLETE.
+setopt GLOB_COMPLETE
+
+# All unquoted arguments of the form `anything=expression` appearing after the
+# command name have filename expansion performed on expression as if it were a
+# parameter assignment.
+# For example, `--prefix=/usr...`.
+setopt MAGIC_EQUAL_SUBST
+
+# Append a trailing `/` to all directory names resulting from filename
+# generation (globbing).
+setopt MARK_DIRS
+
+# If a pattern for filename generation has no matches, delete the pattern from
+# the argument list instead of reporting an error.
+setopt NULL_GLOB
+
+# If numeric filenames are matched by a filename generation pattern, sort the
+# filenames numerically rather than lexicographically.
+setopt NUMERIC_GLOB_SORT
+
+# History
+# -------
+
+# If this is set, zsh sessions will append their history list to the history
+# file, rather than replace it.
+setopt APPEND_HISTORY
+
+# Save each command's beginning timestamp.
+setopt EXTENDED_HISTORY
+
+# Remove command lines from the history list when the first character on the
+# line is a space.
+setopt HIST_IGNORE_SPACE
+
+# Do not enter command lines into the history list if they are duplicates of
+# the previous event.
+setopt HIST_IGNORE_DUPS
+
+# Remove the history (fc -l) command from the history list when invoked.
+setopt HIST_NO_STORE
+
+# Whenever the user enters a line with history expansion, don't execute the
+# line directly
+setopt HIST_VERIFY
+
+# This option both imports new commands from the history file, and also causes
+# your typed commands to be appended to the history file
+setopt SHARE_HISTORY
+
+# Input/Output
+# ------------
+
+# Try to correct the spelling of commands.
+setopt CORRECT
+
+# If this option is unset, output flow control via start/stop characters
+# (usually assigned to ^S/^Q) is disabled in the shell's editor.
+unsetopt FLOW_CONTROL
+
+# Print eight bit characters literally in completion lists, etc.
+setopt PRINT_EIGHT_BIT
+
+# Job Control
+# -----------
+
+# Treat single word simple commands without redirection as candidates for
+# resumption of an existing job.
+setopt AUTO_RESUME
+
+# Don't report the status of background and suspended jobs before exiting a
+# shell with job control
+unsetopt CHECK_JOBS
+
+# Don't send the HUP signal to running jobs when the shell exits.
+unsetopt HUP
+
+# List jobs in the long format by default.
+setopt LONG_LIST_JOBS
+
+# Prompting
+# ---------
+
+# If set, parameter expansion, command substitution and arithmetic expansion
+# are performed in prompts.
+setopt PROMPT_SUBST
+
+# Remove any right prompt from display when accepting a command line.
+setopt TRANSIENT_RPROMPT
+
+# ZLE
+# ---
+
+# No beep on error in ZLE.
+unsetopt BEEP
+
+# Prompting
+# =========
+# See `zshparam(1)` and `zshmisc(1)`.
+
+# FIXME: Shuffle colors depends on $HOST, $USER and $SHLV
+PROMPT="%F{yellow}%T%f %F{red}%n%f@%F{green}%m%f:%F{blue}%2~%f %(!.#.$) "
+RPROMPT="%F{blue}%~%f"
+
+# History
+# =======
+# See `zshparam(1)`.
+
+# Save history on the file.
+HISTFILE=$HOME/.zsh-history
+
+# Max history in the memory.
+HISTSIZE=100000
+
+# Max history.
+SAVEHIST=1000000
+
+# ZLE
+# ===
+# See `zshzle(1)`.
 
 # Use emacs key bindings.
 bindkey -e
-
-# Use colors.
-autoload -Uz colors
-colors
-
-# Expand parameters in the prompt.
-setopt prompt_subst
-
-# Prompt strings.
-get_prompt() {
-  local color_table
-  color_table=(red green yellow blue magenta cyan white)
-
-  get_prompt_color_indexes
-  local user_color=${color_table[${result[1]}]}
-  local host_color=${color_table[${result[2]}]}
-  local shlvl_color=${color_table[${result[3]}]}
-
-  # NOTE To preserve backward compatibility, here we're not using %F and %f.
-  # See RPROMPT for vcs_info.
-  result="%{$fg[yellow]%}%T%{$reset_color%} %{$fg[${user_color}]%}%n%{$reset_color%}@%{$fg[${host_color}]%}%m%{$reset_color%}:%{$fg[${shlvl_color}]%}%2~%{$reset_color%} %(!.#.$) "
-}
-get_prompt
-PROMPT=$result
-
-# Show current directory on right prompt.
-RPROMPT="%{$fg[blue]%}%~%{$reset_color%}"
-
-# Change directory if the command doesn't exist.
-setopt auto_cd
-
-# Resume the command if the command is suspended.
-setopt auto_resume
-
-# No beep.
-setopt no_beep
-
-# Enable expansion from {a-c} to a b c.
-setopt brace_ccl
-
-# Enable spell check.
-setopt correct
-
-# Expand =command to the path of the command.
-setopt equals
-
-# Use #, ~ and ^ as regular expression.
-setopt extended_glob
-
-# No follow control by C-s and C-q.
-setopt no_flow_control
-
-# Don't send SIGHUP to background jobs when shell exits.
-setopt no_hup
-
-# Disable C-d to exit shell.
-#setopt ignore_eof
-
-# Show long list for jobs command.
-setopt long_list_jobs
-
-# Enable completion after = like --prefix=/usr...
-setopt magic_equal_subst
-
-# Append / if complete directory.
-setopt mark_dirs
-
-# Don't show the list for completions.
-#setopt no_auto_menu
-
-# Don't show completions when using *.
-setopt glob_complete
-
-# Perform implicit tees or cats when multiple redirections are attempted.
-setopt multios
-
-# Use numeric sort instead of alphabetic sort.
-setopt numeric_glob_sort
-
-# Enable file names using 8 bits, important to rendering Japanese file names.
-setopt print_eightbit
-
-# Show exit code if exits non 0.
-#setopt print_exit_value
-
-# Don't push multiple copies of the same directory onto the directory stack.
-setopt pushd_ignore_dups
-
-# Use single-line command line editing instead of multi-line.
-#setopt single_line_zle
-
-# Print commands and their arguments as they are executed.
-#setopt xtrace
-
-# Show CR if the prompt doesn't end with CR.
-unsetopt promptcr
-
-# Remove any right prompt from display when accepting a command line.
-setopt transient_rprompt
-
-# Pushd by cd -[tab]
-setopt auto_pushd
-
-# Don't report the status of background and suspended jobs.
-setopt no_check_jobs
-
-# Enable predict completion
-#autoload -Uz predict-on
-#predict-on
 
 # Remove directory word by C-w.
 autoload -Uz select-word-style
 select-word-style bash
 
-# }}}
+# Search history.
+autoload -Uz history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey -M emacs '^p' history-beginning-search-backward-end
+bindkey -M emacs '^n' history-beginning-search-forward-end
 
-## Zsh VCS Info and RPROMPT {{{
+# Completion
+# ==========
+# See `zshcompsys(1)`.
 
-if autoload +X vcs_info 2> /dev/null; then
-  autoload -Uz vcs_info
-  zstyle ':vcs_info:*' enable git cvs svn # hg - slow, it scans all parent directories.
-  zstyle ':vcs_info:*' formats '%s %b'
-  zstyle ':vcs_info:*' actionformats '%s %b (%a)'
-  precmd_vcs_info() {
-    psvar[1]=""
-    LANG=en_US.UTF-8 vcs_info
-    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
-  }
-  precmd_functions+=precmd_vcs_info
-  RPROMPT="${RPROMPT}%1(V. %F{green}%1v%f.)"
-fi
-
-# }}}
-
-## Zsh Completion System {{{
-
-# Use zsh completion system.
 autoload -Uz compinit
 compinit
 
@@ -182,7 +197,6 @@ compinit
 zstyle ':completion:*' list-colors ''
 
 # Colors processes for kill completion.
-zstyle ':completion:*:*:kill:*:processes' command 'ps -axco pid,user,command'
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([%0-9]#)*=0=01;31'
 
 # Ignore case.
@@ -203,107 +217,74 @@ zstyle ':completion:*:default' menu select=1
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
 
 # Hostname completion
-local knownhosts
-if [ -f $HOME/.ssh/known_hosts ]; then
-  knownhosts=( ${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*} )
-  zstyle ':completion:*:(ssh|scp|sftp):*' hosts $knownhosts
+() {
+  if [[ -f "$HOME/.ssh/known_hosts" ]]; then
+    local -a knownhosts
+    knownhosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*})
+    readonly known_hosts
+    zstyle ':completion:*:(ssh|scp|sftp):*' hosts $knownhosts
+  fi
+}
+
+# Version control systems
+# =======================
+# See `zshcontrib(1)`.
+
+# Runs only when we have `vcs_info` in `fpath`.
+# This is the only way to ensure we can `autoload` function without calling it.
+() {
+  local -a files
+  # Lookup `fpath` to find a readable file named `$1`.
+  # See `zshexpn(1)` to understand why this works.
+  files=(${^fpath}/$1(Nr))
+  readonly files
+  # (( expr )) returns 0 if expr is non zero, otherwise 1.
+  (( ${#files} ))
+} vcs_info && {
+  autoload -Uz vcs_info
+
+  # A list of backends you want to use.
+  # Not giving `hg` here, because it scans all parent directories and slow.
+  zstyle ':vcs_info:*' enable git cvs svn
+
+  # A list of formats, used when actionformats is not used (which is most of
+  # the time).
+  zstyle ':vcs_info:*' formats '%s %b'
+
+  # A list of formats, used if there is a special action going on in your
+  # current repository.
+  zstyle ':vcs_info:*' actionformats '%s %b (%a)'
+
+  # Add `precmd` function to update `RPROMPT`.
+  _zshrc-precmd-vcs-info() {
+    psvar[1]=""
+    LANG=en_US.UTF-8 vcs_info
+    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+  }
+  typeset -gaU precmd_functions
+  precmd_functions+=_zshrc-precmd-vcs-info
+  RPROMPT="${RPROMPT}%1(V. %F{green}%1v%f.)"
+}
+
+# Post configuration
+# ==================
+
+if startup-utils-use-rubies; then
+  RPROMPT="${RPROMPT} %F{red}\${RUBIES_RUBY_NAME}%f"
 fi
 
-## }}}
-
-## Zsh History {{{
-
-# Save history on the file.
-HISTFILE="${HOME}"/.zsh-history
-
-# Max history in the memory.
-HISTSIZE=100000
-
-# Max history.
-SAVEHIST=1000000
-
-# Remove command lines from the history list when the first character on the line is a space.
-setopt hist_ignore_space
-
-# Remove the history (fc -l) command from the history list when invoked.
-setopt hist_no_store
-
-# Read new commands from the history and your typed commands to be appended to the history file.
-setopt share_history
-
-# Append the history list to the history file for mutiple Zsh sessions.
-setopt append_history
-
-# Save each command's beginning timestamp.
-setopt extended_history
-
-# Don't add duplicates.
-setopt hist_ignore_dups
-
-# Don't execute the line directly from the history.
-setopt hist_verify
-
-# Seach history.
-autoload -Uz history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-
-## }}}
-
-## Zsh Keybinds {{{
-## based on http://github.com/kana/config/
-
-# To delete characters beyond the starting point of the current insertion.
-bindkey -M viins '\C-h' backward-delete-char
-bindkey -M viins '\C-w' backward-kill-word
-bindkey -M viins '\C-u' backward-kill-line
-
-# Undo/redo more than once.
-bindkey -M vicmd 'u' undo
-bindkey -M vicmd '\C-r' redo
-
-# History
-# See also 'autoload history-search-end'.
-bindkey -M vicmd '/' history-incremental-search-backward
-bindkey -M vicmd '?' history-incremental-search-forward
-bindkey -M viins '^p' history-beginning-search-backward-end
-bindkey -M viins '^n' history-beginning-search-forward-end
-
-bindkey -M emacs '^p' history-beginning-search-backward-end
-bindkey -M emacs '^n' history-beginning-search-forward-end
-
-# Transpose
-bindkey -M vicmd '\C-t' transpose-words
-bindkey -M viins '\C-t' transpose-words
-
-# }}}
-
-## Scan Additonal Configurations {{{
-
-setopt no_nomatch
-init_additionl_configration "*.zsh"
-
-# }}}
-
-## Post Configurations {{{
-
-if init_rubies; then
-  RPROMPT="${RPROMPT} %{$fg[red]%}\${RUBIES_RUBY_NAME}%{$reset_color%}"
+if startup-utils-use-javas; then
+  RPROMPT="${RPROMPT} %F{magenta}\${JAVAS_JAVA_VERSION}%f"
 fi
 
-if init_java; then
-  RPROMPT="${RPROMPT} %{$fg[red]%}\${JAVAS_JAVA_VERSION}%{$reset_color%}"
-fi
+startup-utils-source-scripts ~/.profiles/shared ~/.profiles/local
 
-# Load Perl local::lib.
-init_locallib
-
-# Setup Python interactive mode.
-init_python_interactive_mode
-
-# Cleanup PATH, MANPATH.
-clean_paths
-
-# }}}
-
-# vim:ts=2:sw=2:expandtab:foldmethod=marker:nowrap:
+# Clean up `PATH` and `MANPATH` instead of using `startup-utils-clean-paths`.
+# * `N` to filter only existence paths.
+# * `-/` to filter only directories following by symbolic links.
+# * `W` followed to '^', to remove world writable paths.
+# * `M` followed to '^', to remove trailing `/`.
+# See `typset -U` in Pre Configuration section.
+# See `zshexpn(1)` to understand why this works.
+path=(${^path}(N-/^WM))
+manpath=(${^manpath}(N-/^M))

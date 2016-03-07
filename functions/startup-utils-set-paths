@@ -1,0 +1,50 @@
+startup-utils-set-paths() {
+  local base_path
+  local adding_path
+
+  # Initialize PATH and MANPATH using `path_helper`, if it exists.
+  if [[ -x /usr/libexec/path_helper ]]; then
+    # `path_helper` needs `PATH` or `MANPATH` environment variables to assign
+    # values.
+    export PATH=$PATH
+    export MANPATH=$MANPATH
+    eval $(/usr/libexec/path_helper -s)
+  fi
+
+  for base_path in /usr/local /opt/local; do
+    adding_path="$base_path/bin"
+    if [[ -d $adding_path ]]; then
+      PATH=$adding_path:$PATH
+    fi
+    adding_path="$base_path/sbin"
+    if [[ -d $adding_path ]]; then
+      PATH=$adding_path:$PATH
+    fi
+    adding_path="$base_path/share/man"
+    if [[ -d $adding_path ]]; then
+      MANPATH=$adding_path:$MANPATH
+    fi
+  done
+
+  for base_path in /usr/local/* /opt/*; do
+    if [[ -L $base_path ]]; then
+      adding_path="$base_path/bin"
+      if [[ -d $adding_path ]]; then
+        PATH=$adding_path:$PATH
+      fi
+      adding_path="$base_path/sbin"
+      if [[ -d $adding_path ]]; then
+        PATH=$adding_path:$PATH
+      fi
+      adding_path="$base_path/share/man"
+      if [[ -d $adding_path ]]; then
+        MANPATH=$adding_path:$MANPATH
+      fi
+    fi
+  done
+
+  export PATH
+  export MANPATH
+}
+
+startup-utils-set-paths "$@"
