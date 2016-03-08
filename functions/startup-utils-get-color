@@ -3,10 +3,8 @@ startup-utils-get-color() {
   local -a color_names
   local flag use_escape_sequence use_name use_index
   local -a index_shifts
-  local input index_shift index escape_sequence
+  local index_shift index escape_sequence
   local -i number
-
-  read -r -d '' input
 
   # ANSI escape sequences
   # ---------------------
@@ -30,6 +28,7 @@ startup-utils-get-color() {
     esac
   done
   readonly use_escape_sequence
+  shift $((OPTIND - 1))
 
   # Zsh by default is using 1 start index, bash is using 0 start index.
   # This is a trick to adjust index.
@@ -40,10 +39,10 @@ startup-utils-get-color() {
   # If input is a decimal number, use it as a number.
   # Use `10#` to evaluate expression starting with `0`, which can be evaluated
   # as octal and can be fail.
-  if [[ $input =~ ^[0-9]+$ && $input == $((10#$input)) ]]; then
-    number=$((10#$input))
+  if [[ $* =~ ^[0-9]+$ && $* == $((10#$*)) ]]; then
+    number=$((10#$*))
   else
-    number=$((10#$(printf "$input"|sum|cut -d' ' -f1)))
+    number=$((10#$(printf "$*"|sum|cut -d' ' -f1)))
   fi
 
   # No black color for visibility.
@@ -51,13 +50,13 @@ startup-utils-get-color() {
   escape_sequence="\e[${color_sequences[$index]}m"
 
   if (( $use_escape_sequence )); then
-    printf $escape_sequence
+    echo $escape_sequence
   elif (( $use_name )); then
-    printf ${color_names[$index]}
+    echo ${color_names[$index]}
   elif (( $use_index )); then
-    printf $index
+    echo $index
   else
-    printf "${escape_sequence}${input}\e[0m"
+    echo "${escape_sequence}${*}\e[0m"
   fi
 }
 
