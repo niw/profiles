@@ -165,10 +165,12 @@ unsetopt BEEP
 HISTFILE=$HOME/.zsh-history
 
 # Max history in the memory.
-HISTSIZE=100000
+# This is about for a month.
+HISTSIZE=10000
 
 # Max history.
-SAVEHIST=1000000
+# This is about for a year.
+SAVEHIST=100000
 
 # ZLE
 # ===

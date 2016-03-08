@@ -56,6 +56,7 @@ unset -f _bashrc-set-prompt
 # =======
 
 # The number of commands to remember in the command history
+# This is about for a year.
 HISTSIZE=100000
 
 # A colon-separated list of values controlling how commands are saved on the
