@@ -166,7 +166,7 @@ HISTFILE=$HOME/.zsh-history
 
 # Max history in the memory.
 # This is about for a month.
-HISTSIZE=10000
+HISTSIZE=100000
 
 # Max history.
 # This is about for a year.
