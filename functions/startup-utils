@@ -18,7 +18,10 @@ startup-utils() {
     done
   elif [[ -n ${BASH_VERSION:-} ]]; then
     # Because it's hydrated in each stub function, must be an absolute path.
-    local -r dir=$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)
+    local -r dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" || exit; pwd) || {
+      echo "Fail to find current directory." >&2
+      return 1
+    }
     for function in "${functions[@]}"; do
       # Simulate how `autoload` works on bash. This is not perfect but work
       # as expected.

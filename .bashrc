@@ -29,8 +29,8 @@ shopt -u histappend
 
 _bashrc-set-prompt() {
   local -r time_color_escape="\e[33m"
-  local -r whoami_color_escape=$(startup-utils-get-color -e $(whoami))
-  local -r hostname_color_escape=$(startup-utils-get-color -e $(hostname))
+  local -r whoami_color_escape=$(startup-utils-get-color -e "$(whoami)")
+  local -r hostname_color_escape=$(startup-utils-get-color -e "$(hostname)")
   local -r shlvl_color_escape=$(startup-utils-get-color -e $SHLVL)
 
   # lazy evaluation to content of $PROMPT

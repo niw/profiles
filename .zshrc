@@ -149,8 +149,8 @@ unsetopt BEEP
 # See `zshparam(1)` and `zshmisc(1)`.
 
 () {
-  local -r whoami_color_name=$(startup-utils-get-color -n $(whoami))
-  local -r hostname_color_name=$(startup-utils-get-color -n $(hostname))
+  local -r whoami_color_name=$(startup-utils-get-color -n "$(whoami)")
+  local -r hostname_color_name=$(startup-utils-get-color -n "$(hostname)")
   local -r shlvl_color_name=$(startup-utils-get-color -n $SHLVL)
 
   PROMPT="%F{yellow}%T%f %F{$whoami_color_name}%n%f@%F{$hostname_color_name}%m%f:%F{$shlvl_color_name}%2~%f %(!.#.$) "

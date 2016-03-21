@@ -42,19 +42,19 @@ startup-utils-get-color() {
   if [[ $* =~ ^[0-9]+$ && $* == $((10#$*)) ]]; then
     number=$((10#$*))
   else
-    number=$((10#$(printf "$*"|sum|cut -d' ' -f1)))
+    number=$((10#$(printf '%s' "$*"|sum|cut -d' ' -f1)))
   fi
 
   # No black color for visibility.
-  index=$(($number % 7 + 1 + $index_shift))
+  index=$((number % 7 + 1 + index_shift))
   escape_sequence="\e[${color_sequences[$index]}m"
 
-  if (( $use_escape_sequence )); then
-    echo $escape_sequence
-  elif (( $use_name )); then
-    echo ${color_names[$index]}
-  elif (( $use_index )); then
-    echo $index
+  if (( use_escape_sequence )); then
+    echo "$escape_sequence"
+  elif (( use_name )); then
+    echo "${color_names[$index]}"
+  elif (( use_index )); then
+    echo "$index"
   else
     echo "${escape_sequence}${*}\e[0m"
   fi

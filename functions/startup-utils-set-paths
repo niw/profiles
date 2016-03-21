@@ -1,4 +1,9 @@
 startup-utils-set-paths() {
+  if [[ -n ${ZSH_VERSION:-} ]]; then
+    emulate -L zsh
+    unsetopt nomatch
+  fi
+
   local base_path
   local adding_path
 
@@ -8,7 +13,7 @@ startup-utils-set-paths() {
     # values.
     export PATH=$PATH
     export MANPATH=$MANPATH
-    eval $(/usr/libexec/path_helper -s)
+    eval "$(/usr/libexec/path_helper -s)"
   fi
 
   for base_path in /usr/local /opt/local; do

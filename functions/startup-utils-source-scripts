@@ -1,4 +1,9 @@
 startup-utils-source-scripts() {
+  if [[ -n ${ZSH_VERSION:-} ]]; then
+    emulate -L zsh
+    unsetopt nomatch
+  fi
+
   local dir script
 
   # Enclose local variables for each source.
@@ -8,7 +13,9 @@ startup-utils-source-scripts() {
 
   for dir in "$@"; do
     for script in "$dir"/*.sh; do
-      _startup-utils-source-scripts-source "$script"
+      if [[ -r $script ]]; then
+        _startup-utils-source-scripts-source "$script"
+      fi
     done
   done
 
