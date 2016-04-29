@@ -4,6 +4,7 @@ startup-utils-set-paths() {
     unsetopt nomatch
   fi
 
+  local -a base_paths
   local base_path
   local adding_path
 
@@ -16,23 +17,25 @@ startup-utils-set-paths() {
     eval "$(/usr/libexec/path_helper -s)"
   fi
 
-  for base_path in /usr/local /opt/local; do
-    adding_path="$base_path/bin"
-    if [[ -d $adding_path ]]; then
-      PATH=$adding_path:$PATH
-    fi
-    adding_path="$base_path/sbin"
-    if [[ -d $adding_path ]]; then
-      PATH=$adding_path:$PATH
-    fi
-    adding_path="$base_path/share/man"
-    if [[ -d $adding_path ]]; then
-      MANPATH=$adding_path:$MANPATH
+  # The order is matter here.
+  base_paths=()
+  base_paths+=(/usr/local)
+  for base_path in /usr/local/*; do
+    if [[ -L $base_path ]]; then
+      base_paths+=($base_path)
     fi
   done
-
-  for base_path in /usr/local/* /opt/*; do
+  base_paths+=(/opt/local)
+  for base_path in /opt/*; do
     if [[ -L $base_path ]]; then
+      base_paths+=($base_path)
+    fi
+  done
+  base_paths+=("$@")
+  readonly base_paths
+
+  for base_path in "${base_paths[@]}"; do
+    if [[ -e $base_path ]]; then
       adding_path="$base_path/bin"
       if [[ -d $adding_path ]]; then
         PATH=$adding_path:$PATH
