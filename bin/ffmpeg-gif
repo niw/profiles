@@ -1,0 +1,43 @@
+#!/bin/sh
+
+if [[ $# -ne 2 ]]; then
+  echo "Usage: $0 source.mp4 dest.gif [START_TIME=[HH:]MM:SS[.m]] [DURATION=s] [SIZE=320 (defualt)]"
+  exit 0
+fi
+
+readonly SIZE=${SIZE:-"320"}
+# Time in `[HH:]MM:SS[.m]` format. See ffmpeg-utils(1).
+readonly START_TIME_FLAG=${START_TIME:+"-ss $START_TIME"}
+readonly DURATION_FLAG=${DURATION:+"-t $DURATION"}
+
+readonly SOURCE=$1
+readonly DEST=$2
+readonly PALETTE="$SOURCE.palette.png"
+readonly FILTERS="fps=15,scale=$SIZE:-1:flags=lanczos"
+
+if [[ ! -e $PALETTE ]]; then
+  echo "Create $PALETTE..."
+  ffmpeg \
+    $START_TIME_FLAG \
+    $DURATION_FLAG \
+    -i "$SOURCE" \
+    -vf "$FILTERS,palettegen" \
+    -y \
+    "$PALETTE" || {
+    echo "Fail to create $PALETTE"
+    exit 1
+  }
+fi
+
+echo "Create $DEST..."
+ffmpeg \
+  $START_TIME_FLAG \
+  $DURATION_FLAG \
+  -i "$SOURCE" \
+  -i "$PALETTE" \
+  -lavfi "$FILTERS [x]; [x][1:v] paletteuse" \
+  -y \
+  "$DEST" || {
+  echo "Fail to create $DEST"
+  exit 1
+}
