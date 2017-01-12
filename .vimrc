@@ -220,9 +220,10 @@ set wildmode=longest,list,full
 " Use the pop up menu even if it has only one match.
 set completeopt=menuone
 
-" I don't want to use backup files.
+" I don't want to use backup and undo files.
 set nobackup
 set noswapfile
+set noundofile
 
 " Hide buffer when it is abandoned.
 set hidden
@@ -234,9 +235,8 @@ set history=100
 set ttyfast
 
 " Indicate tab, wrap, trailing spaces and eol or not.
-set list
-"set nolist
-set listchars=tab:»\ ,extends:»,precedes:«,trail:\ 
+"set list
+set listchars=tab:»\ ,extends:»,precedes:«,trail:\
 
 " Highlight Trailing Whitespaces
 "{{{
@@ -336,6 +336,7 @@ augroup MyAutoCommands
   autocmd BufNewFile,BufRead nginx.* setlocal filetype=nginx
   autocmd BufNewFile,BufRead SConstruct setlocal filetype=python
   autocmd BufNewFile,BufRead SConscript setlocal filetype=python
+  autocmd BufNewFile,BufRead *.aurora setlocal filetype=python
 
   " Support grepedit command. See ~/.profiles/bin/grepedit
   autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
