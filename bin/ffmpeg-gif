@@ -4,6 +4,7 @@ if [[ $# -ne 2 ]]; then
   echo "Usage: $0 source.mp4 dest.gif"
   echo "START_TIME=[HH:]MM:SS[.m]"
   echo "DURATION=s"
+  echo "FPS=15 (default)"
   echo "FRAME_DURATION_SCALE=1.0 (default)"
   echo "SIZE=320 (defualt)"
   exit 0
@@ -13,13 +14,14 @@ readonly SIZE=${SIZE:-"320"}
 # Time in `[HH:]MM:SS[.m]` format. See ffmpeg-utils(1).
 readonly START_TIME_FLAG=${START_TIME:+"-ss $START_TIME"}
 readonly DURATION_FLAG=${DURATION:+"-t $DURATION"}
+readonly FPS=${FPS:-"15"}
 # A scale of presentation timestamp of each frame. See ffmepg(1).
 readonly FRAME_DURATION_SCALE=${FRAME_DURATION_SCALE:-"1.0"}
 
 readonly SOURCE=$1
 readonly DEST=$2
 readonly PALETTE="$SOURCE.palette.png"
-readonly FILTERS="fps=15,scale=$SIZE:-1:flags=lanczos,setpts=$FRAME_DURATION_SCALE*PTS"
+readonly FILTERS="fps=$FPS,scale=$SIZE:-1:flags=lanczos,setpts=$FRAME_DURATION_SCALE*PTS"
 
 if [[ ! -e $PALETTE ]]; then
   echo "Create $PALETTE..."
