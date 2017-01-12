@@ -580,9 +580,13 @@ nnoremap # #zzzv
 nnoremap g* g*zzzv
 nnoremap g# g#zzzv
 
-" Run EX commands
-nnoremap ; q:i
-nnoremap : q:i
+" Use command line window.
+" NOTE: Command line window doesn't work due to Vim bug since 8.0.152 prior to 8.0.172
+" See https://github.com/vim/vim/commit/1d669c233c97486555a34f7d3f069068d9ebdb63
+if !has("patch-8.0.152") || has("patch-8.0.172")
+  nnoremap ; q:i
+  nnoremap : q:i
+endif
 "{{{
 "autocmd MyAutoCommands CmdwinEnter * nnoremap <buffer> <ESC> :<C-u>quit<CR>
 
