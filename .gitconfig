@@ -7,6 +7,7 @@
   co = checkout
   st = status
   br = branch
+  brs = branch --sort='committerdate'
   sm = submodule
   gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
   d = diff -w
@@ -45,8 +46,8 @@
   # Keybindings like vim.
   generic = g move-first-line
   generic = G move-last-line
-  generic = ^b move-page-up
-  generic = ^f move-page-down
+  generic = <Ctrl-b> move-page-up
+  generic = <Ctrl-f> move-page-down
 [tig "color"]
   cursor = default black
   date = white default
