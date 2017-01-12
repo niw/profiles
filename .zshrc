@@ -195,7 +195,10 @@ bindkey -M emacs '^n' history-beginning-search-forward-end
 # See `zshcompsys(1)`.
 
 autoload -Uz compinit
-compinit
+# Give -C to ignore compinit security check.
+# Homebrew creates /usr/local/share/zsh, /usr/local/share/zsh/site-functions/ with g+w,
+# which are somehow detected by compinit as insecure directory.
+compinit -C
 
 # Colors completions.
 zstyle ':completion:*' list-colors ''
