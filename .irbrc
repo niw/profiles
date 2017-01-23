@@ -3,16 +3,16 @@ begin
     $KCODE='u'
   end
 
-  require 'irb/completion'
-  unless 'macirb' == File.basename($0)
-    ARGV.concat ['--readline', '--prompt-mode', 'simple']
-  end
-
   require 'pp'
 
+  require 'irb/completion'
   require 'irb/ext/save-history'
+
+  # --readline
+  IRB.conf[:USE_READLINE] = true
+  # --prompt-mode simple
+  IRB.conf[:PROMPT_MODE] = :SIMPLE
   IRB.conf[:SAVE_HISTORY] = 100
-  IRB.conf[:HISTORY_FILE] = "#{ENV['HOME']}/.irb_history"
 
   # See http://bugs.ruby-lang.org/issues/show/1556
   # This is a patch to fix the bug in same way.
