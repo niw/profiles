@@ -1,0 +1,14 @@
+# Source common `~/.lldbinit`.
+# Man page `lldb(1)` doesn't clearly mention that it reads `~/.lldbinit` after reading
+# `~/.lldbinit-$debugger` like `~/.lldbinit-Xcode`, but in fact that it's not reading it.
+# To read common LLDB configuration, source it here.
+command source "~/.lldbinit"
+
+# Reveal
+command script import "/Applications/Reveal.app/Contents/SharedSupport/Scripts/RevealServerCommands.py"
+# Set a one-shot breakpoint on `UIApplicationMain` to install Reveal on the debugging process.
+breakpoint set --name UIApplicationMain --one-shot
+# Add a breakpoint command to the last breakpoint set.
+# This should be executed as a python script with `lldb.debugger.HandleCommand()`,
+# otherwise Xcode will freeze.
+breakpoint command add --stop-on-error true --script python --one-liner 'lldb.debugger.HandleCommand("reveal load");lldb.debugger.HandleCommand("process continue")'
