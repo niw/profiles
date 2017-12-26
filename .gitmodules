@@ -4,9 +4,6 @@
 [submodule ".vim/bundle/vim-rails"]
 	path = .vim/bundle/vim-rails
 	url = https://github.com/tpope/vim-rails.git
-[submodule ".vim/bundle/vim-objj"]
-	path = .vim/bundle/vim-objj
-	url = https://github.com/nanki/vim-objj.git
 [submodule ".vim/bundle/vim-surround"]
 	path = .vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround.git
