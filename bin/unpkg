@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+readonly pkg_path=$1
+readonly pkg_name=$(basename "$pkg_path" .pkg)
+readonly dest_path="$PWD/$pkg_name"
+
+if [[ -z $pkg_path ]]; then
+  echo "Usage: $0 pkg_file_or_directory" >&2
+  exit 1
+fi
+
+if [[ -d $dest_path ]]; then
+  echo "$dest_path exists." >&2
+  exit 1
+fi
+
+if [[ -f $pkg_path ]]; then
+  exec pkgutil --expand "$pkg_path" "$dest_path"
+elif [[ -d $pkg_path && -f "$pkg_path/Bom" && -f "$pkg_path/Payload" ]]; then
+  lsbom "$pkg_path/Bom"
+  exec ditto -x --bom "$pkg_path/Bom" "$pkg_path/Payload" "$dest_path"
+else
+  echo "Can't read $pkg_path." >&2
+  exit 1
+fi
