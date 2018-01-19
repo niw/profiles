@@ -15,7 +15,7 @@ s = WEBrick::HTTPProxyServer.new(
   :ProxyVia => false,
   :ProxyContentHandler => handler
 )
- 
+
 Signal.trap("INT") do
  s.shutdown
 end
