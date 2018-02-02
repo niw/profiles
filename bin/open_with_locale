@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+readonly locale="$1"; shift
+
+echo "Open $@ in locale $1..."
+exec open "$@" --args -AppleLanguages "($locale)" -AppleLocale "$locale"
