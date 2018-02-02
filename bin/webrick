@@ -1,5 +1,21 @@
 #!/usr/bin/env ruby
-require 'webrick'
+
+require "webrick"
+require "webrick/https"
+require "optparse"
+
+args = {}
+OptionParser.new.tap do |opt|
+  opt.on("-p", "--port=PORT") do |value|
+    args[:port] = value.to_i
+  end
+  opt.on("-k", "--tls-key=KEY") do |value|
+    args[:tls_key] = value
+  end
+  opt.on("-c", "--tls-cert=CERT") do |value|
+    args[:tls_cert] = value
+  end
+end.parse!(ARGV)
 
 class EchoServlet < WEBrick::HTTPServlet::AbstractServlet
   def do_GET(req, res)
@@ -11,24 +27,36 @@ class EchoServlet < WEBrick::HTTPServlet::AbstractServlet
   end
 
   private
+
   def echo(req, res)
     res.content_type = "text/plain";
     puts res.body = ["Request:", req.request_line, "Header:", req.header.inspect, "Body:", req.body.inspect].join("\r\n")
   end
 end
 
-server = WEBrick::HTTPServer.new(
-  :Port => 3000,
+options = {
+  :Port => args[:port] || 3000,
   :BindAddress => '0.0.0.0',
   :DocumentRoot => File.expand_path(Dir.pwd),
   :MimeTypes => WEBrick::HTTPUtils::DefaultMimeTypes.merge({
     # place additional MIME types here
     # "jpg" => "image/jpeg"
   })
-)
+}
+
+if args[:tls_key] && args[:tls_cert]
+  options.merge!({
+    :SSLEnable => true,
+    :SSLPrivateKey => OpenSSL::PKey::RSA.new(File.open(args[:tls_key])),
+    :SSLCertificate => OpenSSL::X509::Certificate.new(File.open(args[:tls_cert]))
+  })
+end
+
+server = WEBrick::HTTPServer.new(options)
 server.mount("/echo", EchoServlet);
 
 trap('INT') do
   server.shutdown
 end
+
 server.start
