@@ -64,3 +64,6 @@
 [submodule ".vim/bundle/tabpagebuffer"]
 	path = .vim/bundle/tabpagebuffer
 	url = https://github.com/Shougo/tabpagebuffer.vim.git
+[submodule ".vim/bundle/emmet-vim"]
+	path = .vim/bundle/emmet-vim
+	url = https://github.com/mattn/emmet-vim.git
