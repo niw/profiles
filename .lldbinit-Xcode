@@ -11,4 +11,4 @@ breakpoint set --name UIApplicationMain --one-shot
 # Add a breakpoint command to the last breakpoint set.
 # This should be executed as a python script with `lldb.debugger.HandleCommand()`,
 # otherwise Xcode will freeze.
-breakpoint command add --stop-on-error true --script python --one-liner 'lldb.debugger.HandleCommand("reveal load");lldb.debugger.HandleCommand("process continue")'
+breakpoint command add --stop-on-error true --script python --one-liner 'lldb.debugger.HandleCommand("reveal load");lldb.debugger.HandleCommand("reveal start");lldb.debugger.HandleCommand("process continue")'
