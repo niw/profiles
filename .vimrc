@@ -1,131 +1,92 @@
-" .vimrc
-" http://github.com/niw/profiles
-
-"{{{ Initialize
-
-" There are vim doesn't have eval feature like vim-tiny on Debian.
-" NOTE this must be in a single line. See :help no-eval-feature.
+" There are vim doesn't have eval feature like `vim-tiny` on Debian.
+" NOTE: this must be in a single line. See `:help no-eval-feature`.
 if !1 | finish | endif
 
-" Most of this .vimrc may work even on vim 6.x though,
-" we disable everything to avoid unexpected behavior for now.
+" Most of this `.vimrc` may work even on Vim 6 or prior,
+" We disable everything to avoid unexpected behaviors.
 if v:version < 700
   finish
 endif
 
 if !exists('s:loaded_vimrc')
-  " Don't reset twice on reloading, 'compatible' has many side effects.
+  " Don't reset twice on reloading, changing `compatible` has many side effects.
   set nocompatible
 endif
 
-" Reset all autocmd defined in this file.
+" Reset all `autocmd` defined in this file.
 augroup MyAutoCommands
   autocmd!
 augroup END
 
-" We have now 64 bit Windows.
-let s:has_win = has('win32') || has('win64')
+"{{{ Encodings and Input Method
 
-"}}}
+" Internal encoding. Always using UTF-8.
+set encoding=utf-8
 
-"{{{ Encodings and Japanese
-
-function! s:SetEncoding() "{{{
-  " As default, we're using UTF-8, of course.
-  set encoding=utf-8
-
-  " Done by here, if it's MacVim which can't change &termencoding.
-  if has('gui_macvim')
+" Terminal encoding for Japanese.
+"{{{
+function! s:SetTermEncoding()
+  if has('gui')
     return
   endif
 
-  " Using &encoding as default.
-  set termencoding=
+  set termencoding&
   " If LANG shows EUC or Shift-JIS, use it for termencoding.
   if $LANG =~# 'eucJP'
     set termencoding=euc-jp
   elseif $LANG =~# 'SJIS'
     set termencoding=cp932
   endif
+endfunction
 
-  " On Windows, we need to set encoding=japan or force to use cp932.
-  " Not tested yet because I'm not using Windows.
-  if !has('gui_running') && (&term == 'win32' || &term == 'win64')
-    set termencoding=cp932
-    set encoding=japan
-  elseif has('gui_running') && s:has_win
-    set termencoding=cp932
-  endif
-endfunction "}}}
+call s:SetTermEncoding()
+"}}}
 
-function! s:SetFileEncodings() "{{{
+" File encoding for Japanese.
+"{{{
+function! s:SetFileEncodings()
   if !has('iconv')
     return
   endif
 
   let enc_eucjp = 'euc-jp'
-  let enc_jis = 'iso-2022-jp'
+  let enc_iso2022jp = 'iso-2022-jp'
 
   " Check availability of iconv library.
   " Try converting the chars defined in EUC JIS X 0213 to CP932
   " to make sure iconv supports JIS X 0213 or not.
   if iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
     let enc_eucjp = 'euc-jisx0213,euc-jp'
-    let enc_jis = 'iso-2022-jp-3'
+    let enc_iso2022jp = 'iso-2022-jp-3'
   endif
 
   let value = 'ucs-bom'
-  if &encoding !=# 'utf-8'
-    let value = value . ',' . 'ucs-2le' . ',' . 'ucs-2'
-  endif
-
-  let value = value . ',' . enc_jis
-
-  if &encoding ==# 'utf-8'
-    let value = value . ',' . enc_eucjp . ',' . 'cp932'
-  elseif &encoding ==# 'euc-jp' || &encoding ==# 'euc-jisx0213'
-    " Reset existing values
-    let value = enc_eucjp . ',' . 'utf-8' . ',' . 'cp932'
-  else " assuming &encoding ==# 'cp932'
-    let value = value . ',' . 'utf-8' . ',' . enc_eucjp
-  endif
-  let value = value . ',' . &encoding
-
-  if has('guess_encode')
-    let value = 'guess' . ',' . value
-  endif
+  let value = value . ',' . enc_iso2022jp
+  " There are the cases that we can't differentiate UTF-8 from EUC or Shift-JIS.
+  " Assume that UTF-8 is common encoding now, it takes precedent than the others.
+  let value = value . ',' . 'utf-8'
+  let value = value . ',' . enc_eucjp . ',' . 'cp932'
 
   let &fileencodings = value
-endfunction "}}}
+endfunction
 
-" Make sure the file is not including any Japanese in ISO-2022-JP, use encoding for fileencoding.
-" https://github.com/Shougo/shougo-s-github/blob/master/vim/.vimrc
-function! s:SetFileEncoding() "{{{
+function! s:SetFileEncoding()
+  " Make sure the file is not including any Japanese in ISO-2022-JP, use UTF-8 for fileencoding.
   if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
-    let &fileencoding = &encoding
+    let &fileencoding = 'utf-8'
   endif
-endfunction "}}}
+endfunction
 
-call s:SetEncoding()
 call s:SetFileEncodings()
 autocmd MyAutoCommands BufReadPost * call <SID>SetFileEncoding()
+"}}}
 
-" Address the issue for using □ or ●.
-" NOTE We also need to apply a patch for Mac OS X Terminal.app
-set ambiwidth=double
-
-" Settings for Input Methods
-if has('keymap')
-  set iminsert=0 imsearch=0
-endif
-
-" Multibyte format, See :help fo-table
+" Multibyte format. See `:help fo-table`
 set formatexpr&
 set formatoptions&
 set formatoptions+=mM
-"set formatoptions=tcroqnlM1
 
-" Fileformat. Default is Unix.
+" File format. Use is Unix as default always.
 set fileformat=unix
 set fileformats=unix,dos,mac
 
@@ -172,6 +133,8 @@ set backspace=indent,eol,start
 " Allow h, l, <Left> and <Right> to move to the previous/next line.
 set whichwrap&
 set whichwrap+=<,>,[,],h,l
+" Use mouse in all modes.
+"set mouse=a
 
 " Displays
 
@@ -197,10 +160,14 @@ set showmode
 set cmdheight=2
 " Default height for a preview window.
 set previewheight=40
-" Highlight a pari of < and >.
+" Highlight a pair of < and >.
 set matchpairs+=<:>
 " Use dark background by default.
 set background=dark
+" Use `highlight-guifg` and `highlight-guibg` attributes in the terminal. Using 24-bit color.
+"set termguicolors
+" Disable to translate menu.
+set langmenu=none
 
 " Status line
 
@@ -220,9 +187,9 @@ set wildmode=longest,list,full
 " Use the pop up menu even if it has only one match.
 set completeopt=menuone
 
-" I don't want to use backup and undo files.
+" Disable backup and undo files.
+" These are default to `off` but some implementation may set these to `on`.
 set nobackup
-set noswapfile
 set noundofile
 
 " Hide buffer when it is abandoned.
@@ -235,7 +202,6 @@ set history=100
 set ttyfast
 
 " Indicate tab, wrap, trailing spaces and eol or not.
-"set list
 set listchars=tab:»\ ,extends:»,precedes:«,trail:\
 
 " Highlight Trailing Whitespaces
@@ -254,23 +220,11 @@ function! s:ClearTrailingWhitespacesHighlights()
 endfunction
 
 augroup MyAutoCommands
-  "autocmd VimEnter,ColorScheme * highlight SpecialKey ctermbg=red guibg=#F92672
-  autocmd VimEnter,ColorScheme * highlight TrailingWhitespaces ctermbg=red guibg=#F92672
-  "autocmd VimEnter,WinEnter * call <SID>HighlightTrailingWhitespaces()
+  autocmd VimEnter,ColorScheme * highlight TrailingWhitespaces ctermbg=red guibg=red
   autocmd InsertEnter * call <SID>ClearTrailingWhitespacesHighlights()
   autocmd InsertLeave * call <SID>HighlightTrailingWhitespaces()
 augroup END
 "}}}
-
-" Highlight Cursor Line
-"autocmd MyAutoCommands WinEnter,BufEnter * setlocal cursorline
-"autocmd MyAutoCommands WinLeave,BufLeave * setlocal nocursorline
-
-" Change current directory by switching the buffers, See :help cmdline-special.
-"autocmd MyAutoCommands BufRead,BufEnter * execute ":lcd " . expand("%:p:h:gs? ?\\\\ ?")
-
-" Open QuickFix after vimgrep
-"autocmd MyAutoCommands QuickFixCmdPost grep,grepadd,vimgrep,vimgrepadd copen
 
 " Restore cursor position
 "{{{
@@ -291,9 +245,10 @@ autocmd MyAutoCommands BufReadPost * call <SID>RestoreCursorPosition()
 set autoread
 autocmd MyAutoCommands WinEnter * checktime
 
-" Always enable spell check if using GUI.
-if has('gui_macvim')
-  autocmd MyAutoCommands BufNewFile,BufRead * setlocal spell
+" Support for the file system which ignore case
+if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMrC')
+  " Default `tags` may have `./tags` and `./TAGS`.
+  set tags=./tags,tags
 endif
 
 "}}}
@@ -309,37 +264,8 @@ filetype indent on
 
 augroup MyAutoCommands
   " Disable automatically insert comment.
-  " See :help fo-table
+  " See `:help fo-table`.
   autocmd FileType * setlocal formatoptions-=ro | setlocal formatoptions+=mM
-
-  " File type settings
-  autocmd FileType actionscript setlocal fileencoding=utf-8 tabstop=4 shiftwidth=4 noexpandtab nowrap
-  autocmd FileType objc setlocal fileencoding=utf-8 tabstop=4 shiftwidth=4 expandtab
-  autocmd FileType css setlocal iskeyword+=-
-  autocmd FileType scss setlocal iskeyword+=-
-
-  " Mapping file types
-  autocmd BufNewFile,BufRead *.as setlocal filetype=actionscript
-  autocmd BufNewFile,BufRead *.gradle setlocal filetype=groovy
-  autocmd BufNewFile,BufRead *.json setlocal filetype=json
-  autocmd BufNewFile,BufRead *.mm setlocal filetype=cpp
-  autocmd BufNewFile,BufRead *.module setlocal filetype=php
-  autocmd BufNewFile,BufRead *.mustache setlocal syntax=mustache
-  autocmd BufNewFile,BufRead *.pig setlocal filetype=pig
-  autocmd BufNewFile,BufRead *.pom setlocal filetype=xml
-  autocmd BufNewFile,BufRead *.pp setlocal filetype=puppet
-  autocmd BufNewFile,BufRead *.rl setlocal filetype=ragel
-  autocmd BufNewFile,BufRead *.srt setlocal filetype=srt
-  autocmd BufNewFile,BufRead *.thrift setlocal filetype=thrift
-  autocmd BufNewFile,BufRead *.vcf setlocal filetype=vcard
-  autocmd BufNewFile,BufRead Portfile setlocal filetype=macports
-  autocmd BufNewFile,BufRead nginx.* setlocal filetype=nginx
-  autocmd BufNewFile,BufRead SConstruct setlocal filetype=python
-  autocmd BufNewFile,BufRead SConscript setlocal filetype=python
-  autocmd BufNewFile,BufRead *.aurora setlocal filetype=python
-
-  " Support grepedit command. See ~/.profiles/bin/grepedit
-  autocmd BufRead grepedit.tmp.* setlocal filetype=grepedit
 
   " Editing binary file.
   " See :help hex-editing, Do not merge these two lines into one.
@@ -394,89 +320,66 @@ nnoremap Q q
 nnoremap qK K
 " }}}
 
-" Buffer manipulations
-nmap [Space] [Buffer]
-"{{{
-function! s:NextNormalBuffer(loop) "{{{
+function! s:NextNormalFileBuffer(...) "{{{
+  let direction = get(a:000, 0, 1)
+  if direction > 0
+    let delta = 1
+  elseif direction < 0
+    let delta = -1
+  else
+    return 0
+  end
+
   let buffer_num = bufnr('%')
   let last_buffer_num = bufnr('$')
 
   let next_buffer_num = buffer_num
   while 1
-    if next_buffer_num == last_buffer_num
-      if a:loop
-        let next_buffer_num = 1
-      else
-        break
-      endif
-    else
-      let next_buffer_num = next_buffer_num + 1
-    endif
+    let next_buffer_num = next_buffer_num + delta
+    if next_buffer_num > last_buffer_num
+      let next_buffer_num = 1
+    elseif next_buffer_num < 1
+      let next_buffer_num = last_buffer_num
+    end
+
     if next_buffer_num == buffer_num
       break
-    endif
-    if ! buflisted(next_buffer_num)
-      continue
-    endif
-    if getbufvar(next_buffer_num, '&buftype') == ""
+    end
+
+    " Only if the buffer is listed, normal, and its file name is not directory.
+    let path = expand('#' . next_buffer_num . ':p')
+    if buflisted(next_buffer_num) && getbufvar(next_buffer_num, '&buftype') == "" && !isdirectory(path)
       return next_buffer_num
       break
     endif
   endwhile
+
   return 0
 endfunction "}}}
 
-function! s:OpenNextNormalBuffer(loop) "{{{
+" Buffer manipulations
+nmap [Space] [Buffer]
+"{{{
+function! s:OpenPrevNormalBuffer()
   if &buftype == ""
-    let buffer_num = s:NextNormalBuffer(a:loop)
+    let buffer_num = s:NextNormalFileBuffer(-1)
     if buffer_num
       execute "buffer" buffer_num
     endif
   endif
-endfunction "}}}
+endfunction
 
-function! s:PrevNormalBuffer(loop) "{{{
-  let buffer_num = bufnr('%')
-  let last_buffer_num = bufnr('$')
-
-  let prev_buffer_num = buffer_num
-  while 1
-    if prev_buffer_num == 1
-      if a:loop
-        let prev_buffer_num = last_buffer_num
-      else
-        break
-      endif
-    else
-      let prev_buffer_num = prev_buffer_num - 1
-    endif
-    if prev_buffer_num == buffer_num
-      break
-    endif
-    if ! buflisted(prev_buffer_num)
-      continue
-    endif
-    if getbufvar(prev_buffer_num, '&buftype') == ""
-      return prev_buffer_num
-      break
-    endif
-  endwhile
-  return 0
-endfunction "}}}
-
-function! s:OpenPrevNormalBuffer(loop) "{{{
+function! s:OpenNextNormalBuffer()
   if &buftype == ""
-    let buffer_num = s:PrevNormalBuffer(a:loop)
+    let buffer_num = s:NextNormalFileBuffer(1)
     if buffer_num
       execute "buffer" buffer_num
     endif
   endif
-endfunction "}}}
+endfunction
 
-noremap <silent> [Buffer]P :<C-u>call <SID>OpenPrevNormalBuffer(0)<CR>
-noremap <silent> [Buffer]p :<C-u>call <SID>OpenPrevNormalBuffer(1)<CR>
-noremap <silent> [Buffer]N :<C-u>call <SID>OpenNextNormalBuffer(0)<CR>
-noremap <silent> [Buffer]n :<C-u>call <SID>OpenNextNormalBuffer(1)<CR>
+noremap <silent> [Buffer]p :<C-u>call <SID>OpenPrevNormalBuffer()<CR>
+noremap <silent> [Buffer]n :<C-u>call <SID>OpenNextNormalBuffer()<CR>
 "}}}
 
 " Window manipulations
@@ -558,7 +461,7 @@ endfunction "}}}
 nnoremap <silent> [Space]r :<C-u>syntax sync clear<CR>
 
 " Disable search highlight
-nnoremap <silent> [Space]n :nohlsearch<CR>
+nnoremap <silent> [Space]N :nohlsearch<CR>
 
 " Highlight the word under the cursor
 nnoremap <silent> [Space]<Space> :<C-u>call <SID>SetSearchKeyword(expand('<cword>'))<CR>
@@ -581,14 +484,13 @@ nnoremap g* g*zzzv
 nnoremap g# g#zzzv
 
 " Use command line window.
+"{{{
 " NOTE: Command line window doesn't work due to Vim bug since 8.0.152 prior to 8.0.172
 " See https://github.com/vim/vim/commit/1d669c233c97486555a34f7d3f069068d9ebdb63
 if !has("patch-8.0.152") || has("patch-8.0.172")
   nnoremap ; q:i
   nnoremap : q:i
 endif
-"{{{
-"autocmd MyAutoCommands CmdwinEnter * nnoremap <buffer> <ESC> :<C-u>quit<CR>
 
 augroup MyAutoCommands
   autocmd CmdwinEnter * nnoremap <buffer> <ESC><ESC> :<C-u>quit<CR>
@@ -614,24 +516,6 @@ map [Space]. [Vimrc]
 nnoremap <silent> [Vimrc]e :<C-u>edit $MYVIMRC<CR>
 nnoremap <silent> [Vimrc]s :<C-u>source $MYVIMRC<CR>
 
-" Open shell on console or GUI application.
-"{{{
-function! s:OpenShell()
-  if has('gui_macvim')
-    " Open Terminal.app, then active it.
-"    let l:script = "tell application \"Terminal\"" . "\n"
-"               \ . "activate" . "\n"
-"               \ . "end tell"
-"    call system("env -i osascript", l:script)
-    call system("env -i open -b com.apple.Terminal")
-  else
-    shell
-  end
-endfunction
-
-nnoremap <silent> [Space]; :<C-u>call <SID>OpenShell()<CR>
-"}}}
-
 " Lookup help
 nnoremap <silent> [Space]h :<C-u>help <C-r><C-w><CR>
 
@@ -642,7 +526,7 @@ function! s:OpenQuickFixWithSyntex(syntax) "{{{
   let g:last_quick_fix_syntax = a:syntax
   copen
   " NOTE: quickfix window is using syntax match for highlight the selected file.
-  " matchadd() always overrules syntax highlighs, it results unexpected highlighting.
+  " matchadd() always overrules syntax highlight, it results unexpected highlighting.
   " To avoid this, using syntax match to highlight the keyword here.
   " See help :matchadd
   execute "syntax match Underlined '\\v" . a:syntax . "' display containedin=ALL"
@@ -669,7 +553,9 @@ function! s:SpellCheckCompletion()
   endif
 endfunction
 
+" Toggle spell check
 nnoremap <silent> gs :<C-u>setlocal spell!<CR>
+" Show spell check candidates
 nnoremap <silent> [Space]s :<C-u>call <SID>SpellCheckCompletion()<CR>
 "}}}
 
@@ -677,7 +563,7 @@ nnoremap <silent> [Space]s :<C-u>call <SID>SpellCheckCompletion()<CR>
 
 "{{{ Commands
 
-" Reopen as each encodings
+" Reopen buffer as each encoding
 command! -bang -bar -complete=file -nargs=? Utf8      edit<bang> ++enc=utf-8 <args>
 command! -bang -bar -complete=file -nargs=? Cp932     edit<bang> ++enc=cp932 <args>
 command! -bang -bar -complete=file -nargs=? Euc       edit<bang> ++enc=euc-jp <args>
@@ -754,7 +640,7 @@ command! -nargs=1 -complete=file Rename file <args>|call delete(expand('#'))
 
 " Preserve window splits when deleting the buffer
 "{{{
-function! s:DeleteBuffer(bang) "{{{
+function! s:DeleteBuffer(bang)
   if &mod && a:bang != '!'
     return
   endif
@@ -762,7 +648,7 @@ function! s:DeleteBuffer(bang) "{{{
   let buffer_num = bufnr('%')
   let win_num = winnr()
 
-  let next_buffer_num = s:NextNormalBuffer(1)
+  let next_buffer_num = s:NextNormalFileBuffer()
   if ! next_buffer_num
     enew
     let next_buffer_num = bufnr('%')
@@ -771,7 +657,7 @@ function! s:DeleteBuffer(bang) "{{{
     end
   endif
 
-  " FIXME we have to check the other tabs because bufwinnr doesn't care them
+  " FIXME: We have to check the other tabs because bufwinnr doesn't care them
   while 1
     let n = bufwinnr(buffer_num)
     if n < 0
@@ -783,19 +669,10 @@ function! s:DeleteBuffer(bang) "{{{
 
   execute win_num "wincmd w"
   execute "silent bdelete" . a:bang buffer_num
-endfunction "}}}
+endfunction
 
 command! -bang Bdelete call <SID>DeleteBuffer("<bang>")
 "}}}
-
-" Vars, require vim-prettyprint
-" See http://d.hatena.ne.jp/thinca/20100711/1278849707
-command! -nargs=+ Vars PP filter(copy(g:), 'v:key =~# "^<args>"')
-
-" Large font (MacVim only.)
-if has('gui_macvim')
-  command! GuiLargeFont set guifont=Marker\ Felt:h48 cmdheight=1
-endif
 
 " Change current directory to the one of current file.
 command! -bar Cd cd %:p:h
@@ -866,84 +743,72 @@ command! StripTrailingWhitespaces call <SID>StripTrailingWhitespaces()
 
 "}}}
 
-"{{{ Platform Dependents
+"{{{ Runtime Path and Packages
 
-" Support for the file system which ignore case
-if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMrC')
-  " Do not duplicate tags file
-  set tags=./tags,tags
-endif
-
-" On Windows, if $PATH doesn't includes $VIM, it can not find out the exe file
-if s:has_win && $PATH !~? '\(^\|;\)' . escape($VIM, '\\') . '\(;\|$\)'
-  let $PATH = $VIM . ';' . $PATH
-endif
-
-" I don't want to use Japanese menu on MacVim
-if has("gui_macvim")
-  set langmenu=none
-endif
-
-" MacVim-KaoriYa 20101102 requires this setting to enable Ruby.
-if has('gui_macvim') && has('kaoriya')
-  let $RUBY_DLL = "/usr/lib/libruby.dylib"
-endif
-
-" Disable features coming with Kaoriya patch.
-if has('kaoriya')
-  " Disable dicwin.vim plugin provided by Kaoriya patch which is using <C-k>
-  let g:plugin_dicwin_disable = 1
-
-  " Do not use useless example.
-  let g:no_vimrc_example = 1
-  let g:no_gvimrc_example = 1
-endif
-
-" If terminal supports 256 colors or GUI, set colorscheme.
-if $TERM =~? '256' || has('gui_running')
-  colorscheme molokai
-endif
-
-"}}}
-
-"{{{ Runtime Paths
-
-" Add runtime paths (Using pathogen.vim)
+" Initialize `runtimepath` and `packpath`.
 if !exists('s:loaded_vimrc')
   set runtimepath&
+  set packpath&
 
-  " Add ~/.vim to &runtimepath for Windows
-  if s:has_win
+  " Add ~/.vim for Neovim
+  if has('nvim')
     set runtimepath+=$HOME/.vim
+    set packpath+=$HOME/.vim
   endif
-
-  call pathogen#runtime_append_all_bundles()
-  call pathogen#helptags()
 endif
 
-function! s:SourceRuntimeBundleScripts() "{{{
-  for dir in pathogen#split(&runtimepath)
-    " Ignore all blank paths in runtimepath, which may be paths created by
-    " git-submodule but not updated yet.
-    if empty(globpath(dir, "*"))
-      continue
-    endif
-    for vimfile in [dir . '.vim', dir . '/.vimrc']
-      if filereadable(vimfile)
-        execute "source " . vimfile
+" Load all packages.
+if has('packages')
+  " This will also load `vim-pathogen`.
+  packloadall
+else
+  " Use `vim-pathogen` to load plugins.
+  " `vim-pathogen` itself is in the package, add itself manually.
+  runtime pack/default/start/vim-pathogen/autoload/pathogen.vim
+  " Try to add plugin paths to `runtimepath`.
+  try
+    " This call may fail if we failed to load `vim-pathogen`.
+    call pathogen#infect()
+  catch
+  endtry
+endif
+
+" Try to run `helptags` for each `runtimepath`.
+try
+  " This call may fail if we failed to load `vim-pathogen`.
+  call pathogen#helptags()
+catch
+endtry
+
+" Source each runtime path configuration script.
+"{{{
+function! s:SourceRuntimePathScripts()
+  for glob in pathogen#split(&runtimepath)
+    for dir in split(glob(glob), "\n")
+      if ! isdirectory(dir)
+        continue
+      end
+      " Ignore directory that doesn't have anything.
+      " git-submodule may create such directories until it initializes them.
+      if empty(globpath(dir, "*"))
+        continue
+      endif
+      let runtime_path_script = dir . '.vim'
+      if filereadable(runtime_path_script)
+        execute "source " . runtime_path_script
       endif
     endfor
   endfor
-endfunction "}}}
+endfunction
 
-call s:SourceRuntimeBundleScripts()
+call s:SourceRuntimePathScripts()
+"}}}
 
 "}}}
 
 "{{{ Plugins
 
 " Git Plugin
-" Show `git diff --cached` when editing COMMIT_EDITMSG.
 "{{{
 function! s:PreviewGitDiffCached()
   " Open `git diff --cached` in a preview window.
@@ -954,30 +819,16 @@ function! s:PreviewGitDiffCached()
   goto 1
 endfunction
 
+" Show `git diff --cached` when editing `COMMIT_EDITMSG`.
 autocmd MyAutoCommands FileType gitcommit call <SID>PreviewGitDiffCached()
+
+" Use spell check always for `gitcommit`.
+autocmd MyAutoCommands FileType gitcommit setlocal spell
 "}}}
-
-" Go Plugin
-" golang provides vim plugin in $GOROOT/misc/vim, if we have that path, add it to runtimepath.
-" {{{
-function! s:UseGoPlugin()
-  " Use pathogen to manage runtimepath.
-  if !empty($GOROOT)
-    let sep = pathogen#separator()
-    let before = pathogen#glob_directories($GOROOT . sep . "misc" . sep . "vim")
-    let after = pathogen#glob_directories($GOROOT . sep . "misc" . sep . "vim" . sep . "after")
-    let &runtimepath = pathogen#join(before, &runtimepath, after)
-  endif
-endfunction
-
-call s:UseGoPlugin()
-" }}}
 
 "}}}
 
-"{{{ Finalize
-
-" Re-enable filetype plugin for ftdetect directory of each runtimepath
+" Re-enable filetype plugin for `ftdetect` directory of each `runtimepath`.
 filetype off
 filetype on
 
@@ -985,9 +836,7 @@ if !exists('s:loaded_vimrc')
   let s:loaded_vimrc = 1
 endif
 
-" See :help secure
+" See `:help secure`
 set secure
-
-"}}}
 
 " vim: tabstop=2 shiftwidth=2 textwidth=0 expandtab foldmethod=marker nowrap
