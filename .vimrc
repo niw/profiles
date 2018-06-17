@@ -755,12 +755,16 @@ command! StripTrailingWhitespaces call <SID>StripTrailingWhitespaces()
 " Initialize `runtimepath` and `packpath`.
 if !exists('s:loaded_vimrc')
   set runtimepath&
-  set packpath&
+  if has('packages')
+    set packpath&
+  endif
 
   " Add ~/.vim for Neovim
   if has('nvim')
     set runtimepath+=$HOME/.vim
-    set packpath+=$HOME/.vim
+    if has('packages')
+      set packpath+=$HOME/.vim
+    end
   endif
 endif
 
