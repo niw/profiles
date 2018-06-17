@@ -17,9 +17,15 @@ for i in $(seq 1 9); do
   alias a$i="awk '{print \$$i}'"
 done
 
-if which vim >/dev/null 2>&1; then
+if which nvim >/dev/null 2>&1; then
+  alias vim=nvim
+  alias vi=nvim
+  alias v=nvim
+elif which vim >/dev/null 2>&1; then
   alias vi=vim
   alias v=vim
+else
+  alias v=vi
 fi
 
 if which xcrun >/dev/null 2>&1; then
