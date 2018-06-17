@@ -18,6 +18,13 @@ augroup MyAutoCommands
   autocmd!
 augroup END
 
+" Source site local configuration.
+" Mostly for set dynamic link library paths.
+" TODO: Find a better solution.
+if filereadable($HOME . '/.vimrc.local')
+  execute 'source ' . $HOME . '/.vimrc.local'
+endif
+
 "{{{ Encodings and Input Method
 
 " Internal encoding. Always using UTF-8.
