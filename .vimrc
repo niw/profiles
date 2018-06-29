@@ -274,6 +274,9 @@ augroup MyAutoCommands
   " See `:help fo-table`.
   autocmd FileType * setlocal formatoptions-=ro | setlocal formatoptions+=mM
 
+  " Use spell check always for `conf`.
+  autocmd MyAutoCommands FileType conf setlocal spell
+
   " Editing binary file.
   " See :help hex-editing, Do not merge these two lines into one.
   autocmd BufReadPre   *.bin let &bin=1
