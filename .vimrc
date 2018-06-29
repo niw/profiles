@@ -794,7 +794,14 @@ endtry
 " Source each runtime path configuration script.
 "{{{
 function! s:SourceRuntimePathScripts()
-  for glob in pathogen#split(&runtimepath)
+  try
+    " This call may fail if we failed to load `vim-pathogen`.
+    let paths = pathogen#split(&runtimepath)
+  catch
+    return
+  endtry
+
+  for glob in paths
     for dir in split(glob(glob), "\n")
       if ! isdirectory(dir)
         continue
