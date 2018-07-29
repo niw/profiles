@@ -13,3 +13,6 @@
 [submodule ".vim/pack/default/start/neomru.vim"]
 	path = .vim/pack/default/start/neomru.vim
 	url = https://github.com/Shougo/neomru.vim.git
+[submodule ".vim/pack/default/start/vim-fugitive"]
+	path = .vim/pack/default/start/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
