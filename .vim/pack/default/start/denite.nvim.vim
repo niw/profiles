@@ -10,6 +10,8 @@ endif
 call denite#custom#map('insert', 'jj', '<denite:enter_mode:normal>', 'noremap')
 " Immediately exit Denite by <ESC> anyways.
 call denite#custom#map('normal', '<ESC>', '<denite:quit>', 'noremap')
+" <C-w> to move up path.
+call denite#custom#map('insert', '<C-w>', '<denite:move_up_path>', 'noremap')
 
 " Open window top top left. Default is 'botright'.
 call denite#custom#option('default', 'direction', 'topleft')
