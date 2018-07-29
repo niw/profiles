@@ -18,7 +18,7 @@ call denite#custom#option('default', 'winheight', 10)
 "}}}
 
 " Key Mappings
-" {{{
+"{{{
 nmap f [Denite]
 nnoremap [Denite] <Nop>
 
@@ -35,6 +35,6 @@ function! s:ExecuteCommandOnCR(command)
 endfunction
 
 nnoremap <silent> <CR> :<C-u>call <SID>ExecuteCommandOnCR('Denite buffer')<CR>
-" }}}
+"}}}
 
 " vim: tabstop=2 shiftwidth=2 textwidth=0 expandtab foldmethod=marker nowrap
