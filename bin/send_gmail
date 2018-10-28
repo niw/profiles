@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+require "optparse"
+require "io/console"
+require "net/smtp"
+
+def ask_password(prompt = "Password: ")
+  console = IO.console
+  console.print prompt
+  password = console.noecho{|io| io.gets}.chomp
+  console.print "\n"
+  password
+end
+
+def send_mail!(options)
+  smtp = Net::SMTP.new("smtp.gmail.com", 587)
+  smtp.enable_starttls
+  smtp.start("localhost", options[:mail_from], options[:password]) do |connection|
+    connection.send_mail(options[:body], options[:mail_from], options[:rcpt_to])
+  end
+end
+
+options = {}
+
+option_parser = OptionParser.new do |parser|
+  parser.on("-f MAIL_FROM", "--mail-from=MAIL_FROM") do |value|
+    options[:mail_from] = value
+  end
+
+  parser.on("-t RCPT_TO", "--to=RCPT_TO") do |value|
+    options[:rcpt_to] = value.split(",").map{|to| to.strip}
+  end
+end
+option_parser.parse!
+
+options[:body] = STDIN.read
+options[:password] = ask_password
+
+send_mail!(options)
