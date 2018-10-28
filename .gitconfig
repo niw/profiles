@@ -1,3 +1,6 @@
+[core]
+  ignorecase = false
+
 [user]
   name = Yoshimasa Niwa
   email = niw@niw.at
@@ -27,6 +30,10 @@
   # Increase HTTP post buffer to 100 MB
   postBuffer = 104857600
 
+[format]
+  signature = Yoshimasa Niwa
+  signOff = true
+
 # NOTE Use `git config --system credential.helper osxkeychain` to set credential helper
 # for system wide, not --global, since credential storage is per system.
 #[credential]
@@ -50,6 +57,3 @@
   date = white default
   title-focus = white black
   title-blur = black white
-
-[core]
-  ignorecase = false
