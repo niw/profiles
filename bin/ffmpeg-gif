@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-if [[ $# -ne 2 ]]; then
-  echo "Usage: $0 source.mp4 dest.gif"
+if [[ $# -lt 1 ]]; then
+  echo "Usage: $0 source [dest]"
   echo "START_TIME=[HH:]MM:SS[.m]"
   echo "DURATION=s"
   echo "FPS=15 (default)"
@@ -19,8 +19,14 @@ readonly FPS=${FPS:-"15"}
 readonly FRAME_DURATION_SCALE=${FRAME_DURATION_SCALE:-"1.0"}
 
 readonly SOURCE=$1
-readonly DEST=$2
-readonly PALETTE="$SOURCE.palette.png"
+if [[ -z $2 ]]; then
+  DEST="${SOURCE%.*}.gif"
+else
+  DEST=$2
+fi
+readonly DEST
+
+readonly PALETTE="${SOURCE%.*}-palette.png"
 readonly FILTERS="fps=$FPS,scale=$SIZE:-1:flags=lanczos,setpts=$FRAME_DURATION_SCALE*PTS"
 
 if [[ ! -e $PALETTE ]]; then
