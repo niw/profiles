@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+readonly BRANCH_NAME=$(git symbolic-ref -q --short HEAD)
+readonly HASH=$(git rev-parse HEAD|head -c 7)
+
+readonly WIP_BRANCH_NAME="${BRANCH_NAME}_${HASH}"
+
+git checkout -b "$WIP_BRANCH_NAME" && git checkout "$BRANCH_NAME"
