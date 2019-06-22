@@ -28,11 +28,6 @@ else
   alias v=vi
 fi
 
-if which xcrun >/dev/null 2>&1; then
-  alias swift='xcrun swift'
-  alias swiftc='xcrun swiftc'
-fi
-
 if [[ -e /usr/libexec/PlistBuddy ]]; then
   alias pplist='/usr/libexec/PlistBuddy -c print'
 fi
