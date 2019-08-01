@@ -23,6 +23,9 @@
 [diff]
   algorithm = histogram
 
+[diff "utf-16"]
+  textconv = "iconv -f utf-16 -t utf-8"
+
 [mergetool]
   keepBackup = true
 
