@@ -16,3 +16,6 @@
 [submodule ".vim/pack/default/start/vim-fugitive"]
 	path = .vim/pack/default/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive
+[submodule ".vim/pack/default/start/deoplete.nvim"]
+	path = .vim/pack/default/start/deoplete.nvim
+	url = https://github.com/Shougo/deoplete.nvim.git
