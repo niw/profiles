@@ -162,7 +162,7 @@ unsetopt BEEP
 # See `zshparam(1)`.
 
 # Save history on the file.
-HISTFILE=$HOME/.zsh-history
+HISTFILE=$HOME/.zsh_history
 
 # Max history in the memory.
 # This is about for a month.
