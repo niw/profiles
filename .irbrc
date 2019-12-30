@@ -61,14 +61,16 @@ rescue Object => e
   STDERR.puts "Fail to initialize irb. #{e.inspect}"
 end
 
-begin
-  require 'rubygems'
-  require 'wirb'
-  Wirb.start
-rescue LoadError
-  STDERR.puts 'Fail to load wirb gem.'
-rescue Object => e
-  STDERR.puts "Fail to start wirb gem. #{e.inspect}"
+if RUBY_VERSION < '2.7.0'
+  begin
+    require 'rubygems'
+    require 'wirb'
+    Wirb.start
+  rescue LoadError
+    STDERR.puts 'Fail to load wirb gem.'
+  rescue Object => e
+    STDERR.puts "Fail to start wirb gem. #{e.inspect}"
+  end
 end
 
 # vim:ft=ruby
