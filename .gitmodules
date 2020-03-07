@@ -21,7 +21,7 @@
 	url = https://github.com/Shougo/deoplete.nvim.git
 [submodule ".vim/pack/default/start/deoplete-swift"]
 	path = .vim/pack/default/start/deoplete-swift
-	url = https://github.com/landaire/deoplete-swift.git
+	url = https://github.com/niw/deoplete-swift.git
 [submodule ".vim/pack/default/start/swift.vim"]
 	path = .vim/pack/default/start/swift.vim
 	url = https://github.com/keith/swift.vim.git
