@@ -12,7 +12,7 @@ fi
 
 source ~/.profiles/functions/startup-utils
 
-startup-utils-set-paths ~/.profiles
+startup-utils-set-paths ~/.profiles ~/.profiles/local
 
 # Options
 # =======
