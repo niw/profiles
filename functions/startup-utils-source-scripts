@@ -1,7 +1,7 @@
 startup-utils-source-scripts() {
   if [[ -n ${ZSH_VERSION:-} ]]; then
     emulate -L zsh
-    unsetopt nomatch
+    setopt null_glob
   fi
 
   local dir script

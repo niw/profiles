@@ -1,7 +1,7 @@
 startup-utils-set-paths() {
   if [[ -n ${ZSH_VERSION:-} ]]; then
     emulate -L zsh
-    unsetopt nomatch
+    setopt null_glob
   fi
 
   local -a base_paths
