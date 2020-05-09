@@ -32,7 +32,7 @@ set encoding=utf-8
 
 " Terminal encoding for Japanese.
 "{{{
-function! s:SetTermEncoding()
+function! s:SetTermEncoding() abort
   if has('gui')
     return
   endif
@@ -51,7 +51,7 @@ call s:SetTermEncoding()
 
 " File encoding for Japanese.
 "{{{
-function! s:SetFileEncodings()
+function! s:SetFileEncodings() abort
   if !has('iconv')
     return
   endif
@@ -77,7 +77,7 @@ function! s:SetFileEncodings()
   let &fileencodings = value
 endfunction
 
-function! s:SetFileEncoding()
+function! s:SetFileEncoding() abort
   " Make sure the file is not including any Japanese in ISO-2022-JP, use UTF-8 for fileencoding.
   if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
     let &fileencoding = 'utf-8'
@@ -213,13 +213,13 @@ set listchars=tab:»\ ,extends:»,precedes:«,trail:\
 
 " Highlight Trailing Whitespaces
 "{{{
-function! s:HighlightTrailingWhitespaces()
+function! s:HighlightTrailingWhitespaces() abort
   if getbufvar(bufnr('%'), '&buftype') == ""
     let w:trailing_whitespaces_match = matchadd('TrailingWhitespaces', '\v\s+$')
   endif
 endfunction
 
-function! s:ClearTrailingWhitespacesHighlights()
+function! s:ClearTrailingWhitespacesHighlights() abort
   if exists('w:trailing_whitespaces_match')
     call matchdelete(w:trailing_whitespaces_match)
     unlet w:trailing_whitespaces_match
@@ -235,7 +235,7 @@ augroup END
 
 " Restore cursor position
 "{{{
-function! s:RestoreCursorPosition()
+function! s:RestoreCursorPosition() abort
   " Don't do it when the position is invalid or when inside an event handler
   " (happens when dropping a file on gvim).
   " Also don't do it when the mark is in the first line, that is the default
@@ -330,7 +330,7 @@ nnoremap Q q
 nnoremap qK K
 " }}}
 
-function! s:NextNormalFileBuffer(...) "{{{
+function! s:NextNormalFileBuffer(...) abort "{{{
   let direction = get(a:000, 0, 1)
   if direction > 0
     let delta = 1
@@ -370,7 +370,7 @@ endfunction "}}}
 " Buffer manipulations
 nmap [Space] [Buffer]
 "{{{
-function! s:OpenPrevNormalBuffer()
+function! s:OpenPrevNormalBuffer() abort
   if &buftype == ""
     let buffer_num = s:NextNormalFileBuffer(-1)
     if buffer_num
@@ -379,7 +379,7 @@ function! s:OpenPrevNormalBuffer()
   endif
 endfunction
 
-function! s:OpenNextNormalBuffer()
+function! s:OpenNextNormalBuffer() abort
   if &buftype == ""
     let buffer_num = s:NextNormalFileBuffer(1)
     if buffer_num
@@ -422,7 +422,7 @@ nnoremap [Window][ <C-w>-
 " Tab manipulations
 nmap [t] [Tab]
 "{{{
-function! s:MapTabNextWithCount()
+function! s:MapTabNextWithCount() abort
   let tab_count = 1
   while tab_count < 10
     execute printf("noremap <silent> [Tab]%s :tabnext %s<CR>", tab_count, tab_count)
@@ -438,7 +438,7 @@ nnoremap <silent> [Tab]p :<C-u>tabprev<CR>
 call s:MapTabNextWithCount()
 "}}}
 
-function! s:SetSearchKeyword(keyword) "{{{
+function! s:SetSearchKeyword(keyword) abort "{{{
   if a:keyword == ""
     nohlsearch
     return
@@ -453,7 +453,7 @@ function! s:SetSearchKeyword(keyword) "{{{
   call feedkeys(":silent set hlsearch\<CR>", "n")
 endfunction "}}}
 
-function! s:GetSelectedText() "{{{
+function! s:GetSelectedText() abort "{{{
   let reg = @a
   let regtype = getregtype('a')
   let pos = getpos('.')
@@ -532,7 +532,7 @@ nnoremap <silent> [Space]h :<C-u>help <C-r><C-w><CR>
 " Wrap
 nnoremap <silent> [Space]w :<C-u>setlocal wrap!<CR>
 
-function! s:OpenQuickFixWithSyntex(syntax) "{{{
+function! s:OpenQuickFixWithSyntex(syntax) abort "{{{
   let g:last_quick_fix_syntax = a:syntax
   copen
   " NOTE: quickfix window is using syntax match for highlight the selected file.
@@ -543,7 +543,7 @@ function! s:OpenQuickFixWithSyntex(syntax) "{{{
   wincmd J
 endfunction "}}}
 
-function! s:OpenQuickFix() "{{{
+function! s:OpenQuickFix() abort "{{{
   if exists('g:last_quick_fix_syntax')
     call s:OpenQuickFixWithSyntex(g:last_quick_fix_syntax)
   else
@@ -557,7 +557,7 @@ nnoremap <silent> qw :<C-u>cclose<CR>
 
 " Spell check
 "{{{
-function! s:SpellCheckCompletion()
+function! s:SpellCheckCompletion() abort
   if &spell
     call feedkeys("ea\<C-x>s", "n")
   endif
@@ -583,7 +583,7 @@ command! -bang -bar -complete=file -nargs=? Utf16be   edit<bang> ++enc=ucs-2 <ar
 
 " Recursive Grep and Highlight
 "{{{
-function! s:FlattenList(list) "{{{
+function! s:FlattenList(list) abort "{{{
   let flatten = []
   let i = 0
   while i < len(a:list)
@@ -597,7 +597,7 @@ function! s:FlattenList(list) "{{{
   return flatten
 endfunction "}}}
 
-function! s:Grep(keyword, ...) "{{{
+function! s:Grep(keyword, ...) abort "{{{
   if a:keyword == ""
     return
   endif
@@ -612,12 +612,12 @@ function! s:Grep(keyword, ...) "{{{
   call s:OpenQuickFixWithSyntex(a:keyword)
 endfunction "}}}
 
-function! s:HasCommand(cmd) "{{{
+function! s:HasCommand(cmd) abort "{{{
   execute system('type ' . a:cmd . ' >/dev/null 2>&1')
   return !v:shell_error
 endfunction "}}}
 
-function! s:GrepPrg() "{{{
+function! s:GrepPrg() abort "{{{
   if exists('g:grepprg')
     return g:grepprg
   else
@@ -650,7 +650,7 @@ command! -nargs=1 -complete=file Rename file <args>|call delete(expand('#'))
 
 " Preserve window splits when deleting the buffer
 "{{{
-function! s:DeleteBuffer(bang)
+function! s:DeleteBuffer(bang) abort
   if &mod && a:bang != '!'
     return
   endif
@@ -690,11 +690,11 @@ command! -bar Cd cd %:p:h
 " TabpageCD (Modified.)
 " See https://gist.github.com/604543/
 "{{{
-function! s:StoreTabpageCD()
+function! s:StoreTabpageCD() abort
   let t:cwd = getcwd()
 endfunction!
 
-function! s:RestoreTabpageCD()
+function! s:RestoreTabpageCD() abort
   if exists('t:cwd') && !isdirectory(t:cwd)
     unlet t:cwd
   endif
@@ -713,7 +713,7 @@ augroup END
 " Keep no end of line
 " See http://vim.wikia.com/wiki/Preserve_missing_end-of-line_at_end_of_text_files
 "{{{
-function! s:SetBinaryForNoeol()
+function! s:SetBinaryForNoeol() abort
   let g:save_binary_for_noeol = &binary
   if ! &endofline && ! &binary
     setlocal binary
@@ -723,7 +723,7 @@ function! s:SetBinaryForNoeol()
   endif
 endfunction
 
-function! s:RestoreBinaryForNoeol()
+function! s:RestoreBinaryForNoeol() abort
   if ! &endofline && ! g:save_binary_for_noeol
     if &fileformat == "dos"
       silent 1,$-1s/\r$/
@@ -740,7 +740,7 @@ augroup END
 
 " Remove tailing spaces.
 "{{{
-function! s:StripTrailingWhitespaces()
+function! s:StripTrailingWhitespaces() abort
   silent execute "normal ma<CR>"
   let saved_search = @/
   %s/\s\+$//e
@@ -796,7 +796,7 @@ endtry
 
 " Source each runtime path configuration script.
 "{{{
-function! s:SourceRuntimePathScripts()
+function! s:SourceRuntimePathScripts() abort
   try
     " This call may fail if we failed to load `vim-pathogen`.
     let paths = pathogen#split(&runtimepath)
@@ -831,7 +831,7 @@ call s:SourceRuntimePathScripts()
 
 " Git Plugin
 "{{{
-function! s:PreviewGitDiffCached()
+function! s:PreviewGitDiffCached() abort
   " Open `git diff --cached` in a preview window.
   DiffGitCached
   resize 20
