@@ -198,6 +198,7 @@ set completeopt=menuone
 " These are default to `off` but some implementation may set these to `on`.
 set nobackup
 set noundofile
+set noswapfile
 
 " Hide buffer when it is abandoned.
 set hidden
