@@ -1,20 +1,41 @@
 " Denite requires Neovim or Vim 8.0, and +python3.
 " Early exit if it doesn't support Denite.
-if ! has('python3') || !has('nvim') && v:version < 800
+if !((has('nvim') || v:version < 800) && has('python3'))
   finish
 endif
 
 " Denite customization
 "{{{
-" `jj` to enter normal mode.
-call denite#custom#map('insert', 'jj', '<denite:enter_mode:normal>', 'noremap')
-" Immediately exit Denite by <ESC> anyways.
-call denite#custom#map('normal', '<ESC>', '<denite:quit>', 'noremap')
-" <C-w> to move up path.
-call denite#custom#map('insert', '<C-w>', '<denite:move_up_path>', 'noremap')
+autocmd FileType denite call s:SetDeniteKeyMappings()
+
+function! s:SetDeniteKeyMappings() abort
+  " <CR> to do action.
+  nnoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
+  " `i` to open filter buffer.
+  nnoremap <silent><buffer><expr> i denite#do_map('open_filter_buffer')
+  " <Space> to toggle cursor candidate selection.
+  nnoremap <silent><buffer><expr> <Space> denite#do_map('toggle_select')
+  " <ESC> to exit denite.
+  nnoremap <silent><buffer><expr> <ESC> denite#do_map('quit')
+  " <C-w> to move up path.
+  nnoremap <silent><buffer><expr> <C-w> denite#do_map('move_up_path')
+endfunction
+
+autocmd FileType denite-filter call s:SetDeniteFilterKeyMappings()
+
+function! s:SetDeniteFilterKeyMappings() abort
+  " <CR> to do action in filter buffer.
+  inoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
+  " `jj` to exit filter buffer in insert mode.
+  imap <silent><buffer> jj <Plug>(denite_filter_quit)
+  " <ESC> to immediately exit filter buffer in insert mode.
+  imap <silent><buffer><expr> <ESC> <Plug>(denite_filter_quit)
+endfunction
 
 " Open window top top left. Default is 'botright'.
 call denite#custom#option('default', 'direction', 'topleft')
+call denite#custom#option('default', 'filter_split_direction', 'topleft')
+
 " Narrow window. Default is 20.
 call denite#custom#option('default', 'winheight', 10)
 "}}}
@@ -27,16 +48,6 @@ nnoremap [Denite] <Nop>
 nnoremap <silent> [Denite]f :<C-u>Denite buffer file_mru file/rec<CR>
 nnoremap <silent> [Denite]k :<C-u>DeniteBufferDir file<CR>
 nnoremap <silent> [Denite]l :<C-u>Denite file_mru<CR>
-
-function! s:ExecuteCommandOnCR(command)
-  if &buftype == ''
-    execute a:command
-  else
-    call feedkeys("\r", 'n')
-  endif
-endfunction
-
-nnoremap <silent> <CR> :<C-u>call <SID>ExecuteCommandOnCR('Denite buffer')<CR>
 "}}}
 
 " vim: tabstop=2 shiftwidth=2 textwidth=0 expandtab foldmethod=marker nowrap
