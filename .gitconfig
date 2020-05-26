@@ -1,62 +1,43 @@
 [core]
-  ignorecase = false
+	ignorecase = false
 
 [user]
-  name = Yoshimasa Niwa
-  email = niw@niw.at
+	name = Yoshimasa Niwa
+	email = niw@niw.at
 
 [alias]
-  # See also `shared/git.sh`.
-  br = branch
-  brs = branch --sort='committerdate'
-  ci = commit
-  co = checkout
-  gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
-  ref = symbolic-ref --short HEAD
-  st = status
+	# See also `shared/git.sh`.
+	br = branch
+	brs = branch --sort='committerdate'
+	ci = commit
+	co = checkout
+	gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
+	ref = symbolic-ref --short HEAD
+	st = status
 
 [color]
-  diff = auto
-  status = auto
-  branch = auto
+	diff = auto
+	status = auto
+	branch = auto
 
 [diff]
-  algorithm = histogram
+	algorithm = histogram
 
 [diff "utf-16"]
-  textconv = "iconv -f utf-16 -t utf-8"
+	textconv = "iconv -f utf-16 -t utf-8"
 
 [mergetool]
-  keepBackup = true
+	keepBackup = true
 
 [http]
-  # Increase HTTP post buffer to 100 MB
-  postBuffer = 104857600
+	# Increase HTTP post buffer to 100 MB
+	postBuffer = 104857600
 
 [format]
-  signature = Yoshimasa Niwa
-  signOff = true
+	signature = Yoshimasa Niwa
+	signOff = true
 
 # NOTE Use `git config --system credential.helper osxkeychain` to set credential helper
 # for system wide, not --global, since credential storage is per system.
 #[credential]
-#  helper = osxkeychain
-
-# tig Configurations
-# See man tigrc(5).
-[tig]
-  #line-graphics = ascii
-  tab-size = 4
-[tig "bind"]
-  # Disable default G mapping to git gc.
-  generic = G none
-  # Keybindings like vim.
-  generic = g move-first-line
-  generic = G move-last-line
-  generic = <Ctrl-b> move-page-up
-  generic = <Ctrl-f> move-page-down
-[tig "color"]
-  cursor = default black
-  date = white default
-  title-focus = white black
-  title-blur = black white
+#	helper = osxkeychain
