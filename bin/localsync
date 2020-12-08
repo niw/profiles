@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly COLOR_RESET=$(tput sgr0)
+readonly COLOR_RED=$(tput setaf 1)
+readonly COLOR_GREEN=$(tput setaf 2)
+
+help() {
+  echo "Usage: $0 [-n] push|pull host target"
+  exit 0
+}
+
+DRY_RUN=""
+while getopts ":nh" opts; do
+  case $opts in
+    n)
+      DRY_RUN="-n"
+      ;;
+    h | \?)
+      help
+      ;;
+  esac
+done
+readonly DRY_RUN
+shift $((OPTIND - 1))
+
+if [[ $# -lt 3 ]]; then
+  help
+fi
+readonly ACTION=$1
+readonly HOST="$2.local"
+
+TARGET=$3
+if [[ -d $TARGET ]]; then
+  TARGET=$(cd "$TARGET"; pwd -P)
+elif [[ -f $TARGET ]]; then
+  TARGET=$(cd "$(dirname "$TARGET")" >/dev/null; pwd -P)/$(basename "$TARGET")
+else
+  echo "$TARGET doesn't exist on the local file system." >&2
+  if [[ ! $TARGET =~ ^/ ]]; then
+    TARGET=$(pwd -P)/$TARGET
+  fi
+  echo "Use $TARGET" >&2
+fi
+readonly TARGET
+
+readonly TARGET_DIR=${TARGET%/*}
+readonly TARGET_FILE=${TARGET##*/}
+readonly DEST_PATH=${TARGET_DIR:-/}
+readonly SRC_PATH=${TARGET_DIR}/${TARGET_FILE}
+
+case $ACTION in
+  push)
+    echo "${COLOR_RED}Push ${TARGET}${COLOR_RESET}"
+    SRC=$SRC_PATH
+    DEST="$HOST:$DEST_PATH"
+    ;;
+  pull)
+    echo "${COLOR_GREEN}Pull ${TARGET}${COLOR_RESET}"
+    SRC="$HOST:$SRC_PATH"
+    DEST=$DEST_PATH
+    ;;
+  *)
+    echo "Unknown action $ACTION" >&2
+    exit 1
+    ;;
+esac
+readonly SRC
+readonly DEST
+
+readonly OPTIONS="${DRY_RUN} -avz8 -F --delete-after"
+
+echo "Options: $OPTIONS"
+echo "Source: $SRC"
+echo "Dest: $DEST"
+
+exec rsync $OPTIONS $SRC $DEST

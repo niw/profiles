@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly DNSSD_PID_FILE=/var/run/dns-sd_rsync.pid
+readonly RSYNCD_CONF_FILE=/tmp/rsyncd.conf
+
+readonly HOSTNAME=$(hostname -s)
+
+cleanup() {
+  if [[ -r $DNSSD_PID_FILE ]]; then
+    local -r pid=$(cat "$DNSSD_PID_FILE")
+    echo "Stop advertise rsync service on mdns (pid = $pid)..."
+    kill $pid
+    rm "$DNSSD_PID_FILE"
+  fi
+  if [[ -e $RSYNCD_CONF_FILE ]]; then
+    rm "$RSYNCD_CONF_FILE"
+  fi
+}
+trap "cleanup" EXIT
+
+echo "Start advertise rsync on mdns..."
+bash -c "bash -c 'echo -n \$\$ >\"$DNSSD_PID_FILE\" && exec dns-sd -R \"$HOSTNAME\" _rsync._tcp local 873' >/dev/null 2>&1 &
+disown %-"
+
+cat <<END_OF_RSYNCD_CONF_FILE > "$RSYNCD_CONF_FILE"
+pid file = /var/run/rsyncd.pid
+
+uid = root
+gid = wheel
+
+[home]
+path = $HOME
+comment = home
+read only = no
+END_OF_RSYNCD_CONF_FILE
+
+echo "Start rsync as daemon..."
+sudo rsync --daemon --config="$RSYNCD_CONF_FILE" --no-detach -4 -v
