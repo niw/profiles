@@ -1,36 +1,35 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-if [ ! -e /usr/bin/hdid ]; then
-	echo "hdid command is not found, This command must run under Mac OS X."
-	exit 0
+set -euo pipefail
+
+if [[ ! -e /usr/bin/hdid ]]; then
+  echo "hdid command is not found, This command must run under Mac OS X." >&2
+  exit 1
 fi
 
-if [ -z "$SIZE" ]; then
-	SIZE=$1
-fi
-if [ -z "$SIZE" ]; then
-	echo "Usage: $0 SIZE_IN_MEGABYTE [VOLUME_NAME]"
-	exit 0
+readonly SIZE=${SIZE:-${1:-}}
+if [[ -z $SIZE ]]; then
+  echo "Usage: $0 SIZE_IN_MEGABYTE [VOLUME_NAME]"
+  exit 0
 fi
 
-if [ -z "$VOLUME_NAME" ]; then
-	VOLUME_NAME=$2
-fi
-if [ -z "$VOLUME_NAME" ]; then
-	VOLUME_NAME=ramdisk
-fi
+readonly VOLUME_NAME=${VOLUME_NAME:-${2:-ramdisk}}
+readonly VOLUME_PATH="/Volumes/$VOLUME_NAME"
 
-VOLUME_PATH="/Volumes/$VOLUME_NAME"
-
-if [ -e "$VOLUME_PATH" ]; then
-	echo "$VOLUME_PATH already exists."
-	exit 1
+if [[ -e $VOLUME_PATH ]]; then
+  echo "$VOLUME_PATH already exists." >&2
+  exit 1
 fi
 
-# make ramdisk
-NUMSECTORS=`expr 2048 \* $SIZE`
-DEVICE_NAME=`hdid -nomount ram://$NUMSECTORS`
+# Create ramdisk
+readonly NUMSECTORS=$(( $SIZE * 2048 ))
+readonly DEVICE_NAME=$(/usr/bin/hdid -nomount ram://$NUMSECTORS)
 
-# format as HFS+
-diskutil eraseDisk HFS+ "$VOLUME_NAME" $DEVICE_NAME
-diskutil enableOwnership "$VOLUME_NAME"
+echo "Size: $SIZE MB"
+echo "Number of Sectors: $NUMSECTORS"
+echo "Device name: $DEVICE_NAME"
+echo "Volume name: $VOLUME_NAME"
+
+# Format it as HFS+
+/usr/sbin/diskutil eraseDisk HFS+ "$VOLUME_NAME" $DEVICE_NAME
+/usr/sbin/diskutil enableOwnership "$VOLUME_NAME"

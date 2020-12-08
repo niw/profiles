@@ -1,12 +1,20 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-TMPFILE1=`mktemp -t $(basename $1)` || exit 1
-TMPFILE2=`mktemp -t $(basename $2)` || exit 1
+set -euo pipefail
 
-iconv -f utf-16 -t utf-8 $1 > $TMPFILE1
-iconv -f utf-16 -t utf-8 $2 > $TMPFILE2
+if [[ $# -lt 2 ]]; then
+  echo "Usage: $0 FILS..."
+  exit 0
+fi
 
-diff -u $TMPFILE1 $TMPFILE2
+TMPFILE1=$(mktemp -t "$(basename "$1")") || exit 1
+TMPFILE2=$(mktemp -t "$(basename "$1")") || exit 1
+readonly TEMPFILE1 TEMPFILE2
 
-rm -f $TMPFILE1
-rm -f $TMPFILE2
+iconv -f utf-16 -t utf-8 "$1" > "$TMPFILE1"
+iconv -f utf-16 -t utf-8 "$2" > "$TMPFILE2"
+
+diff -u "$TMPFILE1" "$TMPFILE2"
+
+rm -f "$TMPFILE1"
+rm -f "$TMPFILE2"

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 if [[ $# -lt 1 ]]; then
   echo "Usage: $0 source [dest]"
   echo "START_TIME=[HH:]MM:SS[.m]"
@@ -19,7 +21,7 @@ readonly FPS=${FPS:-"15"}
 readonly FRAME_DURATION_SCALE=${FRAME_DURATION_SCALE:-"1.0"}
 
 readonly SOURCE=$1
-if [[ -z $2 ]]; then
+if [[ -z ${2:-} ]]; then
   DEST="${SOURCE%.*}.gif"
 else
   DEST=$2

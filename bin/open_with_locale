@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
-readonly locale="$1"; shift
+set -euo pipefail
 
-echo "Open $@ in locale $1..."
-exec open "$@" --args -AppleLanguages "($locale)" -AppleLocale "$locale"
+if [[ $# < 1 ]]; then
+  echo "Usage: $0 LOCALE ..."
+  exit
+fi
+
+readonly LOCALE="$1"
+shift
+
+echo "Open $@ in locale $LOCALE..." >&2
+exec open "$@" --args -AppleLanguages "($LOCALE)" -AppleLocale "$LOCALE"

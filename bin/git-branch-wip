@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 readonly BRANCH_NAME=$(git symbolic-ref -q --short HEAD)
 readonly HASH=$(git rev-parse HEAD|head -c 7)
 

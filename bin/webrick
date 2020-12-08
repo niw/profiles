@@ -4,8 +4,14 @@ require "webrick"
 require "webrick/https"
 require "optparse"
 
-args = {}
+args = {
+  :document_root => File.expand_path(Dir.pwd),
+  :port => 3000
+}
 OptionParser.new.tap do |opt|
+  opt.on("-d", "--document-root=PATH") do |value|
+    args[:document_root] = value
+  end
   opt.on("-p", "--port=PORT") do |value|
     args[:port] = value.to_i
   end
@@ -43,9 +49,9 @@ class NullServlet < WEBrick::HTTPServlet::AbstractServlet
 end
 
 options = {
-  :Port => args[:port] || 3000,
+  :Port => args[:port],
   :BindAddress => '0.0.0.0',
-  :DocumentRoot => File.expand_path(Dir.pwd),
+  :DocumentRoot => args[:document_root],
   :MimeTypes => WEBrick::HTTPUtils::DefaultMimeTypes.merge({
     # place additional MIME types here
     # "jpg" => "image/jpeg"

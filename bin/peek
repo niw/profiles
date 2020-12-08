@@ -1,7 +1,0 @@
-#!/bin/zsh
-
-if [[ $OSTYPE != darwin* ]]; then
-  sudo gdb --batch -ex bt --ex detach --pid $1
-else
-  sudo gdb --batch -x =((echo bt;echo detach)) --pid $1
-fi

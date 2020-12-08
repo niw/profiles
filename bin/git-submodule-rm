@@ -1,13 +1,15 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-if [ -z "$1" ]; then
+set -euo pipefail
+
+if [[ $# < 1 ]]; then
   echo "Usage: $0 submodule-path"
   exit
 fi
-SUBMODULE_PATH="$1"
+readonly SUBMODULE_PATH="$1"
 
-if [ ! -d ".git" ]; then
-  echo "You need to run this command from the toplevel of the working tree."
+if [[ ! -d ".git" ]]; then
+  echo "You need to run this command from the toplevel of the working tree." >&2
   exit 1
 fi
 

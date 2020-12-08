@@ -2,22 +2,34 @@
 
 require "webrick"
 require "webrick/httpproxy"
+require "optparse"
+
+args = {
+  :port => 8080
+}
+OptionParser.new.tap do |opt|
+  opt.on("-p", "--port=PORT") do |value|
+    args[:port] = value.to_i
+  end
+end.parse!(ARGV)
 
 handler = Proc.new() {|req,res|
   puts "Request: " + req.header.inspect
   puts "Response: " + res.header.inspect
 }
 
-s = WEBrick::HTTPProxyServer.new(
+options = {
   :BindAddress => "127.0.0.1",
-  :Port => 8080,
+  :Port => args[:port],
   :Logger => WEBrick::Log::new($stderr, WEBrick::Log::DEBUG),
   :ProxyVia => false,
   :ProxyContentHandler => handler
-)
+}
+
+server = WEBrick::HTTPProxyServer.new(options)
 
 Signal.trap("INT") do
- s.shutdown
+  server.shutdown
 end
 
-s.start
+server.start
