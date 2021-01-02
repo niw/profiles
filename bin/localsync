@@ -54,11 +54,11 @@ case $ACTION in
   push)
     echo "${COLOR_RED}Push ${TARGET}${COLOR_RESET}"
     SRC=$SRC_PATH
-    DEST="$HOST:$DEST_PATH"
+    DEST="$HOST:\"$DEST_PATH\""
     ;;
   pull)
     echo "${COLOR_GREEN}Pull ${TARGET}${COLOR_RESET}"
-    SRC="$HOST:$SRC_PATH"
+    SRC="$HOST:\"$SRC_PATH\""
     DEST=$DEST_PATH
     ;;
   *)
@@ -75,4 +75,4 @@ echo "Options: $OPTIONS"
 echo "Source: $SRC"
 echo "Dest: $DEST"
 
-exec rsync $OPTIONS $SRC $DEST
+exec rsync $OPTIONS "$SRC" "$DEST"
