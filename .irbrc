@@ -10,11 +10,12 @@ begin
 
   # --readline
   IRB.conf[:USE_READLINE] = true
+
   # --prompt-mode simple
   IRB.conf[:PROMPT_MODE] = :SIMPLE
   IRB.conf[:SAVE_HISTORY] = 100
 
-  # See http://bugs.ruby-lang.org/issues/show/1556
+  # See <http://bugs.ruby-lang.org/issues/show/1556>.
   # This is a patch to fix the bug in same way.
   if RUBY_VERSION == '1.8.7' &&
      IRB::HistorySavingAbility.respond_to?(:create_finalizer)
@@ -25,11 +26,11 @@ begin
         end
       end
 
-      # NOTE See /lib/irb.rc.
+      # NOTE See `/lib/irb.rc`.
       # I know this is not good, but there are no goot ways to patch
-      # IRB.start from here because this method itself is called from there.
-      # This hack if the caller can be assumed IRB.start, run IRB.irb_at_exit
-      # at eval_input level.
+      # `IRB.start` from here because this method itself is called from there.
+      # This hack if the caller can be assumed `IRB.start`, run `IRB.irb_at_exit`
+      # at `eval_input` level.
       class Irb
         alias :_eval_input :eval_input
         def eval_input
@@ -57,8 +58,6 @@ begin
       end
     end
   end
-rescue Object => e
-  STDERR.puts "Fail to initialize irb. #{e.inspect}"
 end
 
 if RUBY_VERSION < '2.7.0'
@@ -66,11 +65,5 @@ if RUBY_VERSION < '2.7.0'
     require 'rubygems'
     require 'wirb'
     Wirb.start
-  rescue LoadError
-    STDERR.puts 'Fail to load wirb gem.'
-  rescue Object => e
-    STDERR.puts "Fail to start wirb gem. #{e.inspect}"
   end
 end
-
-# vim:ft=ruby
