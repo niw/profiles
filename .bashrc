@@ -76,10 +76,6 @@ if startup-utils-use-rubies; then
   RPROMPT="$RPROMPT \$RUBIES_RUBY_NAME"
 fi
 
-if startup-utils-use-javas; then
-  RPROMPT="$RPROMPT \$JAVAS_JAVA_VERSION"
-fi
-
 startup-utils-source-scripts ~/.profiles/shared ~/.profiles/local
 
 startup-utils-clean-paths

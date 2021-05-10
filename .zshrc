@@ -280,10 +280,6 @@ if startup-utils-use-rubies; then
   RPROMPT="${RPROMPT} %F{red}\${RUBIES_RUBY_NAME}%f"
 fi
 
-if startup-utils-use-javas; then
-  RPROMPT="${RPROMPT} %F{magenta}\${JAVAS_JAVA_VERSION}%f"
-fi
-
 startup-utils-source-scripts ~/.profiles/shared ~/.profiles/local
 
 # Clean up `PATH` and `MANPATH` instead of using `startup-utils-clean-paths`.

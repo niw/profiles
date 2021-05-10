@@ -7,7 +7,6 @@ startup-utils() {
     startup-utils-get-color
     startup-utils-set-paths
     startup-utils-source-scripts
-    startup-utils-use-javas
     startup-utils-use-rubies
   )
   readonly functions
