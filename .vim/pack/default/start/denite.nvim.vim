@@ -29,7 +29,17 @@ function! s:SetDeniteFilterKeyMappings() abort
   " `jj` to exit filter buffer in insert mode.
   imap <silent><buffer> jj <Plug>(denite_filter_quit)
   " <ESC> to immediately exit filter buffer in insert mode.
-  imap <silent><buffer><expr> <ESC> <Plug>(denite_filter_quit)
+  imap <silent><buffer> <ESC> <Plug>(denite_filter_quit)
+endfunction
+
+autocmd FileType denite-filter call s:DisableDeopleteAutoComplete()
+
+function! s:DisableDeopleteAutoComplete() abort
+  " TODO: Find a better way to disable auto_complete,
+  " also find a better way to find if there is deoplete or not.
+  if exists('g:deoplete#_initialized')
+    deoplete#custom#buffer_option('auto_complete', v:false)
+  endif
 endfunction
 
 " Open window top top left. Default is 'botright'.
