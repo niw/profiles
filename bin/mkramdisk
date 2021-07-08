@@ -22,7 +22,7 @@ if [[ -e $VOLUME_PATH ]]; then
 fi
 
 # Create ramdisk
-readonly NUMSECTORS=$(( $SIZE * 2048 ))
+readonly NUMSECTORS=$((SIZE * 2048))
 readonly DEVICE_NAME=$(/usr/bin/hdid -nomount ram://$NUMSECTORS)
 
 echo "Size: $SIZE MB"
