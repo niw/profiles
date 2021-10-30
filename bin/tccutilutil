@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Based on the gist at <https://gist.github.com/haircut/aeb22c853b0ae4b483a76320ccc8c8e9>
+# See also <https://eclecticlight.co/2020/01/28/a-guide-to-catalinas-privacy-protection-4-tccutil/>
+readonly -a SERVICES=(
+  Accessibility
+  AddressBook
+  AppleEvents
+  Calendar
+  Camera
+  ContactsFull
+  ContactsLimited
+  Facebook
+  FileProviderDomain
+  FileProviderPresence
+  LinkedIn
+  Liverpool
+  MediaLibrary
+  Microphone
+  Motion
+  Photos
+  PhotosAdd
+  PostEvent
+  Reminders
+  ScreenCapture
+  ShareKit
+  SinaWeibo
+  Siri
+  SpeechRecognition
+  SystemPolicyAllFiles
+  SystemPolicyDesktopFolder
+  SystemPolicyDeveloperFiles
+  SystemPolicyDocumentsFolder
+  SystemPolicyNetworkVolumes
+  SystemPolicyRemovableVolumes
+  SystemPolicySysAdminFiles
+  SystemPolicyDownloadsFolder
+  TencentWeibo
+  Twitter
+  Ubiquity
+  Willow
+)
+readonly ALL_FILE_SERVICE=SystemPolicyAllFiles
+
+help() {
+  echo "USAGE"
+  echo "    $0 [command] [bundle id]"
+  echo ""
+  echo "COMMANDS"
+  echo "    list    List all known services"
+  echo "    reset   Reset all known tcc services except all file service"
+  exit
+}
+
+list() {
+  for service in "${SERVICES[@]}"; do
+    echo $service
+  done
+}
+
+reset() {
+  local -r bundle_id=${1:-}
+
+  for service in "${SERVICES[@]}"; do
+    # Exclude all file service which is manual selection included.
+    if [[ $service != $ALL_FILE_SERVICE ]]; then
+      tccutil reset $service $bundle_id
+    fi
+  done
+}
+
+readonly command=${1:-help}
+case $command in
+  list)
+    list
+    ;;
+  reset)
+    reset ${2:-}
+    ;;
+  *)
+    help
+    ;;
+esac
