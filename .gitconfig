@@ -37,7 +37,11 @@
 	signature = Yoshimasa Niwa
 	signOff = true
 
-# NOTE Use `git config --system credential.helper osxkeychain` to set credential helper
-# for system wide, not --global, since credential storage is per system.
+# NOTE Use following `git config --system` to set credential helper for system wide.
+# not `--global`, since credential storage is per system.
+# $ git config --system credential.helper osxkeychain
+# This will create a next configuration in system `/etc/gitconfig`.
+# Note that GitHub CLI also creates osxkeychain compatible token in Keychain, therefore
+# additional credential helper configuration is not needed for GitHub CLI usage.
 #[credential]
 #	helper = osxkeychain
