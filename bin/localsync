@@ -69,7 +69,7 @@ esac
 readonly SRC
 readonly DEST
 
-readonly OPTIONS="${DRY_RUN} -avz8 -F --delete-after"
+readonly OPTIONS="${DRY_RUN} -av8 -F --delete-after"
 
 echo "Options: $OPTIONS"
 echo "Source: $SRC"
