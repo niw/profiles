@@ -13,3 +13,7 @@ breakpoint set --name UIApplicationMain
 # This should be executed as a python script with `lldb.debugger.HandleCommand()`,
 # otherwise Xcode will freeze.
 breakpoint command add --stop-on-error true --script-type python --one-liner 'for c in ["reveal load", "reveal start", "process continue"]: lldb.debugger.HandleCommand(c)'
+
+# Experimental settings for Xcode.
+# See <https://forums.swift.org/t/lldb-is-slow-to-resolve-local-vars/32517/21> for details.
+settings set target.experimental.swift-create-module-contexts-in-parallel false
