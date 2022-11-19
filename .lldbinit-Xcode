@@ -5,7 +5,7 @@
 command source "~/.lldbinit"
 
 # Reveal
-command script import "/Applications/Reveal.app/Contents/SharedSupport/Scripts/RevealServerCommands.py"
+command script import "~/Library/Application Support/Reveal/RevealLLDBCommands/reveallldb"
 # Set a one-shot breakpoint on `UIApplicationMain` to install Reveal on the debugging process.
 # NOTE: Somehow if it has `--one-shot`, this doesn't work as expected.
 breakpoint set --name UIApplicationMain
