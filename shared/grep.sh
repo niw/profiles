@@ -1,4 +1,6 @@
-if which ag >/dev/null 2>&1; then
+if which rg >/dev/null 2>&1; then
+  alias gr=rg
+elif which ag >/dev/null 2>&1; then
   alias gr=ag
 elif which ack >/dev/null 2>&1; then
   alias gr=ack
