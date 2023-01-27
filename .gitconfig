@@ -37,6 +37,12 @@
 	signature = Yoshimasa Niwa
 	signOff = true
 
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
 # NOTE Use following `git config --system` to set credential helper for system wide.
 # not `--global`, since credential storage is per system.
 # $ git config --system credential.helper osxkeychain
