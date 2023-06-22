@@ -1,6 +1,6 @@
 " Denite requires Neovim or Vim 8.0, and +python3.
 " Early exit if it doesn't support Denite.
-if !((has('nvim') || v:version < 800) && has('python3'))
+if !((has('nvim') || v:version >= 800) && has('python3'))
   finish
 endif
 
