@@ -30,3 +30,9 @@
 	path = .vim/pack/default/start/swift.vim
 	url = https://github.com/keith/swift.vim.git
 	ignore = dirty
+[submodule ".vim/pack/default/start/nvim-yarp"]
+	path = .vim/pack/default/start/nvim-yarp
+	url = https://github.com/roxma/nvim-yarp.git
+[submodule ".vim/pack/default/start/vim-hug-neovim-rpc"]
+	path = .vim/pack/default/start/vim-hug-neovim-rpc
+	url = https://github.com/roxma/vim-hug-neovim-rpc.git
