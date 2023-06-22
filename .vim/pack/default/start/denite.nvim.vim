@@ -4,6 +4,13 @@ if !((has('nvim') || v:version >= 800) && has('python3'))
   finish
 endif
 
+" Denite requires `pynvim` Python 3 module.
+try
+  python3 import pynvim
+catch
+  finish
+endtry
+
 " Denite customization
 "{{{
 autocmd FileType denite call s:SetDeniteKeyMappings()
