@@ -36,3 +36,6 @@
 [submodule ".vim/pack/default/start/vim-hug-neovim-rpc"]
 	path = .vim/pack/default/start/vim-hug-neovim-rpc
 	url = https://github.com/roxma/vim-hug-neovim-rpc.git
+[submodule ".vim/pack/default/start/jellybeans"]
+	path = .vim/pack/default/start/jellybeans
+	url = https://github.com/nanotech/jellybeans.vim.git
