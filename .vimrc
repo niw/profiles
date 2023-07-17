@@ -168,6 +168,7 @@ set cmdheight=2
 " Default height for a preview window.
 set previewheight=40
 " Highlight a pair of < and >.
+set matchpairs&
 set matchpairs+=<:>
 " Use dark background by default.
 set background=dark
