@@ -2,8 +2,16 @@
 " NOTE: this must be in a single line. See `:help no-eval-feature`.
 if !1 | finish | endif
 
-" Most of this `.vimrc` may work even on Vim 6 or prior,
+" Most of this `vimrc` may work even on Vim 6 or prior,
 " We disable everything to avoid unexpected behaviors.
+"
+" Since v7.3, `vimrc` location has been `~/.vim/vimrc` and this file
+" also has been relocated now.
+" Therefore, anyways by default, prior version of Vim may not load
+" this file without symbolic link to `~/.vimrc`.
+"
+" Note that also for NeoVim, it is required to symbolic link
+" this file to `~/.config/nvim/init.vim`.
 if v:version < 700
   finish
 endif
@@ -17,13 +25,6 @@ endif
 augroup MyAutoCommands
   autocmd!
 augroup END
-
-" Source site local configuration.
-" Mostly for set dynamic link library paths.
-" TODO: Find a better solution.
-if filereadable($HOME . '/.vimrc.local')
-  execute 'source ' . $HOME . '/.vimrc.local'
-endif
 
 "{{{ Encodings and Input Method
 
@@ -523,7 +524,7 @@ xnoremap <silent> gr :<C-u>call <SID>Grep(<SID>GetSelectedText())<CR>
 " Make
 noremap <silent> [Space], :<C-u>make<CR>
 
-" Quick edit and reload .vimrc
+" Quick edit and reload vimrc
 map [Space]. [Vimrc]
 nnoremap <silent> [Vimrc]e :<C-u>edit $MYVIMRC<CR>
 nnoremap <silent> [Vimrc]s :<C-u>source $MYVIMRC<CR>
