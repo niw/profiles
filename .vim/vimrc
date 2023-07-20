@@ -261,6 +261,12 @@ if filereadable($VIM . '/vimrc') && filereadable($VIM . '/ViMrC')
   set tags=./tags,tags
 endif
 
+" Disable mouse support on non-GUI environment.
+" For example, NeoVim by defualt enables mouse support even on console.
+if !has('gui')
+  set mouse=
+endif
+
 "}}}
 
 "{{{ Syntax and File Types
