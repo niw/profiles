@@ -5,7 +5,7 @@ augroup END
 
 " Font
 if has('gui_macvim')
-  set guifont=Menlo:h14
+  set guifont=SFMono-Regular:h14
 endif
 
 " Window size
