@@ -26,6 +26,35 @@ augroup MyAutoCommands
   autocmd!
 augroup END
 
+"  {{{ Dynamic Features Support
+
+" TODO: Add Ruby and others support as needed.
+" See `:help Provider`.
+
+" Unset `PYTHONHOME` for virtualenv.
+call setenv('PYTHONHOME', v:null)
+
+" Use localized Python 3 for Vim by virtualenv.
+" Create `~/.vim/.venv` by using, for example, `python3 -m venv ~/.vim/.venv`.
+" This is required to have `has('python3')` on NeoVim
+" See `:help python-virtualenv`.
+" Also this may be used by multiple plugins to fork `python3` subprocess on Vim.
+if filereadable($HOME . '/.vim/.venv/bin/python3')
+  let g:python3_host_prog = $HOME . '/.vim/.venv/bin/python3'
+
+  " Rewriting sys.prefix by using `__PYVENV_LAUNCHER__` works only on macOS.
+  " See `site.py`. This is mostly hack.
+  " Also behavior would be unknown if linked or dyld python3 is not same as the one
+  " used in virtualenv.
+  if !has('nvim') && has('mac')
+    call setenv('__PYVENV_LAUNCHER__', $HOME . '/.vim/.venv/bin/python3')
+  endif
+else
+  let g:loaded_python3_provider = 0
+endif
+
+"}}}
+
 "{{{ Encodings and Input Method
 
 " Internal encoding. Always using UTF-8.
