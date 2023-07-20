@@ -28,6 +28,7 @@ set visualbell t_vb=
 set cmdheight=2
 
 " No toolbar, No menubar, No scrollbars.
+set guioptions&
 set guioptions-=T
 set guioptions-=m
 set guioptions-=l
