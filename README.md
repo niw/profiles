@@ -15,14 +15,11 @@ Install
 Following the next steps to use this configuration files.
 
     % git clone git://github.com/niw/profiles.git ~/.profiles
-    % cd ~/.profiles
-    % git submodule init
-    % git submodule update
-    % ./setup
+    % ~/.profiles/symlinks.py
 
 Uninstall
 ---------
 
 Using setup command, you can remove all symlinks to the configuration files.
 
-    % ~/.profiles/setup -r
+    % ~/.profiles/symlinks.py remove
