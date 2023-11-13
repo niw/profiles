@@ -1,7 +1,7 @@
 local autocommands = {
   _group = vim.api.nvim_create_augroup('init', { clear = true }),
 
-  create = function(self, event, options)
+  create = function (self, event, options)
     if type(options) == 'function' then
       options = {
         callback = options
@@ -305,8 +305,8 @@ local function next_normal_file_buffer(backward)
 
     local handle = buffer_handles[buffer_index]
     if vim.api.nvim_buf_is_valid(handle) and
-      vim.api.nvim_buf_get_option(handle, 'buftype') == '' and
-      vim.fn.isdirectory(vim.api.nvim_buf_get_name(handle)) == 0 then
+        vim.api.nvim_buf_get_option(handle, 'buftype') == '' and
+        vim.fn.isdirectory(vim.api.nvim_buf_get_name(handle)) == 0 then
       return handle
     end
   end
@@ -499,7 +499,7 @@ _G.plugins_hook_function = {
   _functions = {},
 
   -- Add func in global variable then return Vim script that calls it.
-  create = function(self, func)
+  create = function (self, func)
     table.insert(self._functions, func)
     local id = #self._functions
     return 'call v:lua.plugins_hook_function.call(' .. id .. ')'
@@ -507,7 +507,7 @@ _G.plugins_hook_function = {
 
   -- Can't use self syntax pattern with 'v:lua'
   -- Directry reference global self.
-  call = function(id)
+  call = function (id)
     return plugins_hook_function._functions[id]()
   end
 }
