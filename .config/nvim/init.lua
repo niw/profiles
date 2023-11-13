@@ -493,62 +493,28 @@ end, { bar = true })
 
 -- {{{ Plugins
 
--- This is global to expose in Vim script with `v:lua`
--- to call hook function from Vim script.
-_G.plugins_hook_function = {
-  _functions = {},
+local plugins = require('plugins')
 
-  -- Add func in global variable then return Vim script that calls it.
-  create = function (self, func)
-    table.insert(self._functions, func)
-    local id = #self._functions
-    return 'call v:lua.plugins_hook_function.call(' .. id .. ')'
-  end,
-
-  -- Can't use self syntax pattern with 'v:lua'
-  -- Directry reference global self.
-  call = function (id)
-    return plugins_hook_function._functions[id]()
-  end
-}
-
-local function use_plugin(plugin, ...)
-  -- This must be `vim.empty_dict()` or it will be converted as list in vim.fn.
-  local options = vim.empty_dict()
-  local hook_post_source_func
-  for _, arg in pairs({ ... }) do
-    if type(arg) == 'table' then
-      for k, v in pairs(arg) do
-        options[k] = v
-      end
-    elseif type(arg) == 'function' then
-      hook_post_source_func = arg
+plugins.setup({
+  {
+    'nanotech/jellybeans.vim',
+    config = function ()
+      vim.cmd.colorscheme('jellybeans')
     end
-  end
-  if hook_post_source_func then
-    options['hook_post_source'] = plugins_hook_function:create(hook_post_source_func)
-  end
-  return vim.fn['jetpack#add'](plugin, options)
-end
+  },
 
-local function configure_plugins(plugins)
-  vim.fn['jetpack#begin']()
-  plugins()
-  vim.fn['jetpack#end']()
-end
+  'tpope/vim-surround',
 
-configure_plugins(function ()
-  use_plugin('nanotech/jellybeans.vim', function ()
-    vim.cmd.colorscheme('jellybeans')
-  end)
+  {
+    'tpope/vim-commentary',
+    config = function ()
+      -- TODO: Consider to change this `,` to `/`.
+      vim.keymap.set('v', ',', '<Plug>Commentary')
+    end
+  }
+})
 
-  use_plugin('tpope/vim-surround')
-
-  use_plugin('tpope/vim-commentary', function ()
-    -- TODO: Consider to change this `,` to `/`.
-    vim.keymap.set('v', ',', '<Plug>Commentary')
-  end)
-end)
+plugins.sync()
 
 -- }}}
 
