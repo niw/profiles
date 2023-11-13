@@ -508,28 +508,37 @@ plugins_hook_function = {
   end
 }
 
-local function use_plugin(...)
-  vim.fn['jetpack#add'](...)
+local function use_plugin(plugin, options)
+  if type(options) == 'function' then
+    options = {
+      hook_post_source = plugins_hook_function:create(options)
+    }
+  end
+  local args = { plugin }
+  if options then
+    table.insert(args, options)
+  end
+  return vim.fn['jetpack#add'](unpack(args))
 end
 
-vim.fn['jetpack#begin']()
+local function configure_plugins(plugins)
+  vim.fn['jetpack#begin']()
+  plugins()
+  vim.fn['jetpack#end']()
+end
 
-use_plugin('nanotech/jellybeans.vim', {
-  hook_post_source = plugins_hook_function:create(function ()
+configure_plugins(function ()
+  use_plugin('nanotech/jellybeans.vim', function ()
     vim.cmd.colorscheme('jellybeans')
   end)
-})
 
-use_plugin('tpope/vim-surround')
+  use_plugin('tpope/vim-surround')
 
-use_plugin('tpope/vim-commentary', {
-  hook_post_source = plugins_hook_function:create(function ()
+  use_plugin('tpope/vim-commentary', function ()
     -- TODO: Consider to change this `,` to `/`.
     vim.keymap.set('v', ',', '<Plug>Commentary')
   end)
-})
-
-vim.fn['jetpack#end']()
+end)
 
 -- }}}
 
