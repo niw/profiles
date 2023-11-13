@@ -66,6 +66,7 @@ let g:jetpack_download_method =
 let s:cmds = {}
 let s:maps = {}
 let s:declared_packages = {}
+let s:declared_package_names = []
 
 let s:status = {
 \   'pending': 'pending',
@@ -472,6 +473,7 @@ function! jetpack#add(plugin, ...) abort
   \ }
   let pkg.opt = get(opts, 'opt', jetpack#is_opt(pkg))
   let s:declared_packages[name] = pkg
+  let s:declared_package_names += [name]
   call jetpack#execute(pkg.hook_add)
 endfunction
 
@@ -634,7 +636,8 @@ function! jetpack#end() abort
     echomsg 'Some packages are not synchronized. Run :JetpackSync'
   endif
 
-  for [pkg_name, pkg] in items(s:declared_packages)
+  for pkg_name in s:declared_package_names
+    let pkg = s:declared_packages[pkg_name]
     for dep_name in pkg.dependers_before
       let cmd = 'call jetpack#load("'.pkg_name.'")'
       let pattern = 'JetpackPre:'.dep_name
