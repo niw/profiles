@@ -130,6 +130,10 @@ reset_option(vim.opt.matchpairs)
 vim.opt.matchpairs:append({ '<:>' })
 -- Disable to translate menu.
 vim.o.langmenu = 'none'
+-- Enable 24-bit colors if `COLORTERM` is `truecolor`.
+if vim.env.COLORTERM == 'truecolor' then
+  vim.o.termguicolors = true
+end
 
 -- Status line
 
