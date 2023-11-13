@@ -512,17 +512,23 @@ _G.plugins_hook_function = {
   end
 }
 
-local function use_plugin(plugin, options)
-  if type(options) == 'function' then
-    options = {
-      hook_post_source = plugins_hook_function:create(options)
-    }
+local function use_plugin(plugin, ...)
+  -- This must be `vim.empty_dict()` or it will be converted as list in vim.fn.
+  local options = vim.empty_dict()
+  local hook_post_source_func
+  for _, arg in pairs({ ... }) do
+    if type(arg) == 'table' then
+      for k, v in pairs(arg) do
+        options[k] = v
+      end
+    elseif type(arg) == 'function' then
+      hook_post_source_func = arg
+    end
   end
-  local args = { plugin }
-  if options then
-    table.insert(args, options)
+  if hook_post_source_func then
+    options['hook_post_source'] = plugins_hook_function:create(hook_post_source_func)
   end
-  return vim.fn['jetpack#add'](unpack(args))
+  return vim.fn['jetpack#add'](plugin, options)
 end
 
 local function configure_plugins(plugins)
