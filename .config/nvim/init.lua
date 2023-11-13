@@ -110,6 +110,10 @@ vim.o.shiftround = true
 -- Allow h, l, <Left> and <Right> to move to the previous/next line.
 reset_option(vim.opt.whichwrap)
 enable_option_flags(vim.opt.whichwrap, '<', '>', '[', ']', 'h', 'l')
+-- Disable mouse if it is not 'gui'.
+if vim.fn.has('gui') == 0 then
+  vim.o.mouse = ''
+end
 
 -- Displays
 
@@ -481,7 +485,7 @@ for command, encoding in pairs({
 end
 
 -- Change current directory to the one of current file.
-vim.api.nvim_create_user_command('Cd', function (arg)
+vim.api.nvim_create_user_command('Cd', function ()
   local path = vim.api.nvim_buf_get_name(0)
   if vim.fn.isdirectory(path) == 0 then
     path = vim.fs.dirname(path)
