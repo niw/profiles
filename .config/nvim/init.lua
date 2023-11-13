@@ -21,39 +21,43 @@ local autocommands = {
 -- {{{ Encodings
 
 local function set_file_encodings()
-  local enc_eucjp = 'euc-jp'
-  local enc_iso2022jp = 'iso-2022-jp'
+  local fileencodings = {
+    'ucs-bom'
+  }
 
-  -- Check availability of iconv library.
+  local eucjp = 'euc-jp'
+  local iso2022jp = 'iso-2022-jp'
+
+  -- Check availability of JIS X 0213 on `iconv()`.
   -- Try converting the chars defined in EUC JIS X 0213 to CP932
   -- to make sure iconv supports JIS X 0213 or not.
   if vim.fn.iconv(string.char(0x87, 0x64, 0x87, 0x6a), 'cp932', 'euc-jisx0213') == string.char(0xad, 0xc5, 0xad, 0xcb) then
-    enc_eucjp = 'euc-jisx0213,euc-jp'
-    enc_iso2022jp = 'iso-2022-jp-3'
+    eucjp = 'euc-jisx0213,euc-jp'
+    iso2022jp = 'iso-2022-jp-3'
   end
 
-  vim.opt.fileencodings = {
-    'ucs-bom',
-    enc_iso2022jp,
-    -- There are the cases that we can't differentiate UTF-8 from EUC or Shift-JIS.
-    -- Assume that UTF-8 is common encoding now, it takes precedent than the others.
-    'utf-8',
-    enc_eucjp,
-    'cp932',
-    'default'
-  }
+  -- Check if `iconv()` can handle ISO-2022-JP properly with UTF-8.
+  -- Some `iconv()` such as the one in macOS wrongly converts invalid ISO-2022-JP bytes to UTF-8.
+  -- This may open UTF-8 files as ISO-2022-JP, because `readfile()` always try to convert file
+  -- to UTF-8 and see if it success or not.
+  -- See `src/nvim/fileio.c`.
+  -- Thus, try convert ' 🐱', which heading a space may cause this issue, to see if it fails.
+  -- If it converts to '?' that means it properly failed to convert UTF-8 bytes.
+  if vim.fn.iconv(string.char(0x20, 0xf0, 0x9f, 0x90, 0xb1), 'iso-2022-jp', 'utf-8') == ' ??' then
+    table.insert(fileencodings, iso2022jp)
+  end
+
+  -- There are the cases that we can't differentiate UTF-8 from EUC-JP or CP932.
+  -- Assume that UTF-8 is common encoding now, it takes precedent than the others.
+  table.insert(fileencodings, 'utf-8')
+  table.insert(fileencodings, eucjp)
+  table.insert(fileencodings, 'cp932')
+  table.insert(fileencodings, 'default')
+
+  vim.opt.fileencodings = fileencodings
 end
 
 set_file_encodings()
-
--- Make sure the file is not including any Japanese in ISO-2022-JP, use UTF-8 for fileencoding.
-autocommands:create('BufReadPost', function ()
-  -- For `string.match()`, Lua's pattern is strange, need to escape `-` with `%`.
-  -- For `vim.fn.search()`, it requires to escape `\` as Lua's string.
-  if vim.o.fileencoding:match('iso%-2022%-jp') and vim.fn.search('[^\\x01-\\x7e]', 'n') == 0 then
-    vim.o.fileencoding = 'utf-8'
-  end
-end)
 
 -- }}}
 
