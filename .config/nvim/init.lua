@@ -473,7 +473,7 @@ for command, encoding in pairs({
 }) do
   vim.api.nvim_create_user_command(command, function (arg)
     vim.cmd('edit! ++enc=' .. encoding .. ' ' .. arg.args)
-  end, { bang = true, bar = true, complete = file, nargs = '?' })
+  end, { bang = true, bar = true, complete = 'file', nargs = '?' })
 end
 
 -- Change current directory to the one of current file.
@@ -491,7 +491,7 @@ end, { bar = true })
 
 -- This is global to expose in Vim script with `v:lua`
 -- to call hook function from Vim script.
-plugins_hook_function = {
+_G.plugins_hook_function = {
   _functions = {},
 
   -- Add func in global variable then return Vim script that calls it.
