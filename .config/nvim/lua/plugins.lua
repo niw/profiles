@@ -44,7 +44,7 @@ local function create_hook(hook_name, pkg_name, value)
   end
 
   return
-    "lua if require('plugins')._jetpack.tap('" .. pkg_name .. "') then " ..
+    ":lua if require('plugins')._jetpack.tap('" .. pkg_name .. "') then " ..
     "  require('plugins')._hooks['" .. hook_name .. "." .. pkg_name .. "']() " ..
     "end"
 end
