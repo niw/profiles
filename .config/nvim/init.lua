@@ -249,7 +249,7 @@ vim.keymap.set('', '<LocalLeader>', '<Nop>')
 
 local function keymap_prefix(mode, key)
   -- Strip '<...>' from key if it exists.
-  local name = key:match('<(.+)>') or key
+  local name = string.match(key, '<(.+)>') or key
   vim.keymap.set(mode, key, '<Nop>')
   vim.keymap.set(mode, key, '[' .. name .. ']', { remap = true })
 end
@@ -429,6 +429,21 @@ vim.keymap.set('v', '[Space]<Space>', function ()
   highlight_search_keyword(word)
 end)
 
+-- Command-line Window
+
+vim.keymap.set('n', ';', 'q:i')
+vim.keymap.set('n', ':', 'q:i')
+
+autocommands:create('CmdwinEnter', function ()
+  vim.keymap.set('n', '<ESC><ESC>', function ()
+    vim.cmd.quit()
+  end, { buffer = true })
+  vim.keymap.set('n', ':', '<Nop>', { buffer = true })
+  vim.keymap.set('n', ';', '<Nop>', { buffer = true })
+end)
+
+-- Miscellaneous
+
 -- Move cursor by display line
 vim.keymap.set('', 'j', 'gj')
 vim.keymap.set('', 'k', 'gk')
@@ -443,25 +458,13 @@ vim.keymap.set('n', '#', '#zzzv')
 vim.keymap.set('n', 'g*', 'g*zzzv')
 vim.keymap.set('n', 'g#', '#zzzv')
 
--- Use command-line window.
-vim.keymap.set('n', ';', 'q:i')
-vim.keymap.set('n', ':', 'q:i')
-
-autocommands:create('CmdwinEnter', function ()
-  vim.keymap.set('n', '<ESC><ESC>', function ()
-    vim.cmd.quit()
-  end, { buffer = true })
-  vim.keymap.set('n', ':', '<Nop>', { buffer = true })
-  vim.keymap.set('n', ';', '<Nop>', { buffer = true })
-end)
-
 -- Select the last modified texts.
 vim.keymap.set('n', 'gm', '`[v`]', { silent = true })
 
 -- Lookup help
 vim.keymap.set('n', '[Space]h', ':<C-u>help <C-r><C-w><CR>', { silent = true })
 
--- Wrap
+-- Toggle text wrap
 vim.keymap.set('n', '[Space]w', function ()
   vim.wo.wrap = not vim.wo.wrap
 end)
