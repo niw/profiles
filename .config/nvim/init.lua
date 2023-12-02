@@ -154,10 +154,14 @@ vim.o.statusline = (
 
 -- Completion
 
--- Complete longest common string, list all matches and complete the next full match.
+-- Command-line completion behavior.
+-- See `:help wildmode`.
 vim.opt.wildmode = { 'longest', 'list', 'full' }
--- Use the pop up menu even if it has only one match.
-vim.opt.completeopt = { 'menuone', 'preview' }
+-- Completion behavior.
+-- See `:help completeopt`
+vim.opt.completeopt = { 'menuone', 'noselect', 'noinsert' }
+-- Extend popup menu width.
+vim.o.pumwidth = 20
 
 -- Use multibyte aware format.
 -- See `:help fo-table`.
@@ -428,6 +432,42 @@ vim.keymap.set('v', '[Space]<Space>', function ()
   vim.fn.setpos('.', pos)
   highlight_search_keyword(word)
 end)
+
+-- Completion
+
+-- Not inserting candidate when <C-n> and <C-p>.
+vim.keymap.set('i', '<C-n>', function ()
+  if vim.fn.pumvisible() == 1 then
+    return '<Down>'
+  else
+    return '<C-n>'
+  end
+end, { expr = true })
+vim.keymap.set('i', '<C-p>', function ()
+  if vim.fn.pumvisible() == 1 then
+    return '<Up>'
+  else
+    return '<C-n>'
+  end
+end, { expr = true })
+
+-- Trigger omni completion with <Tab> if there is a character
+-- in front of current cursor position.
+vim.keymap.set('i', '<Tab>', function ()
+  -- This `cols` is in byte offset.
+  local rows, cols = unpack(vim.api.nvim_win_get_cursor(0))
+  if cols > 0 then
+    local line = vim.api.nvim_buf_get_lines(0, rows - 1, rows, false)[1]
+    -- This will not return a single Unicode code point but a byte.
+    -- however, it's enough for this use case.
+    local char = string.sub(line, cols, cols)
+    -- Check if it's an alphanumetic character or '.'.
+    if (string.match(char, '[%w.]')) then
+      return '<C-x><C-o>'
+    end
+  end
+  return '<Tab>'
+end, { expr = true })
 
 -- Command-line Window
 
