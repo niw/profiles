@@ -228,7 +228,7 @@ autocommands:create('FileType', {
   pattern = 'conf',
   callback = function ()
     -- Use spell check always for `conf`.
-    vim.bo.spell = true
+    vim.wo.spell = true
   end
 })
 
