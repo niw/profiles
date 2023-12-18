@@ -2,46 +2,69 @@
 
 set -euo pipefail
 
-# Based on the gist at <https://gist.github.com/haircut/aeb22c853b0ae4b483a76320ccc8c8e9>
-# See also <https://eclecticlight.co/2020/01/28/a-guide-to-catalinas-privacy-protection-4-tccutil/>
+# Strings extracted from `/System/Library/PrivateFrameworks/TCC.framework/Versions/A/TCC`,
+# which prefixed with `kTCCService`.
+# TCC.framework is in dyld cache therefore need to be extract from, for example,
+# `/System/Volumes/Preboot/Cryptexes/OS/System/Library/dyld/dyld_shared_cache_arm64e`.
 readonly -a SERVICES=(
   Accessibility
   AddressBook
+  All
   AppleEvents
+  AudioCapture
+  BluetoothAlways
   Calendar
   Camera
   ContactsFull
   ContactsLimited
+  DeveloperTool
+  EndpointSecurityClient
   Facebook
   FileProviderDomain
   FileProviderPresence
+  FocusStatus
+  GameCenterFriends
   LinkedIn
+  ListenEvent
   Liverpool
+  Location
   MediaLibrary
   Microphone
   Motion
   Photos
   PhotosAdd
   PostEvent
+  Prototype3Rights
+  Prototype4Rights
   Reminders
+  RemoteDesktop
   ScreenCapture
   ShareKit
   SinaWeibo
   Siri
   SpeechRecognition
   SystemPolicyAllFiles
+  SystemPolicyAppBundles
+  SystemPolicyAppData
   SystemPolicyDesktopFolder
   SystemPolicyDeveloperFiles
   SystemPolicyDocumentsFolder
+  SystemPolicyDownloadsFolder
   SystemPolicyNetworkVolumes
   SystemPolicyRemovableVolumes
   SystemPolicySysAdminFiles
-  SystemPolicyDownloadsFolder
   TencentWeibo
   Twitter
   Ubiquity
+  UserAvailability
+  UserTracking
+  VirtualMachineNetworking
+  VoiceBanking
+  WebBrowserPublicKeyCredential
+  WebKitIntelligentTrackingPrevention
   Willow
 )
+
 readonly ALL_FILE_SERVICE=SystemPolicyAllFiles
 
 help() {
