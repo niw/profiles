@@ -221,19 +221,6 @@ end)
 
 -- }}}
 
--- {{{ File Types
-
--- conf
-autocommands:create('FileType', {
-  pattern = 'conf',
-  callback = function ()
-    -- Use spell check always for `conf`.
-    vim.wo.spell = true
-  end
-})
-
--- }}}
-
 -- {{{ Key Mappings
 
 -- Leaders
