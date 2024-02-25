@@ -15,7 +15,7 @@ typeset -U manpath MANPATH
 autoload -Uz startup-utils
 startup-utils
 
-startup-utils-set-paths ~/.profiles ~/.profiles/local
+startup-utils-set-paths ~/.profiles ~/.profiles/local ~/.local
 
 # Options
 # =======
