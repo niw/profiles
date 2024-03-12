@@ -7,8 +7,8 @@
 
 [alias]
 	# See also `shared/git.sh`.
-	br = branch
-	brs = branch --sort='committerdate'
+	br = branch --color
+	brs = branch --color --sort='committerdate'
 	ci = commit
 	co = checkout
 	gr = log --graph --date=short --decorate=short --pretty=format:'%Cgreen%h %Creset%cd %Cblue%cn %Cred%d %Creset%s'
