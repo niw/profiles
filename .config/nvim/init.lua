@@ -159,7 +159,7 @@ vim.o.statusline = (
 vim.opt.wildmode = { 'longest', 'list', 'full' }
 -- Completion behavior.
 -- See `:help completeopt`
-vim.opt.completeopt = { 'menuone', 'noselect', 'noinsert' }
+vim.opt.completeopt = { 'menuone', 'noinsert' }
 -- Extend popup menu width.
 vim.o.pumwidth = 20
 
