@@ -538,14 +538,6 @@ plugins.setup({
   },
 
   'tpope/vim-surround',
-
-  {
-    'tpope/vim-commentary',
-    config = function ()
-      -- TODO: Consider to change this `,` to `/`.
-      vim.keymap.set('v', ',', '<Plug>Commentary')
-    end
-  }
 })
 
 plugins.sync()
