@@ -68,6 +68,9 @@ local function use(plugin)
       if plugin.setup then
         plugin.hook_add = create_hook('setup', name, plugin.setup)
       end
+      if plugin.build then
+        plugin.build = create_hook('build', name, plugin.build)
+      end
       if plugin.config then
         plugin.hook_post_source = create_hook('config', name, plugin.config)
       end
