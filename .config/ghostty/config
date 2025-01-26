@@ -1,0 +1,24 @@
+background = #000000
+background-blur-radius = 8
+background-opacity = 0.9
+
+cursor-opacity = 0.5
+cursor-style-blink = false
+
+font-family = "SF Mono"
+font-family = "Hiragino Sans"
+font-feature = "-calt"
+font-feature = "-dlig"
+font-feature = "-liga"
+font-size = 14
+font-thicken = true
+
+macos-titlebar-style = native
+
+selection-background = #333333
+shell-integration-features = no-cursor
+
+theme = Default
+
+window-height = 60
+window-width = 120
