@@ -128,8 +128,8 @@ unsetopt HUP
 # List jobs in the long format by default.
 setopt LONG_LIST_JOBS
 
-# Prompting
-# ---------
+# Prompt
+# ------
 
 # If set, parameter expansion, command substitution and arithmetic expansion
 # are performed in prompts.
@@ -144,8 +144,8 @@ setopt TRANSIENT_RPROMPT
 # No beep on error in ZLE.
 unsetopt BEEP
 
-# Prompting
-# =========
+# Prompt
+# ======
 # See `zshparam(1)` and `zshmisc(1)`.
 
 () {
@@ -233,6 +233,18 @@ zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
   fi
 }
 
+# Conditional Prompt
+# ==================
+
+() {
+  _zshrc-precmd-conditional-prompt() {
+    psvar[1]="${AWS_PROFILE+ ${AWS_PROFILE}}"
+  }
+  typeset -gaU precmd_functions
+  precmd_functions+=_zshrc-precmd-conditional-prompt
+  RPROMPT="${RPROMPT}%F{blue}%1v%f"
+}
+
 # Version control systems
 # =======================
 # See `zshcontrib(1)`.
@@ -264,19 +276,20 @@ zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}'
 
   # Add `precmd` function to update `RPROMPT`.
   _zshrc-precmd-vcs-info() {
-    psvar[1]=""
+    psvar[2]=""
     LANG=en_US.UTF-8 vcs_info
-    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+    [[ -n "$vcs_info_msg_0_" ]] && psvar[2]="$vcs_info_msg_0_"
   }
   typeset -gaU precmd_functions
   precmd_functions+=_zshrc-precmd-vcs-info
-  RPROMPT="${RPROMPT}%1(V. %F{green}%1v%f.)"
+  RPROMPT="${RPROMPT}%2(V. %F{green}%2v%f.)"
 }
 
 # Post configuration
 # ==================
 
 if startup-utils-use-rubies; then
+  # `RUBIES_RUBY_NAME` is always non-empty.
   RPROMPT="${RPROMPT} %F{red}\${RUBIES_RUBY_NAME}%f"
 fi
 
