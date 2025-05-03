@@ -1,4 +1,5 @@
-" This is a modified, simplified version of vim-jetpack.
+" This is a modified version of vim-jetpack.
+" See inline `NOTE:` comments for details.
 " See <https://github.com/tani/vim-jetpack>.
 
 "=================================== Jetpack ==================================
@@ -66,7 +67,6 @@ let g:jetpack_download_method =
 let s:cmds = {}
 let s:maps = {}
 let s:declared_packages = {}
-let s:declared_package_names = []
 
 let s:status = {
 \   'pending': 'pending',
@@ -78,6 +78,48 @@ let s:status = {
 \   'switched': 'switched',
 \   'copied': 'copied'
 \ }
+
+function! jetpack#parse_toml(lines) abort
+  let plugins = []
+  let plugin = {}
+  let key = ''
+  let multiline = ''
+  for line in a:lines
+    if !empty(multiline)
+      let plugin[key] .= line . (multiline =~ ']' ? "" : "\n")
+      if line =~ multiline
+        if multiline == ']'
+          let plugin[key] = eval(plugin[key])
+        else
+          let plugin[key] = substitute(plugin[key], multiline, '', 'g')
+        endif
+        let multiline = ''
+      endif
+    elseif trim(line) =~ '^#\|^$'
+    elseif line =~ '\[\[plugins\]\]'
+      call add(plugins, deepcopy(plugin))
+      let plugin = {}
+    elseif line =~ '\(\w\+\)\s*=\s*'
+      let key = substitute(line, '\(\w\+\)\s*=\s*.*', '\1', '')
+      let raw = substitute(line, '\w\+\s*=\s*', '', '')
+      if raw =~ "\\(\"\"\"\\|'''\\)\\(.*\\)\\1"
+        let plugin[key] = substitute(raw, "\\(\"\"\"\\|'''\\)\\(.*\\)\\1", '\2', '')
+      elseif raw =~ '"""' || raw =~ "'''"
+        let multiline = raw =~ '"""' ? '"""' : "'''"
+        let plugin[key] = raw
+      elseif raw =~ '\[.*\]'
+        let plugin[key] = eval(raw)
+      elseif raw =~ '\['
+        let multiline = ']'
+        let plugin[key] = raw
+      else
+        let plugin[key] = eval(trim(raw) =~ 'true\|false' ? 'v:'.raw : raw)
+      endif
+    endif
+  endfor
+  call add(plugins, plugin)
+  return filter(plugins,{ _, val -> !empty(val) })
+endfunction
 
 function! jetpack#make_progressbar(n) abort
   return '[' . join(map(range(0, 100, 3), {_, v -> v < a:n ? '=' : ' '}), '') . ']'
@@ -490,8 +532,14 @@ function! jetpack#add(plugin, ...) abort
   \ }
   let pkg.opt = get(opts, 'opt', jetpack#is_opt(pkg))
   let s:declared_packages[name] = pkg
-  let s:declared_package_names += [name]
   call jetpack#execute(pkg.hook_add)
+endfunction
+
+function! jetpack#load_toml(path) abort
+  let lines = readfile(a:path)
+  for pkg in jetpack#parse_toml(lines)
+    call jetpack#add(pkg.repo, pkg)
+  endfor
 endfunction
 
 function! jetpack#begin(...) abort
@@ -522,6 +570,7 @@ function! jetpack#begin(...) abort
   augroup Jetpack
     autocmd!
   augroup END
+  command! -nargs=+ -bar Jetpack call jetpack#add(<args>)
 endfunction
 
 function! jetpack#doautocmd(ord, pkg_name) abort
@@ -644,17 +693,19 @@ endfunction
 
 function! jetpack#end() abort
   let runtimepath = []
+  delcommand Jetpack
   command! -bar JetpackSync call jetpack#sync()
 
   syntax off
   filetype plugin indent off
 
+  " NOTE: Remove vim-jetpack plugin package declaration check.
+
   if sort(keys(s:declared_packages)) != sort(keys(s:available_packages))
     echomsg 'Some packages are not synchronized. Run :JetpackSync'
   endif
 
-  for pkg_name in s:declared_package_names
-    let pkg = s:declared_packages[pkg_name]
+  for [pkg_name, pkg] in items(s:declared_packages)
     for dep_name in pkg.dependers_before
       let cmd = 'call jetpack#load("'.pkg_name.'")'
       let pattern = 'JetpackPre:'.dep_name
@@ -738,3 +789,5 @@ endfunction
 function! jetpack#get(name) abort
   return get(s:declared_packages, a:name, {})
 endfunction
+
+" NOTE: Following Lua code is moved to `lua/plugins.lua`.
