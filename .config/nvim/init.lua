@@ -227,7 +227,7 @@ end)
 
 -- Define <Leader>, <LocalLeader>
 vim.g.mapleader = ','
-vim.g.maplocalleader = '.'
+vim.g.maplocalleader = ','
 
 -- Disable <Leader>, <LocalLeader> to avoid unexpected behavior.
 vim.keymap.set('', '<Leader>', '<Nop>')
@@ -235,36 +235,25 @@ vim.keymap.set('', '<LocalLeader>', '<Nop>')
 
 -- Prefixes
 
--- Reserve <Space>, s, t, T, q, K.
--- TODO: Consider to simplify this and repalce it with Leader.
+vim.keymap.set('', 's', '<Nop>')
 
-local function keymap_prefix(mode, key)
-  -- Strip '<...>' from key if it exists.
-  local name = string.match(key, '<(.+)>') or key
-  vim.keymap.set(mode, key, '<Nop>')
-  vim.keymap.set(mode, key, '[' .. name .. ']', { remap = true })
-end
+-- Reserver f, F, t, T for prefix key only on normal mode.
+vim.keymap.set('n', 'f', '<Nop>')
+vim.keymap.set('n', 'F', '<Nop>')
+vim.keymap.set('n', 't', '<Nop>')
+vim.keymap.set('n', 'T', '<Nop>')
 
-keymap_prefix('', '<Space>')
-keymap_prefix('', 's')
-
--- Allow t and T in visual, operator-pending mode to give a motion.
-keymap_prefix('n', 't')
-keymap_prefix('n', 'T')
-
--- q is reserved for prefix key, assign Q for the original action.
+-- Reserve q for prefix key, assign Q for the original action.
 -- Q is for Ex-mode which we don't need to use.
-keymap_prefix('', 'q')
+vim.keymap.set('', 'q', '<Nop>')
 vim.keymap.set('', 'Q', 'q')
 
--- K is reserved for prefix to avoid run K mistakenly with C-k,
+-- Reserve K for prefix to avoid run K mistakenly with C-k,
 -- assign qK for the original action.
-keymap_prefix('', 'K')
-vim.keymap.set('', 'qk', 'k')
+vim.keymap.set('', 'K', '<Nop>')
+vim.keymap.set('', 'qK', 'K')
 
 -- Buffer
-
-vim.keymap.set('n', '[Space]', '[Buffer]', { remap = true })
 
 local function next_normal_file_buffer(backward)
   local delta = 1
@@ -307,14 +296,14 @@ local function next_normal_file_buffer(backward)
   end
 end
 
-vim.keymap.set('n', '[Buffer]n', function ()
+vim.keymap.set('n', '<Space>n', function ()
   if vim.bo.buftype == '' then
     local buffer = next_normal_file_buffer()
     vim.api.nvim_win_set_buf(0, buffer)
   end
 end)
 
-vim.keymap.set('n', '[Buffer]p', function ()
+vim.keymap.set('n', '<Space>p', function ()
   if vim.bo.buftype == '' then
     local buffer = next_normal_file_buffer(true)
     vim.api.nvim_win_set_buf(0, buffer)
@@ -323,63 +312,26 @@ end)
 
 -- Window
 
-vim.keymap.set('n', '[s]', '[Window]', { remap = true })
-
-vim.keymap.set('n', '[Window]j', '<C-w>j')
-vim.keymap.set('n', '[Window]k', '<C-w>k')
-vim.keymap.set('n', '[Window]h', '<C-w>h')
-vim.keymap.set('n', '[Window]l', '<C-w>l')
-
-vim.keymap.set('n', '[Window]J', '<C-w>J')
-vim.keymap.set('n', '[Window]K', '<C-w>K')
-vim.keymap.set('n', '[Window]H', '<C-w>H')
-vim.keymap.set('n', '[Window]L', '<C-w>L')
-
-vim.keymap.set('n', '[Window]v', '<C-w>v')
+vim.keymap.set('n', '<C-w>d', ':<C-u>bdelete<CR>')
 
 -- Centering cursor after splitting window
-vim.keymap.set('n', '[Window]s', '<C-w>szz')
+vim.keymap.set('n', '<C-w>s', '<C-w>szz')
 
-vim.keymap.set('n', '[Window]q', ':<C-u>quit<CR>')
-vim.keymap.set('n', '[Window]d', ':<C-u>Bdelete<CR>')
-
-vim.keymap.set('n', '[Window]=', '<C-w>=')
-vim.keymap.set('n', '[Window],', '<C-w><')
-vim.keymap.set('n', '[Window].', '<C-w>>')
-vim.keymap.set('n', '[Window]]', '<C-w>+')
-vim.keymap.set('n', '[Window][', '<C-w>-')
-
--- Tab
-
-vim.keymap.set('n', '[t]', '[Tab]', { remap = true })
-
-vim.keymap.set('n', '[Tab]c', function ()
-  vim.cmd.tabnew()
-end)
-vim.keymap.set('n', '[Tab]q', function ()
-  vim.cmd.tabclose()
-end)
-vim.keymap.set('n', '[Tab]p', function ()
-  vim.cmd.tabprev()
-end)
-vim.keymap.set('n', '[Tab]n', function ()
-  vim.cmd.tabnext()
-end)
-for count = 1, 9 do
-  vim.keymap.set('n', '[Tab]' .. count, function ()
-    vim.cmd('tabnext ' .. count)
-  end)
-end
+-- Sizing
+vim.keymap.set('n', '<C-w>,', '<C-w><')
+vim.keymap.set('n', '<C-w>.', '<C-w>>')
+vim.keymap.set('n', '<C-w>]', '<C-w>+')
+vim.keymap.set('n', '<C-w>[', '<C-w>-')
 
 -- Highlight
 
 -- Reset syntax highlight
-vim.keymap.set('n', '[Space]r', function ()
+vim.keymap.set('n', '<Space>r', function ()
   vim.cmd('syntax sync clear')
 end)
 
 -- Disable search highlight
-vim.keymap.set('n', '[Space]N', function ()
+vim.keymap.set('n', '<Space>N', function ()
   vim.cmd.nohlsearch()
 end)
 
@@ -399,13 +351,13 @@ local function highlight_search_keyword(keyword)
 end
 
 -- Search the word under the cursor
-vim.keymap.set('n', '[Space]<Space>', function ()
+vim.keymap.set('n', '<Space><Space>', function ()
   local word = vim.fn.expand('<cword>')
   highlight_search_keyword(word)
 end)
 
 -- Search by visual region
-vim.keymap.set('v', '[Space]<Space>', function ()
+vim.keymap.set('v', '<Space><Space>', function ()
   local reg = vim.fn.getreginfo('a')
   local pos = vim.fn.getpos('.')
   local word
@@ -489,10 +441,10 @@ vim.keymap.set('n', 'g#', '#zzzv')
 vim.keymap.set('n', 'gm', '`[v`]', { silent = true })
 
 -- Lookup help
-vim.keymap.set('n', '[Space]h', ':<C-u>help <C-r><C-w><CR>', { silent = true })
+vim.keymap.set('n', '<Space>h', ':<C-u>help <C-r><C-w><CR>', { silent = true })
 
 -- Toggle text wrap
-vim.keymap.set('n', '[Space]w', function ()
+vim.keymap.set('n', '<Space>w', function ()
   vim.wo.wrap = not vim.wo.wrap
 end)
 
