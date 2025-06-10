@@ -1,6 +1,6 @@
-background = #000000
+background = #191D27
 background-blur-radius = 8
-background-opacity = 0.9
+background-opacity = 0.95
 
 cursor-opacity = 0.5
 cursor-style-blink = false
@@ -15,7 +15,7 @@ font-thicken = true
 
 macos-titlebar-style = native
 
-selection-background = #333333
+selection-background = #273D4C
 shell-integration-features = no-cursor
 
 theme = Default
