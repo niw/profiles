@@ -16,6 +16,7 @@ font-thicken = true
 macos-titlebar-style = native
 
 selection-background = #273D4C
+selection-foreground = cell-foreground
 shell-integration-features = no-cursor
 
 theme = Default
