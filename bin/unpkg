@@ -20,7 +20,7 @@ if [[ -f $pkg_path ]]; then
   exec pkgutil --expand "$pkg_path" "$dest_path"
 elif [[ -d $pkg_path && -f "$pkg_path/Bom" && -f "$pkg_path/Payload" ]]; then
   lsbom "$pkg_path/Bom"
-  exec ditto -x --bom "$pkg_path/Bom" "$pkg_path/Payload" "$dest_path"
+  exec ditto -x "$pkg_path/Payload" "$dest_path"
 else
   echo "Can't read $pkg_path." >&2
   exit 1
