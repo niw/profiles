@@ -22,7 +22,11 @@ local autocommands = {
 
 local function set_file_encodings()
   local fileencodings = {
-    'ucs-bom'
+    -- The encodings with BOM must be obvious, thus it precedence than the others always.
+    'ucs-bom',
+    -- There are the cases that we can't differentiate UTF-8 from EUC-JP or CP932.
+    -- Assume that UTF-8 is common encoding now, it takes precedence than the others.
+    'utf-8'
   }
 
   local eucjp = 'euc-jp'
@@ -47,9 +51,6 @@ local function set_file_encodings()
     table.insert(fileencodings, iso2022jp)
   end
 
-  -- There are the cases that we can't differentiate UTF-8 from EUC-JP or CP932.
-  -- Assume that UTF-8 is common encoding now, it takes precedent than the others.
-  table.insert(fileencodings, 'utf-8')
   table.insert(fileencodings, eucjp)
   table.insert(fileencodings, 'cp932')
   table.insert(fileencodings, 'default')
