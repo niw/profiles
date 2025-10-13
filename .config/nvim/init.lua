@@ -211,7 +211,7 @@ autocommands:create('WinEnter', function ()
   vim.cmd.checktime()
 end)
 
--- TODO: Looks like this is not working. file type plugin may take a precedence.
+-- TODO: Looks like this is not working. file type plugin may take precedence.
 -- Disable automatically insert comment by default.
 -- These options are set locally by filetypes, thus remove them for each filetype.
 -- See `:help fo-table`.
