@@ -457,7 +457,7 @@ for command, encoding in pairs({
   Utf8 = 'utf-8',
   Cp932 = 'cp932',
   Eucjp = 'euc-jp',
-  Iso2022jp = 'ios-2022-jp',
+  Iso2022jp = 'iso-2022-jp',
   Utf16 = 'ucs-2le',
   Utf16be = 'ucs-2'
 }) do
