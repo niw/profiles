@@ -1,6 +1,8 @@
-background = #191D27
+background = #212734
 background-blur-radius = 8
 background-opacity = 0.95
+
+bell-features = no-attention
 
 cursor-opacity = 0.5
 cursor-style-blink = false
@@ -23,3 +25,4 @@ theme = Default
 
 window-height = 60
 window-width = 120
+window-padding-balance = true
