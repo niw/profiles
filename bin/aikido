@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+readonly COMMAND="$1"
+shift
+
+if [[ -z "$COMMAND" ]]; then
+  echo "Usage: aikido [npx|npm|...] [args...]"
+  exit 1
+fi
+
+exec npx --package @aikidosec/safe-chain env npm_config_package= "aikido-$COMMAND" "$@"
