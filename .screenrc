@@ -11,7 +11,7 @@ startup_message off
 vbell off
 
 # Change control key from C-a to C-t because C-a is for line-beginning on zsh
-escape ^t^t
+#escape ^t^t
 
 # Status line
 # %{=bu wk} change color to bold, underline, while, black
