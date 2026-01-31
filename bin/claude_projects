@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import os
+import re
+import shutil
+import sys
+from pathlib import Path
+from typing import Any
+
+
+def claude_paths() -> tuple[Path, Path]:
+    claude_config_dir = os.environ.get("CLAUDE_CONFIG_DIR")
+
+    if claude_config_dir:
+        config_dir = Path(claude_config_dir)
+    else:
+        config_dir = Path.home() / ".claude_code"
+
+    claude_json = config_dir / ".claude.json"
+    projects_dir = config_dir / "projects"
+
+    return claude_json, projects_dir
+
+
+def load_config(claude_json: Path) -> dict[str, Any] | None:
+    if not claude_json.exists():
+        print(f"Error: .claude.json not found: {claude_json}", file=sys.stderr)
+        return None
+
+    try:
+        with open(claude_json, "r") as f:
+            return json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Error: Failed to parse JSON from {claude_json}: {e}", file=sys.stderr)
+        return None
+    except Exception as e:
+        print(f"Error: Failed to read {claude_json}: {e}", file=sys.stderr)
+        return None
+
+
+def safe_path_string(path: str) -> str:
+    normalized_path = os.path.abspath(os.path.expanduser(path))
+    # This is how current Calude Code implemented.
+    # This means if path contains non-alphanumeric characters,
+    # directory in `projects` may conflict.
+    return re.sub(r"[^a-zA-Z0-9]", "-", normalized_path)
+
+
+def list_projects() -> bool:
+    claude_json, _ = claude_paths()
+
+    config = load_config(claude_json)
+    if config is None:
+        return False
+
+    projects: dict[str, Any] = config.get("projects", {})
+    if not projects:
+        print("No projects found.")
+        return True
+
+    for project_path in sorted(projects.keys()):
+        print(f"* {project_path}")
+
+    return True
+
+
+def delete_project(project_path: str, *, dry_run: bool = False) -> bool:
+    claude_json, projects_dir = claude_paths()
+
+    project_path = os.path.abspath(os.path.expanduser(project_path))
+
+    print(f"Use .claude.json: {claude_json}")
+    print(f"Use projects directory: {projects_dir}")
+
+    config = load_config(claude_json)
+    if config is None:
+        return False
+
+    if "projects" not in config:
+        print("Error: 'projects' key not found in .claude.json", file=sys.stderr)
+        return False
+
+    if project_path not in config["projects"]:
+        print(
+            f"Error: Project '{project_path}' not found in .claude.json",
+            file=sys.stderr,
+        )
+        return False
+
+    # Remove from JSON config
+    if dry_run:
+        print(f"Project can be removed from .claude.json: {project_path}")
+    else:
+        del config["projects"][project_path]
+        try:
+            with open(claude_json, "w") as f:
+                # Preserve the default `.claude.json` formatting.
+                json.dump(config, f, indent=2)
+            print(f"Removed project from .claude.json: {project_path}")
+        except Exception as e:
+            print(f"Error: Failed to write to {claude_json}: {e}", file=sys.stderr)
+            return False
+
+    project_path_name = safe_path_string(project_path)
+    project_dir = projects_dir / project_path_name
+
+    if project_dir.exists():
+        if dry_run:
+            print(f"Project directory can be removed: {project_dir}")
+        else:
+            try:
+                shutil.rmtree(project_dir)
+                print(f"Removed project directory: {project_dir}")
+            except Exception as e:
+                print(
+                    f"Error: Failed to remove directory {project_dir}: {e}",
+                    file=sys.stderr,
+                )
+                return False
+    else:
+        print(
+            f"Project directory not found, may have been already removed: {project_dir}"
+        )
+
+    return True
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Manage Claude Code projects")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    subparsers.add_parser("list", help="List all projects")
+
+    delete_parser = subparsers.add_parser(
+        "delete", help="Delete a project from configuration"
+    )
+    delete_parser.add_argument(
+        "project_path",
+        nargs="?",
+        default=".",
+        help="Path to the project to delete (default: current directory)",
+    )
+    delete_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be done without making any changes",
+    )
+
+    args = parser.parse_args()
+
+    match args.command:
+        case "list":
+            success = list_projects()
+        case "delete":
+            success = delete_project(args.project_path, dry_run=args.dry_run)
+        case _:
+            parser.print_help()
+            success = False
+
+    sys.exit(0 if success else 1)
+
+
+if __name__ == "__main__":
+    main()
