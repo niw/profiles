@@ -5,7 +5,9 @@ import os
 from pathlib import Path
 
 KNOWN_CONTAINER_PATHS = ".config".split()
-IGNORED_FILES = ".git .gitignore .gitmodules .DS_Store .venv".split() + KNOWN_CONTAINER_PATHS
+IGNORED_FILES = (
+    ".git .gitignore .gitmodules .DS_Store .venv".split() + KNOWN_CONTAINER_PATHS
+)
 
 parser = argparse.ArgumentParser(description="simple tool to manage symbolic links.")
 parser.add_argument(
@@ -28,7 +30,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-def process(path, container_path=None):
+def process(path: Path, container_path: Path | None = None) -> None:
     dest_path = Path(args.dest)
     if container_path:
         dest_path = dest_path / container_path
@@ -54,7 +56,7 @@ def process(path, container_path=None):
 base_path = Path(__file__).parent
 
 for path in base_path.glob(".*"):
-    if not path.name in IGNORED_FILES:
+    if path.name not in IGNORED_FILES:
         process(path)
 
 for known_container_path_string in KNOWN_CONTAINER_PATHS:
