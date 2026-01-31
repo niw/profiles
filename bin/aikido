@@ -8,4 +8,4 @@ if [[ -z "$COMMAND" ]]; then
   exit 1
 fi
 
-exec npx --package @aikidosec/safe-chain env npm_config_package= "aikido-$COMMAND" "$@"
+exec npx --package @aikidosec/safe-chain env npm_config_package= "aikido-$COMMAND" --safe-chain-logging=silent "$@"
