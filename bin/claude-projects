@@ -127,14 +127,102 @@ def delete_project(project_path: str, *, dry_run: bool = False) -> bool:
     return True
 
 
+def move_project(
+    source_path: str, destination_path: str, *, dry_run: bool = False
+) -> bool:
+    claude_json, projects_dir = claude_paths()
+
+    source_path = os.path.abspath(os.path.expanduser(source_path))
+    destination_path = os.path.abspath(os.path.expanduser(destination_path))
+
+    print(f"Use .claude.json: {claude_json}")
+    print(f"Use projects directory: {projects_dir}")
+
+    if source_path == destination_path:
+        print(
+            "Error: Source and destination paths are the same.",
+            file=sys.stderr,
+        )
+        return False
+
+    config = load_config(claude_json)
+    if config is None:
+        return False
+
+    if "projects" not in config:
+        print("Error: 'projects' key not found in .claude.json", file=sys.stderr)
+        return False
+
+    if source_path not in config["projects"]:
+        print(
+            f"Error: Project '{source_path}' not found in .claude.json",
+            file=sys.stderr,
+        )
+        return False
+
+    if destination_path in config["projects"]:
+        print(
+            f"Error: Destination project '{destination_path}' already exists in .claude.json",
+            file=sys.stderr,
+        )
+        return False
+
+    source_dir_name = safe_path_string(source_path)
+    destination_dir_name = safe_path_string(destination_path)
+    source_dir = projects_dir / source_dir_name
+    destination_dir = projects_dir / destination_dir_name
+
+    if destination_dir.exists():
+        print(
+            f"Error: Destination project directory already exists: {destination_dir}",
+            file=sys.stderr,
+        )
+        return False
+
+    # Update JSON config
+    if dry_run:
+        print(
+            f"Project can be moved in .claude.json: {source_path} -> {destination_path}"
+        )
+    else:
+        config["projects"][destination_path] = config["projects"][source_path]
+        del config["projects"][source_path]
+        try:
+            with open(claude_json, "w") as f:
+                # Preserve the default `.claude.json` formatting.
+                json.dump(config, f, indent=2)
+            print(f"Moved project in .claude.json: {source_path} -> {destination_path}")
+        except Exception as e:
+            print(f"Error: Failed to write to {claude_json}: {e}", file=sys.stderr)
+            return False
+
+    if source_dir.exists():
+        if dry_run:
+            print(f"Project directory can be moved: {source_dir} -> {destination_dir}")
+        else:
+            try:
+                shutil.move(str(source_dir), str(destination_dir))
+                print(f"Moved project directory: {source_dir} -> {destination_dir}")
+            except Exception as e:
+                print(
+                    f"Error: Failed to move directory {source_dir} -> {destination_dir}: {e}",
+                    file=sys.stderr,
+                )
+                return False
+    else:
+        print(f"Project directory not found, nothing to move: {source_dir}")
+
+    return True
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Manage Claude Code projects")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    subparsers.add_parser("list", help="List all projects")
+    subparsers.add_parser("list", aliases=["ls"], help="List all projects")
 
     delete_parser = subparsers.add_parser(
-        "delete", help="Delete a project from configuration"
+        "delete", aliases=["rm"], help="Delete a project from configuration"
     )
     delete_parser.add_argument(
         "project_path",
@@ -148,13 +236,34 @@ def main() -> None:
         help="Show what would be done without making any changes",
     )
 
+    move_parser = subparsers.add_parser(
+        "move", aliases=["mv"], help="Move a project to a new path in configuration"
+    )
+    move_parser.add_argument(
+        "source_path",
+        help="Current path of the project",
+    )
+    move_parser.add_argument(
+        "destination_path",
+        help="New path of the project",
+    )
+    move_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be done without making any changes",
+    )
+
     args = parser.parse_args()
 
     match args.command:
-        case "list":
+        case "list" | "ls":
             success = list_projects()
-        case "delete":
+        case "delete" | "rm":
             success = delete_project(args.project_path, dry_run=args.dry_run)
+        case "move" | "mv":
+            success = move_project(
+                args.source_path, args.destination_path, dry_run=args.dry_run
+            )
         case _:
             parser.print_help()
             success = False
