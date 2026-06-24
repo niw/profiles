@@ -6,11 +6,19 @@ import os
 import re
 import shutil
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 
-def claude_paths() -> tuple[Path, Path]:
+@dataclass(kw_only=True)
+class ClaudeConfig:
+    claude_json_path: Path
+    projects_dir_path: Path
+    history_jsonl_path: Path
+
+
+def claude_config() -> ClaudeConfig:
     claude_config_dir = os.environ.get("CLAUDE_CONFIG_DIR")
 
     if claude_config_dir:
@@ -18,25 +26,29 @@ def claude_paths() -> tuple[Path, Path]:
     else:
         config_dir = Path.home() / ".claude_code"
 
-    claude_json = config_dir / ".claude.json"
-    projects_dir = config_dir / "projects"
+    return ClaudeConfig(
+        claude_json_path=config_dir / ".claude.json",
+        projects_dir_path=config_dir / "projects",
+        history_jsonl_path=config_dir / "history.jsonl",
+    )
 
-    return claude_json, projects_dir
 
-
-def load_config(claude_json: Path) -> dict[str, Any] | None:
-    if not claude_json.exists():
-        print(f"Error: .claude.json not found: {claude_json}", file=sys.stderr)
+def load_claude_json(claude_json_path: Path) -> dict[str, Any] | None:
+    if not claude_json_path.exists():
+        print(f"Error: .claude.json not found: {claude_json_path}", file=sys.stderr)
         return None
 
     try:
-        with open(claude_json, "r") as f:
-            return json.load(f)
-    except json.JSONDecodeError as e:
-        print(f"Error: Failed to parse JSON from {claude_json}: {e}", file=sys.stderr)
+        with open(claude_json_path, "r") as config_file:
+            return json.load(config_file)
+    except json.JSONDecodeError as error:
+        print(
+            f"Error: Failed to parse JSON from {claude_json_path}: {error}",
+            file=sys.stderr,
+        )
         return None
-    except Exception as e:
-        print(f"Error: Failed to read {claude_json}: {e}", file=sys.stderr)
+    except Exception as error:
+        print(f"Error: Failed to read {claude_json_path}: {error}", file=sys.stderr)
         return None
 
 
@@ -49,13 +61,13 @@ def safe_path_string(path: str) -> str:
 
 
 def list_projects() -> bool:
-    claude_json, _ = claude_paths()
+    config = claude_config()
 
-    config = load_config(claude_json)
-    if config is None:
+    claude_json = load_claude_json(config.claude_json_path)
+    if claude_json is None:
         return False
 
-    projects: dict[str, Any] = config.get("projects", {})
+    projects: dict[str, Any] = claude_json.get("projects", {})
     if not projects:
         print("No projects found.")
         return True
@@ -67,62 +79,157 @@ def list_projects() -> bool:
 
 
 def delete_project(project_path: str, *, dry_run: bool = False) -> bool:
-    claude_json, projects_dir = claude_paths()
+    config = claude_config()
 
     project_path = os.path.abspath(os.path.expanduser(project_path))
 
-    print(f"Use .claude.json: {claude_json}")
-    print(f"Use projects directory: {projects_dir}")
+    print(f"Use .claude.json: {config.claude_json_path}")
+    print(f"Use projects directory: {config.projects_dir_path}")
 
-    config = load_config(claude_json)
-    if config is None:
+    claude_json = load_claude_json(config.claude_json_path)
+    if claude_json is None:
         return False
 
-    if "projects" not in config:
+    if "projects" not in claude_json:
         print("Error: 'projects' key not found in .claude.json", file=sys.stderr)
         return False
 
-    if project_path not in config["projects"]:
+    if project_path not in claude_json["projects"]:
         print(
             f"Error: Project '{project_path}' not found in .claude.json",
             file=sys.stderr,
         )
         return False
 
+    # Collect the project itself plus any sub-directory projects nested under it.
+    path_prefix = project_path + os.sep
+    target_paths = [project_path] + sorted(
+        project_path
+        for project_path in claude_json["projects"]
+        if project_path.startswith(path_prefix)
+    )
+
+    dir_name = safe_path_string(project_path)
+
+    # Collect the project directories in projects/ to delete.
+    dir_name_prefix = dir_name + "-"
+    target_dirs: list[Path] = []
+    if config.projects_dir_path.exists():
+        for dir in sorted(config.projects_dir_path.iterdir()):
+            if dir.name == dir_name or dir.name.startswith(dir_name_prefix):
+                target_dirs.append(dir)
+
     # Remove from JSON config
     if dry_run:
-        print(f"Project can be removed from .claude.json: {project_path}")
+        for target_path in target_paths:
+            print(f"Project can be removed from .claude.json: {target_path}")
     else:
-        del config["projects"][project_path]
+        for target_path in target_paths:
+            del claude_json["projects"][target_path]
         try:
-            with open(claude_json, "w") as f:
+            with open(config.claude_json_path, "w") as config_file:
                 # Preserve the default `.claude.json` formatting.
-                json.dump(config, f, indent=2)
-            print(f"Removed project from .claude.json: {project_path}")
-        except Exception as e:
-            print(f"Error: Failed to write to {claude_json}: {e}", file=sys.stderr)
+                json.dump(claude_json, config_file, indent=2)
+        except Exception as error:
+            print(
+                f"Error: Failed to write to {config.claude_json_path}: {error}",
+                file=sys.stderr,
+            )
             return False
+        for target_path in target_paths:
+            print(f"Removed project from .claude.json: {target_path}")
 
-    project_path_name = safe_path_string(project_path)
-    project_dir = projects_dir / project_path_name
-
-    if project_dir.exists():
+    # Remove project directories
+    if not target_dirs:
+        print(
+            f"Project directory not found, may have been already removed: {config.projects_dir_path / dir_name}"
+        )
+    for dir in target_dirs:
         if dry_run:
-            print(f"Project directory can be removed: {project_dir}")
+            print(f"Project directory can be removed: {dir}")
         else:
             try:
-                shutil.rmtree(project_dir)
-                print(f"Removed project directory: {project_dir}")
-            except Exception as e:
+                shutil.rmtree(dir)
+                print(f"Removed project directory: {dir}")
+            except Exception as error:
                 print(
-                    f"Error: Failed to remove directory {project_dir}: {e}",
+                    f"Error: Failed to remove directory {dir}: {error}",
                     file=sys.stderr,
                 )
                 return False
-    else:
-        print(
-            f"Project directory not found, may have been already removed: {project_dir}"
+
+    # Remove command history
+    for target_path in target_paths:
+        if not update_history(config.history_jsonl_path, target_path, dry_run=dry_run):
+            return False
+
+    return True
+
+
+def update_history(
+    history_jsonl: Path,
+    project_path: str,
+    new_project_path: str | None = None,
+    *,
+    dry_run: bool = False,
+) -> bool:
+    removing = new_project_path is None
+
+    if not history_jsonl.exists():
+        print(f"History file not found, nothing to update: {history_jsonl}")
+        return True
+
+    try:
+        with open(history_jsonl, "r") as history_file:
+            lines = history_file.readlines()
+    except Exception as error:
+        print(f"Error: Failed to read {history_jsonl}: {error}", file=sys.stderr)
+        return False
+
+    updated_lines: list[str] = []
+    count = 0
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            updated_lines.append(line)
+            continue
+
+        try:
+            entry = json.loads(stripped)
+        except json.JSONDecodeError:
+            # Preserve any line we can't parse as-is.
+            updated_lines.append(line)
+            continue
+
+        if entry.get("project") != project_path:
+            updated_lines.append(line)
+            continue
+
+        count += 1
+        if removing:
+            # Drop the line by not appending it.
+            continue
+        entry["project"] = new_project_path
+        # Match Claude Code's compact, non-ASCII-escaped JSONL format.
+        updated_lines.append(
+            json.dumps(entry, ensure_ascii=False, separators=(",", ":")) + "\n"
         )
+
+    if count == 0:
+        print(f"No history entries to update in: {history_jsonl}")
+        return True
+
+    if dry_run:
+        print(f"{count} history entries can be updated in: {history_jsonl}")
+        return True
+
+    try:
+        with open(history_jsonl, "w") as history_file:
+            history_file.writelines(updated_lines)
+        print(f"Updated {count} history entries in: {history_jsonl}")
+    except Exception as error:
+        print(f"Error: Failed to write to {history_jsonl}: {error}", file=sys.stderr)
+        return False
 
     return True
 
@@ -130,13 +237,13 @@ def delete_project(project_path: str, *, dry_run: bool = False) -> bool:
 def move_project(
     source_path: str, destination_path: str, *, dry_run: bool = False
 ) -> bool:
-    claude_json, projects_dir = claude_paths()
+    config = claude_config()
 
     source_path = os.path.abspath(os.path.expanduser(source_path))
     destination_path = os.path.abspath(os.path.expanduser(destination_path))
 
-    print(f"Use .claude.json: {claude_json}")
-    print(f"Use projects directory: {projects_dir}")
+    print(f"Use .claude.json: {config.claude_json_path}")
+    print(f"Use projects directory: {config.projects_dir_path}")
 
     if source_path == destination_path:
         print(
@@ -145,72 +252,104 @@ def move_project(
         )
         return False
 
-    config = load_config(claude_json)
-    if config is None:
+    claude_json = load_claude_json(config.claude_json_path)
+    if claude_json is None:
         return False
 
-    if "projects" not in config:
+    if "projects" not in claude_json:
         print("Error: 'projects' key not found in .claude.json", file=sys.stderr)
         return False
 
-    if source_path not in config["projects"]:
+    if source_path not in claude_json["projects"]:
         print(
             f"Error: Project '{source_path}' not found in .claude.json",
             file=sys.stderr,
         )
         return False
 
-    if destination_path in config["projects"]:
-        print(
-            f"Error: Destination project '{destination_path}' already exists in .claude.json",
-            file=sys.stderr,
-        )
-        return False
-
     source_dir_name = safe_path_string(source_path)
     destination_dir_name = safe_path_string(destination_path)
-    source_dir = projects_dir / source_dir_name
-    destination_dir = projects_dir / destination_dir_name
 
-    if destination_dir.exists():
-        print(
-            f"Error: Destination project directory already exists: {destination_dir}",
-            file=sys.stderr,
-        )
-        return False
+    # Collect the project itself plus any sub-directory projects nested under it.
+    path_prefix = source_path + os.sep
+    path_moves: list[tuple[str, str]] = [(source_path, destination_path)]
+    for source_sub_path in sorted(
+        project_path
+        for project_path in claude_json["projects"]
+        if project_path.startswith(path_prefix)
+    ):
+        destination_sub_path = destination_path + source_sub_path[len(source_path) :]
+        path_moves.append((source_sub_path, destination_sub_path))
+
+    # Collect the project directories in projects/ to move.
+    dir_name_prefix = source_dir_name + "-"
+    dir_moves: list[tuple[Path, Path]] = []
+    if config.projects_dir_path.exists():
+        for dir in sorted(config.projects_dir_path.iterdir()):
+            if dir.name == source_dir_name or dir.name.startswith(dir_name_prefix):
+                name = destination_dir_name + dir.name[len(source_dir_name) :]
+                dir_moves.append((dir, config.projects_dir_path / name))
+
+    # Validate every destination up front so we don't move some and then fail.
+    for _, dst in path_moves:
+        if dst in claude_json["projects"]:
+            print(
+                f"Error: Destination project '{dst}' already exists in .claude.json",
+                file=sys.stderr,
+            )
+            return False
+    for _, dst in dir_moves:
+        if dst.exists():
+            print(
+                f"Error: Destination project directory already exists: {dst}",
+                file=sys.stderr,
+            )
+            return False
 
     # Update JSON config
     if dry_run:
-        print(
-            f"Project can be moved in .claude.json: {source_path} -> {destination_path}"
-        )
+        for src, dst in path_moves:
+            print(f"Project can be moved in .claude.json: {src} -> {dst}")
     else:
-        config["projects"][destination_path] = config["projects"][source_path]
-        del config["projects"][source_path]
+        for src, dst in path_moves:
+            claude_json["projects"][dst] = claude_json["projects"][src]
+            del claude_json["projects"][src]
         try:
-            with open(claude_json, "w") as f:
+            with open(config.claude_json_path, "w") as config_file:
                 # Preserve the default `.claude.json` formatting.
-                json.dump(config, f, indent=2)
-            print(f"Moved project in .claude.json: {source_path} -> {destination_path}")
-        except Exception as e:
-            print(f"Error: Failed to write to {claude_json}: {e}", file=sys.stderr)
+                json.dump(claude_json, config_file, indent=2)
+        except Exception as error:
+            print(
+                f"Error: Failed to write to {config.claude_json_path}: {error}",
+                file=sys.stderr,
+            )
             return False
+        for src, dst in path_moves:
+            print(f"Moved project in .claude.json: {src} -> {dst}")
 
-    if source_dir.exists():
+    # Move project directories
+    if not dir_moves:
+        print(
+            f"Project directory not found, nothing to move: {config.projects_dir_path / source_dir_name}"
+        )
+    for src, dst in dir_moves:
         if dry_run:
-            print(f"Project directory can be moved: {source_dir} -> {destination_dir}")
+            print(f"Project directory can be moved: {src} -> {dst}")
         else:
             try:
-                shutil.move(str(source_dir), str(destination_dir))
-                print(f"Moved project directory: {source_dir} -> {destination_dir}")
-            except Exception as e:
+                shutil.move(str(src), str(dst))
+                print(f"Moved project directory: {src} -> {dst}")
+            except Exception as error:
                 print(
-                    f"Error: Failed to move directory {source_dir} -> {destination_dir}: {e}",
+                    f"Error: Failed to move directory {src} -> {dst}: {error}",
                     file=sys.stderr,
                 )
                 return False
-    else:
-        print(f"Project directory not found, nothing to move: {source_dir}")
+
+    # Migrate command history
+    for src, dst in path_moves:
+        if not update_history(config.history_jsonl_path, src, dst, dry_run=dry_run):
+            return False
 
     return True
 
