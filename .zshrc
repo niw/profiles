@@ -170,7 +170,7 @@ HISTSIZE=100000
 
 # Max history.
 # This is about for a year.
-SAVEHIST=100000
+SAVEHIST=200000
 
 # ZLE
 # ===
