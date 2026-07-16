@@ -72,10 +72,6 @@ setopt NUMERIC_GLOB_SORT
 # History
 # -------
 
-# If this is set, zsh sessions will append their history list to the history
-# file, rather than replace it.
-setopt APPEND_HISTORY
-
 # Save each command's beginning timestamp.
 setopt EXTENDED_HISTORY
 
