@@ -306,6 +306,19 @@ def move_project(
             )
             return False
 
+    # Refuse to move when the destination path already contains another project.
+    move_source_paths = {src for src, _ in path_moves}
+    destination_prefix = destination_path + os.sep
+    for existing_project_path in sorted(claude_json["projects"]):
+        if existing_project_path in move_source_paths:
+            continue
+        if existing_project_path.startswith(destination_prefix):
+            print(
+                f"Error: Destination path '{destination_path}' contains another project: {existing_project_path}",
+                file=sys.stderr,
+            )
+            return False
+
     # Update JSON config
     if dry_run:
         for src, dst in path_moves:
