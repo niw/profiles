@@ -43,6 +43,11 @@
 	process = git-lfs filter-process
 	required = true
 
+[lfs "customtransfer.xet"]
+	path = git-xet
+	args = transfer
+	concurrent = true
+
 # NOTE Use following `git config --system` to set credential helper for system wide.
 # not `--global`, since credential storage is per system.
 # $ git config --system credential.helper osxkeychain
